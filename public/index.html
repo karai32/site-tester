@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка сайта</title>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <div>
+          <h1>Проверка сайта</h1>
+          <p id="site" class="site">Загрузка настроек…</p>
+          <p class="repository">
+            <a href="https://github.com/karai32/site-tester" target="_blank" rel="noopener noreferrer">
+              GitHub: karai32/site-tester
+            </a>
+          </p>
+        </div>
+        <button id="start-scan" type="button">Запустить проверку</button>
+      </header>
+
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+
+      <section
+        id="check-groups"
+        class="check-groups"
+        aria-label="Результаты проверки"
+      ></section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

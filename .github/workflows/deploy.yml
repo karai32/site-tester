@@ -1,0 +1,69 @@
+name: Deploy to production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DEPLOY_HOST: 46.19.69.32
+      DEPLOY_USER: deploy
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          ssh-keyscan -H -T 10 "$DEPLOY_HOST" >> "$HOME/.ssh/known_hosts"
+
+      - name: Check that no scan is running
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            'if curl --silent http://127.0.0.1:3000/api/scans | grep -Eq "\"status\":\"(pending|running)\""; then echo "A scan is running. Deployment cancelled."; exit 1; fi'
+
+      - name: Upload application
+        run: |
+          SSH_COMMAND="ssh -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes"
+          rsync -az --delete -e "$SSH_COMMAND" src/ "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/src/"
+          rsync -az --delete -e "$SSH_COMMAND" public/ "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/public/"
+          rsync -az --delete -e "$SSH_COMMAND" config/ "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/config/"
+          rsync -az -e "$SSH_COMMAND" package.json package-lock.json "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/"
+
+      - name: Install and restart
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" '
+            set -eu
+            cd /opt/site-checker
+            find src public config -type f -name "*.js" -print0 | xargs -0 -n1 node --check
+            npm ci --omit=dev
+            sudo /usr/bin/systemctl restart site-checker.service
+
+            for attempt in $(seq 1 15); do
+              if curl --fail --silent http://127.0.0.1:3000/api/health >/dev/null; then
+                echo "Deployment completed successfully."
+                exit 0
+              fi
+              sleep 1
+            done
+
+            systemctl status site-checker.service --no-pager
+            exit 1
+          '

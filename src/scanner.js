@@ -38,6 +38,11 @@ import { chatWidgetLoads } from './checks/widgets/chat-widget-loads.js';
 import { whatsappButtonLink } from './checks/widgets/whatsapp-button-link.js';
 import { telegramButtonLink } from './checks/widgets/telegram-button-link.js';
 import { headerPhoneClickableMobile } from './checks/widgets/header-phone-clickable-mobile.js';
+import { titlePresent } from './checks/seo/title-present.js';
+import { descriptionPresent } from './checks/seo/description-present.js';
+import { h1Present } from './checks/seo/h1-present.js';
+import { headingHierarchy } from './checks/seo/heading-hierarchy.js';
+import { no404Links } from './checks/seo/no-404-links.js';
 
 const categories = [
   {
@@ -94,6 +99,11 @@ const categories = [
       telegramButtonLink,
       headerPhoneClickableMobile,
     ],
+  },
+  {
+    id: 'seo',
+    title: 'SEO',
+    checks: [titlePresent, descriptionPresent, h1Present, headingHierarchy, no404Links],
   },
 ];
 

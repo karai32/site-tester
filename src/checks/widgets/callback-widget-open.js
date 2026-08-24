@@ -47,6 +47,7 @@ export const callbackWidgetOpen = {
       const phoneInput = frame.locator('input').first();
       const phoneInputVisible = await phoneInput.isVisible().catch(() => false);
 
+      await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 

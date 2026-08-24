@@ -19,10 +19,20 @@ export const languageSwitch = {
 
       const langBefore = await page.evaluate(() => document.documentElement.lang);
       const urlBefore = page.url();
+      await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
+      const screenshotBeforeBuffer = await page.screenshot({ type: 'jpeg', quality: 45, fullPage: true });
+      const screenshotBefore = `data:image/jpeg;base64,${screenshotBeforeBuffer.toString('base64')}`;
 
       const langOption = page.locator(selectors.langOptionEng).first();
       if (await langOption.count() === 0) {
-        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'На странице не найден переключатель языка на английский.' };
+        return {
+          id: this.id,
+          title: this.title,
+          pageUrl: url,
+          status: 'failed',
+          message: 'На странице не найден переключатель языка на английский.',
+          screenshots: [{ label: 'До переключения', image: screenshotBefore }],
+        };
       }
 
       await page.locator(selectors.langHeader).first().click();
@@ -32,6 +42,13 @@ export const languageSwitch = {
 
       const langAfter = await page.evaluate(() => document.documentElement.lang);
       const urlAfter = page.url();
+      await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
+      const screenshotAfterBuffer = await page.screenshot({ type: 'jpeg', quality: 45, fullPage: true });
+      const screenshotAfter = `data:image/jpeg;base64,${screenshotAfterBuffer.toString('base64')}`;
+      const screenshots = [
+        { label: 'До переключения', image: screenshotBefore },
+        { label: 'После переключения', image: screenshotAfter },
+      ];
 
       if (langAfter === langBefore && urlAfter === urlBefore) {
         return {
@@ -39,6 +56,7 @@ export const languageSwitch = {
           title: this.title, pageUrl: url,
           status: 'failed',
           message: `Клик по переключателю языка ничего не меняет: URL остался ${urlAfter}, html[lang] остался «${langAfter}». Переключатель нефункционален.`,
+          screenshots,
         };
       }
 
@@ -47,6 +65,7 @@ export const languageSwitch = {
         title: this.title, pageUrl: url,
         status: 'passed',
         message: `После переключения языка: URL — ${urlAfter}, html[lang] — «${langAfter}».`,
+        screenshots,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);

@@ -61,6 +61,7 @@ export const headerBookingForm = {
         }
 
         if (!screenshot) {
+          await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
           const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
           screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
         }

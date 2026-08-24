@@ -20,8 +20,12 @@ export const custom404Page = {
       }
 
       const status = response.status();
+      await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
+      const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
+      const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
+
       if (status !== 404) {
-        return { id: this.id, title: this.title, pageUrl: target, status: 'failed', message: `Страница ${testPath} вернула HTTP ${status}, ожидался 404.` };
+        return { id: this.id, title: this.title, pageUrl: target, status: 'failed', message: `Страница ${testPath} вернула HTTP ${status}, ожидался 404.`, screenshot };
       }
 
       const main = page.locator('main');
@@ -32,6 +36,7 @@ export const custom404Page = {
           title: this.title, pageUrl: target,
           status: 'failed',
           message: 'HTTP-статус 404 корректный, но блок <main> на странице пуст — кастомное содержимое 404-страницы не выведено.',
+          screenshot,
         };
       }
 
@@ -51,6 +56,7 @@ export const custom404Page = {
           title: this.title, pageUrl: target,
           status: 'failed',
           message: 'HTTP-статус 404 корректный, содержимое есть, но на странице нет ссылки для перехода на главную.',
+          screenshot,
         };
       }
 
@@ -59,6 +65,7 @@ export const custom404Page = {
         title: this.title, pageUrl: target,
         status: 'passed',
         message: `Страница ${testPath} корректно отдаёт HTTP 404 и содержит ссылку на главную.`,
+        screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);

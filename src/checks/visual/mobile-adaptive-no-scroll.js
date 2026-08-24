@@ -31,6 +31,7 @@ export const mobileAdaptiveNoScroll = {
           problems.push(`${viewport.label}: горизонтальный скролл есть (ширина контента ${scrollWidth}px больше экрана ${clientWidth}px)`);
         }
 
+        await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
         const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 45, fullPage: true });
         screenshots.push({
           label: viewport.label,

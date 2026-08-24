@@ -27,6 +27,7 @@ export const doctorsPagination = {
 
       await page.goto(`${listUrl}?page=2`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       const page2 = await collectDoctorLinks(page);
+      await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 

@@ -32,6 +32,7 @@ export const homepageAdvantagesBlock = {
 
       await section.scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
+      await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 

@@ -11,6 +11,27 @@ const statusLabels = {
 };
 
 let groupDefinitions = [];
+let objectUrls = [];
+
+function releaseObjectUrls() {
+  for (const objectUrl of objectUrls) {
+    URL.revokeObjectURL(objectUrl);
+  }
+  objectUrls = [];
+}
+
+function dataUriToObjectUrl(dataUri) {
+  const [header, base64] = dataUri.split(',');
+  const mime = header.match(/data:([^;]+)/)?.[1] || 'application/octet-stream';
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  const objectUrl = URL.createObjectURL(new Blob([bytes], { type: mime }));
+  objectUrls.push(objectUrl);
+  return objectUrl;
+}
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -28,6 +49,8 @@ function statusBadge(status = 'pending') {
 }
 
 function renderGroups(groups) {
+  releaseObjectUrls();
+
   const accordions = groups.map((group) => {
     const details = element('details', 'check-group');
     details.open = true;
@@ -72,12 +95,13 @@ function renderGroups(groups) {
       }
 
       if (check.screenshot) {
+        const objectUrl = dataUriToObjectUrl(check.screenshot);
         const link = element('a', 'check-screenshot-link');
-        link.href = check.screenshot;
+        link.href = objectUrl;
         link.target = '_blank';
         link.rel = 'noopener';
         const screenshot = element('img', 'check-screenshot');
-        screenshot.src = check.screenshot;
+        screenshot.src = objectUrl;
         screenshot.alt = `Скриншот: ${check.title}`;
         link.append(screenshot);
         item.append(link);
@@ -86,13 +110,14 @@ function renderGroups(groups) {
       if (Array.isArray(check.screenshots)) {
         const gallery = element('div', 'check-screenshot-gallery');
         for (const shot of check.screenshots) {
+          const objectUrl = dataUriToObjectUrl(shot.image);
           const figure = element('figure', 'check-screenshot-figure');
           const link = element('a', 'check-screenshot-link');
-          link.href = shot.image;
+          link.href = objectUrl;
           link.target = '_blank';
           link.rel = 'noopener';
           const img = element('img', 'check-screenshot');
-          img.src = shot.image;
+          img.src = objectUrl;
           img.alt = `Скриншот: ${check.title} — ${shot.label}`;
           link.append(img);
           figure.append(link, element('figcaption', '', shot.label));

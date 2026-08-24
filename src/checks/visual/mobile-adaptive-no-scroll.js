@@ -1,8 +1,9 @@
 import { chromium } from '@playwright/test';
 
 const viewports = [
-  { label: 'Смартфон (390×844)', width: 390, height: 844 },
+  { label: 'Смартфон (320×690)', width: 320, height: 690 },
   { label: 'Планшет (768×1024)', width: 768, height: 1024 },
+  { label: 'Десктоп (1280×900)', width: 1280, height: 900 },
 ];
 
 export const mobileAdaptiveNoScroll = {

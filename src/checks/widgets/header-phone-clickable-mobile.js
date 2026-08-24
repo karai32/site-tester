@@ -23,7 +23,7 @@ export const headerPhoneClickableMobile = {
 
       const phoneLink = page.locator(selectors.phoneLink).first();
       if (await phoneLink.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `В мобильном меню не найден номер телефона (${selectors.phoneLink}).` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `В мобильном меню не найден номер телефона (${selectors.phoneLink}).` };
       }
 
       await phoneLink.scrollIntoViewIfNeeded();
@@ -45,15 +45,15 @@ export const headerPhoneClickableMobile = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Номер «${text}» в мобильном меню кликабелен, ведёт на ${href}.`,
           screenshot,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`, screenshot };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`, screenshot };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

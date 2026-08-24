@@ -4,12 +4,6 @@ const selectors = {
   menuLinks: '.nav > .nav-item a[href]',
 };
 
-function problemMessage(problems) {
-  const visible = problems.slice(0, 8).join('; ');
-  const rest = problems.length > 8 ? `; ещё ${problems.length - 8}` : '';
-  return `Найдено проблем: ${problems.length}. ${visible}${rest}.`;
-}
-
 function findLogoHref(html) {
   for (const match of html.matchAll(/<a\b[^>]*>/gi)) {
     const tag = match[0];
@@ -75,14 +69,14 @@ export const logoHome = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Логотип ведёт на главную на ${internalUrls.size} внутренних страницах из меню.`,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems) };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

@@ -6,10 +6,6 @@ const selectors = {
   checkbox: '#call form.wpcf7-form input[name="agreement"]',
 };
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const headerBookingConsentCheckbox = {
   id: 'header-booking-consent-checkbox',
   title: 'Чекбокс согласия на обработку ПДн присутствует и по умолчанию не отмечен',
@@ -27,7 +23,7 @@ export const headerBookingConsentCheckbox = {
 
       const checkbox = page.locator(selectors.checkbox).first();
       if (await checkbox.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'В форме записи не найден чекбокс согласия на обработку ПДн.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'В форме записи не найден чекбокс согласия на обработку ПДн.' };
       }
 
       await checkbox.scrollIntoViewIfNeeded();
@@ -49,15 +45,15 @@ export const headerBookingConsentCheckbox = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: 'Чекбокс согласия на обработку ПДн присутствует, снят по умолчанию, текст со ссылкой на политику на месте.',
           screenshot,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

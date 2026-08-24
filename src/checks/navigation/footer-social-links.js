@@ -5,12 +5,6 @@ const selectors = {
   socialLinks: '.footer__social-item',
 };
 
-function problemMessage(problems) {
-  const visible = problems.slice(0, 8).join('; ');
-  const rest = problems.length > 8 ? `; ещё ${problems.length - 8}` : '';
-  return `Найдено проблем: ${problems.length}. ${visible}${rest}.`;
-}
-
 export const footerSocialLinks = {
   id: 'footer-social-links',
   title: 'Ссылки на соцсети и мессенджеры в футере рабочие',
@@ -26,12 +20,12 @@ export const footerSocialLinks = {
 
       const footer = page.locator(selectors.footer);
       if (await footer.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На главной странице не найден footer.footer.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'На главной странице не найден footer.footer.' };
       }
 
       const links = await footer.locator(selectors.socialLinks).evaluateAll((els) => els.map((el) => el.getAttribute('href') || ''));
       if (links.length === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `В футере не найдено ссылок ${selectors.socialLinks}.` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `В футере не найдено ссылок ${selectors.socialLinks}.` };
       }
 
       const problems = [];
@@ -56,11 +50,11 @@ export const footerSocialLinks = {
       }
 
       return problems.length === 0
-        ? { id: this.id, title: this.title, status: 'passed', message: `Проверено ${links.length} ссылок на соцсети/мессенджеры, все рабочие.` }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems) };
+        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${links.length} ссылок на соцсети/мессенджеры, все рабочие.` }
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

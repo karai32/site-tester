@@ -14,16 +14,13 @@ const selectors = {
   checkbox: '#call form.wpcf7-form input[name="agreement"]',
 };
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const headerBookingForm = {
   id: 'header-booking-form',
   title: 'Форма записи в шапке доступна и видима без багов вёрстки на всех типах страниц',
 
   async run({ url }) {
     let browser;
+    const pageUrls = pagesToCheck.map(({ path }) => new URL(path, url).href);
 
     try {
       browser = await chromium.launch();
@@ -76,11 +73,12 @@ export const headerBookingForm = {
           status: 'passed',
           message: `Форма записи в шапке открывается корректно на ${pagesToCheck.length} типах страниц (${pagesToCheck.map((p) => p.label).join(', ')}).`,
           screenshot,
+          pageUrls,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot, pageUrls };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrls };
     } finally {
       await browser?.close().catch(() => {});
     }

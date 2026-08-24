@@ -18,11 +18,11 @@ export const homepageHttpStatus = {
 
       const status = response.status();
       return status >= 200 && status < 400
-        ? { id: this.id, title: this.title, status: 'passed', message: `Главная страница загружена. HTTP-статус: ${status}.` }
-        : { id: this.id, title: this.title, status: 'failed', message: `Главная страница вернула HTTP-статус ${status}.` };
+        ? { id: this.id, title: this.title, status: 'passed', message: `Главная страница загружена. HTTP-статус: ${status}.`, pageUrl: url }
+        : { id: this.id, title: this.title, status: 'failed', message: `Главная страница вернула HTTP-статус ${status}.`, pageUrl: url };
     } catch (error) {
       const reason = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Главная страница не загрузилась: ${reason}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Главная страница не загрузилась: ${reason}`, pageUrl: url };
     } finally {
       await browser?.close().catch(() => {});
     }

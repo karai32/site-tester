@@ -27,24 +27,24 @@ export const newsFeedHomepage = {
 
       const itemCount = await page.locator(selectors.newsItem).count();
       if (itemCount === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На главной странице не найдено ни одной новости.' };
+        return { id: this.id, title: this.title, status: 'failed', message: 'На главной странице не найдено ни одной новости.', pageUrl: url };
       }
 
       const dateTexts = await page.locator(selectors.newsDate).evaluateAll((els) => els.map((el) => el.textContent.trim()));
       const dates = dateTexts.map(parseRuDate);
 
       if (dates.some((value) => value === null)) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Не удалось распознать одну из дат новостей: ${JSON.stringify(dateTexts)}.` };
+        return { id: this.id, title: this.title, status: 'failed', message: `Не удалось распознать одну из дат новостей: ${JSON.stringify(dateTexts)}.`, pageUrl: url };
       }
 
       const isSortedDescending = dates.every((value, index) => index === 0 || dates[index - 1] >= value);
       if (!isSortedDescending) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Новости отсортированы некорректно: ${dateTexts.join(', ')}.` };
+        return { id: this.id, title: this.title, status: 'failed', message: `Новости отсортированы некорректно: ${dateTexts.join(', ')}.`, pageUrl: url };
       }
 
       const firstLink = await page.locator(selectors.newsLink).first().getAttribute('href');
       if (!firstLink) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'Не удалось найти ссылку на первую новость.' };
+        return { id: this.id, title: this.title, status: 'failed', message: 'Не удалось найти ссылку на первую новость.', pageUrl: url };
       }
 
       await page.goto(firstLink, { waitUntil: 'domcontentloaded', timeout: 30_000 });
@@ -59,6 +59,7 @@ export const newsFeedHomepage = {
           status: 'failed',
           message: `Клик по новости открыл страницу ${firstLink}, но текста слишком мало (${articleTextLength} символов).`,
           screenshot,
+          pageUrls: [url, firstLink],
         };
       }
 
@@ -68,10 +69,11 @@ export const newsFeedHomepage = {
         status: 'passed',
         message: `Новости отсортированы по дате (свежие сверху: ${dateTexts.join(', ')}), клик открывает полный текст новости.`,
         screenshot,
+        pageUrls: [url, firstLink],
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrl: url };
     } finally {
       await browser?.close().catch(() => {});
     }

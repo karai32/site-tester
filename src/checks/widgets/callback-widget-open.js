@@ -27,7 +27,7 @@ export const callbackWidgetOpen = {
       if (await widgetFrame.count() === 0) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'failed',
           message: `Виджет обратного звонка (${selectors.widgetFrame}) не появился за ${maxAttempts} попытки.`,
         };
@@ -38,7 +38,7 @@ export const callbackWidgetOpen = {
 
       const buttonAppeared = await button.waitFor({ state: 'visible', timeout: 8_000 }).then(() => true).catch(() => false);
       if (!buttonAppeared) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'Внутри виджета обратного звонка не найдена кнопка открытия.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'Внутри виджета обратного звонка не найдена кнопка открытия.' };
       }
 
       await button.click();
@@ -53,7 +53,7 @@ export const callbackWidgetOpen = {
       if (!phoneInputVisible) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'failed',
           message: 'После клика по виджету обратного звонка не появилось поле ввода телефона.',
           screenshot,
@@ -62,14 +62,14 @@ export const callbackWidgetOpen = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: url,
         status: 'passed',
         message: 'Виджет обратного звонка открывается по клику и показывает форму ввода телефона.',
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

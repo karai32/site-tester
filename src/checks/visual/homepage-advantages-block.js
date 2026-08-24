@@ -7,10 +7,6 @@ const selectors = {
   title: '.h-license-title',
 };
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const homepageAdvantagesBlock = {
   id: 'homepage-advantages-block',
   title: 'Блок преимуществ/лицензий на главной отображается без искажений вёрстки',
@@ -25,13 +21,13 @@ export const homepageAdvantagesBlock = {
 
       const section = page.locator(selectors.section);
       if (await section.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `На главной странице не найден блок ${selectors.section}.` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `На главной странице не найден блок ${selectors.section}.` };
       }
 
       const cards = page.locator(selectors.card);
       const cardCount = await cards.count();
       if (cardCount === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'В блоке преимуществ/лицензий не найдено ни одной карточки.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'В блоке преимуществ/лицензий не найдено ни одной карточки.' };
       }
 
       await section.scrollIntoViewIfNeeded();
@@ -58,15 +54,15 @@ export const homepageAdvantagesBlock = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Проверено ${cardCount} карточек в блоке преимуществ/лицензий: текст и иконки отображаются корректно.`,
           screenshot,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

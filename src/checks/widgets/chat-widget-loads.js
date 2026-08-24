@@ -21,7 +21,7 @@ export const chatWidgetLoads = {
       await chatFrame.waitFor({ state: 'attached', timeout: maxWaitMs }).catch(() => {});
 
       if (await chatFrame.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `На странице не найден виджет чата (${selectors.chatFrame}).` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `На странице не найден виджет чата (${selectors.chatFrame}).` };
       }
 
       await page.waitForTimeout(maxWaitMs);
@@ -38,7 +38,7 @@ export const chatWidgetLoads = {
       if (!state.src || state.width === 0 || state.height === 0) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'failed',
           message: `Виджет чата не загрузился за ${maxWaitMs / 1000} сек: src="${state.src}", размер ${state.width}×${state.height}.`,
           screenshot,
@@ -47,14 +47,14 @@ export const chatWidgetLoads = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: url,
         status: 'passed',
         message: `Виджет чата загрузился, размер ${state.width}×${state.height}.`,
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

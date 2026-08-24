@@ -9,10 +9,6 @@ const selectors = {
   heroButton: '.doctor-hero__button',
 };
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const doctorProfileOpen = {
   id: 'doctor-profile-open',
   title: 'Открытие полной страницы врача из карточки со всеми данными',
@@ -27,7 +23,7 @@ export const doctorProfileOpen = {
 
       const cardLink = page.locator(selectors.cardNameLink).first();
       if (await cardLink.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На главной странице не найдено ни одной карточки врача с именем-ссылкой.' };
+        return { id: this.id, title: this.title, status: 'failed', message: 'На главной странице не найдено ни одной карточки врача с именем-ссылкой.', pageUrl: url };
       }
 
       const href = await cardLink.getAttribute('href');
@@ -67,11 +63,12 @@ export const doctorProfileOpen = {
           status: 'passed',
           message: `Страница врача (${href}) открылась из карточки, содержит должность, описание, стоимость приёма и кнопку записи.`,
           screenshot,
+          pageUrls: [url, href],
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot, pageUrls: [url, href] };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrl: url };
     } finally {
       await browser?.close().catch(() => {});
     }

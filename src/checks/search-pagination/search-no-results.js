@@ -8,12 +8,12 @@ export const searchNoResults = {
 
   async run({ url }) {
     let browser;
+    const searchUrl = `${new URL('/', url).href}?s=${encodeURIComponent(nonsenseQuery)}`;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
-      const searchUrl = `${new URL('/', url).href}?s=${encodeURIComponent(nonsenseQuery)}`;
       await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       await page.waitForTimeout(500);
 
@@ -25,7 +25,7 @@ export const searchNoResults = {
       if (!hasNoResultsMessage) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: searchUrl,
           status: 'failed',
           message: `На странице ${searchUrl} нет ожидаемого сообщения «Ничего не найдено».`,
           screenshot,
@@ -34,14 +34,14 @@ export const searchNoResults = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: searchUrl,
         status: 'passed',
         message: 'По бессмысленному запросу корректно показывается сообщение «Ничего не найдено».',
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: searchUrl, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

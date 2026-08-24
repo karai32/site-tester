@@ -12,16 +12,16 @@ export const priceFilter = {
 
   async run({ url }) {
     let browser;
+    const priceUrl = new URL('/price/', url).href;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-      const priceUrl = new URL('/price/', url).href;
       await page.goto(priceUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
       const searchInput = page.locator(selectors.searchInput).first();
       if (await searchInput.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `На странице ${priceUrl} не найдено поле поиска по прайсу.` };
+        return { id: this.id, title: this.title, pageUrl: priceUrl, status: 'failed', message: `На странице ${priceUrl} не найдено поле поиска по прайсу.` };
       }
 
       await searchInput.fill(query);
@@ -36,7 +36,7 @@ export const priceFilter = {
       if (!hasQueryHeading) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: priceUrl,
           status: 'failed',
           message: `После поиска по запросу «${query}» на странице прайса не найдено ожидаемых результатов.`,
           screenshot,
@@ -45,14 +45,14 @@ export const priceFilter = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: priceUrl,
         status: 'passed',
         message: `Фильтр по прайсу по запросу «${query}» отображает релевантные позиции.`,
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: priceUrl, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

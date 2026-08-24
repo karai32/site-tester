@@ -12,11 +12,11 @@ export const departmentContentComplete = {
 
   async run({ url }) {
     let browser;
+    const target = new URL(departmentPath, url).href;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-      const target = new URL(departmentPath, url).href;
       await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       await page.waitForTimeout(1_500);
 
@@ -45,15 +45,15 @@ export const departmentContentComplete = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: target,
           status: 'passed',
           message: `Страница ${target}: контент раздела услуг присутствует (${bodyTextLength} символов текста), найдено ${doctorCount} врачей и ${formCount} форм(ы) записи. Скриншот приложен для визуальной проверки вёрстки.`,
           screenshot,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`, screenshot };
+        : { id: this.id, title: this.title, pageUrl: target, status: 'failed', message: `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`, screenshot };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: target, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

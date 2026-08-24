@@ -1,11 +1,5 @@
 import { chromium } from '@playwright/test';
 
-function problemMessage(problems) {
-  const visible = problems.slice(0, 8).join('; ');
-  const rest = problems.length > 8 ? `; ещё ${problems.length - 8}` : '';
-  return `Найдено проблем: ${problems.length}. ${visible}${rest}.`;
-}
-
 export const formsSpamProtection = {
   id: 'forms-spam-protection',
   title: 'Формы защищены от спама (капча/honeypot) без ухудшения UX',
@@ -23,7 +17,7 @@ export const formsSpamProtection = {
       const formCount = await forms.count();
 
       if (formCount === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На странице не найдено ни одной формы wpcf7-form для проверки.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'На странице не найдено ни одной формы wpcf7-form для проверки.' };
       }
 
       const problems = [];
@@ -46,14 +40,14 @@ export const formsSpamProtection = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Проверено ${formCount} форм(ы), у всех активна капча SmartCaptcha.`,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems) };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

@@ -13,12 +13,12 @@ export const newsPagination = {
   async run({ url }) {
     let browser;
     const consoleErrors = [];
+    const newsUrl = new URL('/news/', url).href;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
-      const newsUrl = new URL('/news/', url).href;
       await page.goto(newsUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
       const countBefore = await page.locator(selectors.newsItem).count();
@@ -41,6 +41,7 @@ export const newsPagination = {
           status: 'failed',
           message: `Кнопка «Показать еще» вызывает ошибку скрипта: ${consoleErrors[0]}`,
           screenshot,
+          pageUrls: [newsUrl],
         };
       }
 
@@ -51,11 +52,12 @@ export const newsPagination = {
           status: 'failed',
           message: `После клика «Показать еще» список новостей не пополнился (было ${countBefore}, стало ${countAfter}).`,
           screenshot,
+          pageUrls: [newsUrl],
         };
       }
 
       if (!firstArticleHref) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'Не удалось найти ссылку на первую новость.', screenshot };
+        return { id: this.id, title: this.title, status: 'failed', message: 'Не удалось найти ссылку на первую новость.', screenshot, pageUrls: [newsUrl] };
       }
 
       await page.goto(firstArticleHref, { waitUntil: 'domcontentloaded', timeout: 30_000 });
@@ -69,6 +71,7 @@ export const newsPagination = {
           status: 'failed',
           message: `Страница новости ${firstArticleHref} открылась, но содержит слишком мало текста (${articleTextLength} символов).`,
           screenshot,
+          pageUrls: [newsUrl, firstArticleHref],
         };
       }
 
@@ -78,10 +81,11 @@ export const newsPagination = {
         status: 'passed',
         message: `Список новостей пополнился после «Показать еще» (было ${countBefore}, стало ${countAfter}), новость «${articleTitle}» открывается с полным текстом.`,
         screenshot,
+        pageUrls: [newsUrl, firstArticleHref],
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrls: [newsUrl] };
     } finally {
       await browser?.close().catch(() => {});
     }

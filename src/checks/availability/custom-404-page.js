@@ -8,11 +8,11 @@ export const custom404Page = {
 
   async run({ url }) {
     let browser;
+    const target = new URL(testPath, url).href;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage();
-      const target = new URL(testPath, url).href;
       const response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
       if (!response) {
@@ -21,7 +21,7 @@ export const custom404Page = {
 
       const status = response.status();
       if (status !== 404) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Страница ${testPath} вернула HTTP ${status}, ожидался 404.` };
+        return { id: this.id, title: this.title, pageUrl: target, status: 'failed', message: `Страница ${testPath} вернула HTTP ${status}, ожидался 404.` };
       }
 
       const main = page.locator('main');
@@ -29,7 +29,7 @@ export const custom404Page = {
       if (!mainText) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: target,
           status: 'failed',
           message: 'HTTP-статус 404 корректный, но блок <main> на странице пуст — кастомное содержимое 404-страницы не выведено.',
         };
@@ -48,7 +48,7 @@ export const custom404Page = {
       if (!hasHomeLink) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: target,
           status: 'failed',
           message: 'HTTP-статус 404 корректный, содержимое есть, но на странице нет ссылки для перехода на главную.',
         };
@@ -56,13 +56,13 @@ export const custom404Page = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: target,
         status: 'passed',
         message: `Страница ${testPath} корректно отдаёт HTTP 404 и содержит ссылку на главную.`,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: target, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

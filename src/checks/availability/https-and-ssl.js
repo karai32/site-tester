@@ -17,7 +17,7 @@ export const httpsAndSsl = {
       }
 
       if (new URL(page.url()).protocol !== 'https:') {
-        return { id: this.id, title: this.title, status: 'failed', message: 'Сайт открылся без HTTPS.' };
+        return { id: this.id, title: this.title, status: 'failed', message: 'Сайт открылся без HTTPS.', pageUrl: url };
       }
 
       const security = await response.securityDetails();
@@ -27,10 +27,11 @@ export const httpsAndSsl = {
         title: this.title,
         status: 'passed',
         message: `Сайт открыт по HTTPS. Chromium принял SSL-сертификат без предупреждений.${protocol}`,
+        pageUrl: url,
       };
     } catch (error) {
       const reason = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Ошибка HTTPS/SSL: ${reason}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Ошибка HTTPS/SSL: ${reason}`, pageUrl: url };
     } finally {
       await browser?.close().catch(() => {});
     }

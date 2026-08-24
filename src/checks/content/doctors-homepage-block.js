@@ -7,12 +7,6 @@ const selectors = {
   appointmentButton: '.doctor-item__link',
 };
 
-function problemMessage(problems) {
-  const visible = problems.slice(0, 8).join('; ');
-  const rest = problems.length > 8 ? `; ещё ${problems.length - 8}` : '';
-  return `Найдено проблем: ${problems.length}. ${visible}${rest}.`;
-}
-
 export const doctorsHomepageBlock = {
   id: 'doctors-homepage-block',
   title: 'Блок с врачами на главной отображается с фото, должностью, кнопка записи кликабельна',
@@ -29,7 +23,7 @@ export const doctorsHomepageBlock = {
       const cardCount = await cards.count();
 
       if (cardCount === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На главной странице не найдено ни одной карточки врача.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'На главной странице не найдено ни одной карточки врача.' };
       }
 
       await cards.first().scrollIntoViewIfNeeded();
@@ -64,15 +58,15 @@ export const doctorsHomepageBlock = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Проверено ${checkedCount} из ${cardCount} карточек врачей: фото загружаются, должность указана, кнопка записи кликабельна.`,
           screenshot,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

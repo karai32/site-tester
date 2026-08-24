@@ -8,11 +8,11 @@ export const searchResults = {
 
   async run({ url }) {
     let browser;
+    const searchUrl = `${new URL('/', url).href}?s=${encodeURIComponent(query)}`;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-      const searchUrl = `${new URL('/', url).href}?s=${encodeURIComponent(query)}`;
       await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
       const bodyText = await page.evaluate(() => document.body.innerText);
@@ -25,7 +25,7 @@ export const searchResults = {
       if (resultCount === 0) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: searchUrl,
           status: 'failed',
           message: `По запросу «${query}» на странице ${searchUrl} не найдено результатов (ожидались релевантные страницы).`,
           screenshot,
@@ -34,14 +34,14 @@ export const searchResults = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: searchUrl,
         status: 'passed',
         message: `По запросу «${query}» найдено ${resultCount} результатов.`,
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: searchUrl, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

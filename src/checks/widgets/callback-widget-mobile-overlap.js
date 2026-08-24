@@ -13,10 +13,6 @@ function boxesOverlap(a, b) {
   return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const callbackWidgetMobileOverlap = {
   id: 'callback-widget-mobile-overlap',
   title: 'Виджет обратного звонка не перекрывает контент/CTA на мобильных',
@@ -34,12 +30,12 @@ export const callbackWidgetMobileOverlap = {
 
       const widget = page.locator(selectors.widget);
       if (await widget.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Не найден виджет обратного звонка (${selectors.widget}).` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Не найден виджет обратного звонка (${selectors.widget}).` };
       }
 
       const widgetBox = await widget.boundingBox();
       if (!widgetBox) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'Не удалось определить положение виджета обратного звонка.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'Не удалось определить положение виджета обратного звонка.' };
       }
 
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
@@ -57,15 +53,15 @@ export const callbackWidgetMobileOverlap = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: 'Виджет обратного звонка не перекрывает проверенные CTA-элементы на мобильном экране.',
           screenshot,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

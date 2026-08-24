@@ -9,10 +9,6 @@ const browsers = [
 
 const pagesToCheck = ['/', '/price/'];
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const crossBrowser = {
   id: 'cross-browser',
   title: 'Ключевые страницы и формы работают в разных браузерах',
@@ -20,6 +16,7 @@ export const crossBrowser = {
   async run({ url }) {
     const problems = [];
     let screenshot;
+    const pageUrls = pagesToCheck.map((path) => new URL(path, url).href);
 
     for (const { launcher, label } of browsers) {
       let browser;
@@ -67,7 +64,8 @@ export const crossBrowser = {
         status: 'passed',
         message: `Проверено в ${browsers.length} браузере(ах): ${browsers.map((b) => b.label).join(', ')}. Ключевые страницы и формы загружаются корректно.`,
         screenshot,
+        pageUrls,
       }
-      : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+      : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot, pageUrls };
   },
 };

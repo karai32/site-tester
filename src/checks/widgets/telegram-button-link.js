@@ -20,12 +20,12 @@ export const telegramButtonLink = {
 
       const link = page.locator(selectors.telegramLink).first();
       if (await link.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `На странице не найдена кнопка Telegram (${selectors.telegramLink}).` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `На странице не найдена кнопка Telegram (${selectors.telegramLink}).` };
       }
 
       const href = await link.getAttribute('href');
       if (!href || !href.includes(expectedUsername)) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Ссылка Telegram (${href || 'пусто'}) не содержит ожидаемый username ${expectedUsername}.` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Ссылка Telegram (${href || 'пусто'}) не содержит ожидаемый username ${expectedUsername}.` };
       }
 
       const response = await context.request.get(href, { failOnStatusCode: false, timeout: 20_000 });
@@ -33,18 +33,18 @@ export const telegramButtonLink = {
       await response.dispose();
 
       if (status < 200 || status >= 400) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Ссылка Telegram (${href}) вернула HTTP ${status}.` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Ссылка Telegram (${href}) вернула HTTP ${status}.` };
       }
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: url,
         status: 'passed',
         message: `Кнопка Telegram ведёт на ${href}, ссылка открывается корректно.`,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

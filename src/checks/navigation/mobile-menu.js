@@ -18,7 +18,7 @@ export const mobileMenu = {
 
       const burger = page.locator(selectors.burger).first();
       if (await burger.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Не найдена кнопка мобильного меню ${selectors.burger}.` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Не найдена кнопка мобильного меню ${selectors.burger}.` };
       }
 
       await burger.click();
@@ -26,7 +26,7 @@ export const mobileMenu = {
       const openedLocked = await page.evaluate(() => document.body.classList.contains('no-scroll'));
 
       if (!openedLocked) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'После клика по кнопке меню скролл страницы не заблокировался (класс no-scroll не появился на body).' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'После клика по кнопке меню скролл страницы не заблокировался (класс no-scroll не появился на body).' };
       }
 
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
@@ -39,7 +39,7 @@ export const mobileMenu = {
       if (!closedUnlocked) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'failed',
           message: 'Меню открылось корректно, но повторный клик по кнопке не закрыл его (класс no-scroll не снялся).',
           screenshot,
@@ -48,14 +48,14 @@ export const mobileMenu = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: url,
         status: 'passed',
         message: 'Меню открывается по клику (скролл блокируется) и закрывается повторным кликом (скролл разблокируется).',
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

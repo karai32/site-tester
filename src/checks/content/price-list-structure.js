@@ -11,11 +11,11 @@ export const priceListStructure = {
 
   async run({ url }) {
     let browser;
+    const priceUrl = new URL('/price/', url).href;
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-      const priceUrl = new URL('/price/', url).href;
       await page.goto(priceUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       await page.waitForTimeout(1_000);
 
@@ -31,14 +31,14 @@ export const priceListStructure = {
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 
       if (priceTexts.length === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `На странице ${priceUrl} не найдено ни одной цены (${selectors.priceValue}).`, screenshot };
+        return { id: this.id, title: this.title, pageUrl: priceUrl, status: 'failed', message: `На странице ${priceUrl} не найдено ни одной цены (${selectors.priceValue}).`, screenshot };
       }
 
       const zeroPrices = priceTexts.filter((text) => /^0[\s₽]*$/.test(text));
       if (zeroPrices.length > 0) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: priceUrl,
           status: 'failed',
           message: `Найдено ${zeroPrices.length} позиций с некорректной ценой «0 руб.» из ${priceTexts.length} проверенных.`,
           screenshot,
@@ -47,14 +47,14 @@ export const priceListStructure = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: priceUrl,
         status: 'passed',
         message: `Проверено ${priceTexts.length} позиций прайса, все со значимыми суммами (без «0 руб.»).`,
         screenshot,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: priceUrl, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

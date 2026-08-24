@@ -5,10 +5,6 @@ const viewports = [
   { label: 'Планшет (768×1024)', width: 768, height: 1024 },
 ];
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const mobileAdaptiveNoScroll = {
   id: 'mobile-adaptive-no-scroll',
   title: 'Сайт корректно адаптируется на экранах смартфона и планшета, нет горизонтального скролла',
@@ -47,15 +43,15 @@ export const mobileAdaptiveNoScroll = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Проверено на ${viewports.length} разрешениях (${viewports.map((v) => v.label).join(', ')}), горизонтального скролла нет.`,
           screenshots,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshots };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshots };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

@@ -9,16 +9,13 @@ const departmentPaths = [
   '/departments/mezhdunarodnaya-mediczina/',
 ];
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const departmentPagesLoad = {
   id: 'department-pages-load',
   title: 'Страницы направлений (онкология, урология, кардиология и др.) открываются без ошибок',
 
   async run({ url }) {
     let browser;
+    const pageUrls = departmentPaths.map((path) => new URL(path, url).href);
 
     try {
       browser = await chromium.launch();
@@ -55,11 +52,12 @@ export const departmentPagesLoad = {
           status: 'passed',
           message: `Проверено ${departmentPaths.length} страниц направлений, все открываются без ошибок.`,
           screenshot,
+          pageUrls,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot, pageUrls };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrls };
     } finally {
       await browser?.close().catch(() => {});
     }

@@ -6,26 +6,23 @@ const selectors = {
 const programsToCheck = 3;
 const priceOrTextPattern = /\d[\d\s]*(₽|руб)/i;
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const checkupPrograms = {
   id: 'checkup-programs',
   title: 'Список чек-ап программ и их состав отображается полностью, с ценой',
 
   async run({ url }) {
     let browser;
+    const checkupsUrl = new URL('/checkups/', url).href;
+    const visitedUrls = [checkupsUrl];
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-      const checkupsUrl = new URL('/checkups/', url).href;
       await page.goto(checkupsUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
       const hrefs = await page.locator(selectors.programLink).evaluateAll((links) => [...new Set(links.map((link) => link.getAttribute('href')))]);
       if (hrefs.length === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: `На странице ${checkupsUrl} не найдено ни одной чек-ап программы.` };
+        return { id: this.id, title: this.title, status: 'failed', message: `На странице ${checkupsUrl} не найдено ни одной чек-ап программы.`, pageUrl: checkupsUrl };
       }
 
       const problems = [];
@@ -34,6 +31,7 @@ export const checkupPrograms = {
 
       for (const href of sample) {
         const target = new URL(href, url).href;
+        visitedUrls.push(target);
         await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
         await page.waitForTimeout(500);
 
@@ -64,11 +62,12 @@ export const checkupPrograms = {
           status: 'passed',
           message: `Проверено ${sample.length} из ${hrefs.length} чек-ап программ, у каждой есть описание состава и цена.`,
           screenshot,
+          pageUrls: visitedUrls,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems), screenshot };
+        : { id: this.id, title: this.title, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems, screenshot, pageUrls: visitedUrls };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrls: visitedUrls };
     } finally {
       await browser?.close().catch(() => {});
     }

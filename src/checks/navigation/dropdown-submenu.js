@@ -8,12 +8,6 @@ function cleanText(value = '') {
   return value.replace(/\s+/g, ' ').trim();
 }
 
-function problemMessage(problems) {
-  const visible = problems.slice(0, 8).join('; ');
-  const rest = problems.length > 8 ? `; ещё ${problems.length - 8}` : '';
-  return `Найдено проблем: ${problems.length}. ${visible}${rest}.`;
-}
-
 export const dropdownSubmenu = {
   id: 'dropdown-submenu',
   title: 'Выпадающие подменю (направления/отделения) раскрываются корректно',
@@ -35,7 +29,7 @@ export const dropdownSubmenu = {
       const dropdownCount = await dropdownButtons.count();
 
       if (dropdownCount === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На странице не найдено ни одного выпадающего пункта меню.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'На странице не найдено ни одного выпадающего пункта меню.' };
       }
 
       for (let index = 0; index < dropdownCount; index += 1) {
@@ -56,11 +50,11 @@ export const dropdownSubmenu = {
       }
 
       return problems.length === 0
-        ? { id: this.id, title: this.title, status: 'passed', message: `Проверено ${dropdownCount} выпадающих подменю, все раскрываются и закрываются корректно.` }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems) };
+        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${dropdownCount} выпадающих подменю, все раскрываются и закрываются корректно.` }
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

@@ -23,12 +23,12 @@ export const headerBookingPrivacyLink = {
 
       const link = page.locator(selectors.privacyLink).first();
       if (await link.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'В форме записи не найдена ссылка на политику обработки персональных данных.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'В форме записи не найдена ссылка на политику обработки персональных данных.' };
       }
 
       const href = await link.getAttribute('href');
       if (!href) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'У ссылки на политику ПДн в форме отсутствует href.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'У ссылки на политику ПДн в форме отсутствует href.' };
       }
 
       const target = new URL(href, url).href;
@@ -37,18 +37,18 @@ export const headerBookingPrivacyLink = {
       await response.dispose();
 
       if (status < 200 || status >= 400) {
-        return { id: this.id, title: this.title, status: 'failed', message: `Ссылка на политику ПДн (${target}) вернула HTTP ${status}.` };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Ссылка на политику ПДн (${target}) вернула HTTP ${status}.` };
       }
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: url,
         status: 'passed',
         message: `Ссылка на политику ПДн в форме записи (${target}) открывается корректно.`,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

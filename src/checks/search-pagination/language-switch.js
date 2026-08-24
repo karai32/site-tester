@@ -22,7 +22,7 @@ export const languageSwitch = {
 
       const langOption = page.locator(selectors.langOptionEng).first();
       if (await langOption.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'На странице не найден переключатель языка на английский.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'На странице не найден переключатель языка на английский.' };
       }
 
       await page.locator(selectors.langHeader).first().click();
@@ -36,7 +36,7 @@ export const languageSwitch = {
       if (langAfter === langBefore && urlAfter === urlBefore) {
         return {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'failed',
           message: `Клик по переключателю языка ничего не меняет: URL остался ${urlAfter}, html[lang] остался «${langAfter}». Переключатель нефункционален.`,
         };
@@ -44,13 +44,13 @@ export const languageSwitch = {
 
       return {
         id: this.id,
-        title: this.title,
+        title: this.title, pageUrl: url,
         status: 'passed',
         message: `После переключения языка: URL — ${urlAfter}, html[lang] — «${langAfter}».`,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

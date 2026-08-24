@@ -15,11 +15,12 @@ export const doctorsPagination = {
 
   async run({ url }) {
     let browser;
+    const listUrl = new URL('/doctors/', url).href;
+    const pageUrls = [listUrl, `${listUrl}?page=2`, `${listUrl}?page=3`];
 
     try {
       browser = await chromium.launch();
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-      const listUrl = new URL('/doctors/', url).href;
 
       await page.goto(listUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       const page1 = await collectDoctorLinks(page);
@@ -30,7 +31,7 @@ export const doctorsPagination = {
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 
       if (!page.url().includes('page=2')) {
-        return { id: this.id, title: this.title, status: 'failed', message: `URL не отражает номер страницы: ${page.url()}`, screenshot };
+        return { id: this.id, title: this.title, status: 'failed', message: `URL не отражает номер страницы: ${page.url()}`, screenshot, pageUrls };
       }
 
       if (page2.length === 0 || page1.every((href) => page2.includes(href))) {
@@ -40,6 +41,7 @@ export const doctorsPagination = {
           status: 'failed',
           message: 'Страница 2 списка врачей пуста или полностью совпадает со страницей 1.',
           screenshot,
+          pageUrls,
         };
       }
 
@@ -53,6 +55,7 @@ export const doctorsPagination = {
           status: 'failed',
           message: 'Страница 3 списка врачей пуста или полностью совпадает со страницей 2.',
           screenshot,
+          pageUrls,
         };
       }
 
@@ -66,6 +69,7 @@ export const doctorsPagination = {
           status: 'failed',
           message: 'После возврата на страницу 1 список врачей отличается от исходного.',
           screenshot,
+          pageUrls,
         };
       }
 
@@ -75,10 +79,11 @@ export const doctorsPagination = {
         status: 'passed',
         message: 'Страницы 1, 2 и 3 списка врачей содержат разные наборы карточек, URL отражает номер страницы, возврат на страницу 1 работает корректно.',
         screenshot,
+        pageUrls,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}`, pageUrls };
     } finally {
       await browser?.close().catch(() => {});
     }

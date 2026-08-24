@@ -8,10 +8,6 @@ const selectors = {
 const baselineFormat = '9261234567';
 const formatsToCheck = ['+79261234567', '89261234567', '+7 (926) 123-45-67', '8 926 123 45 67'];
 
-function problemMessage(problems) {
-  return `Найдено проблем: ${problems.length}. ${problems.join('; ')}.`;
-}
-
 export const headerBookingPhoneNormalization = {
   id: 'header-booking-phone-normalization',
   title: 'Разные форматы телефона в форме записи приводятся к единому виду',
@@ -29,7 +25,7 @@ export const headerBookingPhoneNormalization = {
 
       const phoneField = page.locator(selectors.phone).first();
       if (await phoneField.count() === 0) {
-        return { id: this.id, title: this.title, status: 'failed', message: 'Поле телефона в форме записи не найдено.' };
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: 'Поле телефона в форме записи не найдено.' };
       }
 
       await phoneField.fill('');
@@ -53,14 +49,14 @@ export const headerBookingPhoneNormalization = {
       return problems.length === 0
         ? {
           id: this.id,
-          title: this.title,
+          title: this.title, pageUrl: url,
           status: 'passed',
           message: `Все проверенные форматы телефона приводятся к единому виду «${canonical}».`,
         }
-        : { id: this.id, title: this.title, status: 'failed', message: problemMessage(problems) };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-      return { id: this.id, title: this.title, status: 'failed', message: `Проверка не выполнена: ${message}` };
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };
     } finally {
       await browser?.close().catch(() => {});
     }

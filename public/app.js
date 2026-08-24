@@ -48,21 +48,54 @@ function renderGroups(groups) {
         element('p', 'check-output', check.message || 'Результат отсутствует.'),
       );
 
+      if (Array.isArray(check.problems) && check.problems.length > 0) {
+        const problemsList = element('ul', 'check-problems');
+        for (const problem of check.problems) {
+          problemsList.append(element('li', '', problem));
+        }
+        item.append(problemsList);
+      }
+
+      const pageUrls = check.pageUrls || (check.pageUrl ? [check.pageUrl] : []);
+      if (pageUrls.length > 0) {
+        const pageLinksLine = element('p', 'check-page-links');
+        pageLinksLine.append(element('span', 'check-page-links-label', pageUrls.length > 1 ? 'Страницы проверки: ' : 'Страница проверки: '));
+        pageUrls.forEach((pageUrl, index) => {
+          if (index > 0) pageLinksLine.append(', ');
+          const link = element('a', '', pageUrl);
+          link.href = pageUrl;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          pageLinksLine.append(link);
+        });
+        item.append(pageLinksLine);
+      }
+
       if (check.screenshot) {
+        const link = element('a', 'check-screenshot-link');
+        link.href = check.screenshot;
+        link.target = '_blank';
+        link.rel = 'noopener';
         const screenshot = element('img', 'check-screenshot');
         screenshot.src = check.screenshot;
         screenshot.alt = `Скриншот: ${check.title}`;
-        item.append(screenshot);
+        link.append(screenshot);
+        item.append(link);
       }
 
       if (Array.isArray(check.screenshots)) {
         const gallery = element('div', 'check-screenshot-gallery');
         for (const shot of check.screenshots) {
           const figure = element('figure', 'check-screenshot-figure');
+          const link = element('a', 'check-screenshot-link');
+          link.href = shot.image;
+          link.target = '_blank';
+          link.rel = 'noopener';
           const img = element('img', 'check-screenshot');
           img.src = shot.image;
           img.alt = `Скриншот: ${check.title} — ${shot.label}`;
-          figure.append(img, element('figcaption', '', shot.label));
+          link.append(img);
+          figure.append(link, element('figcaption', '', shot.label));
           gallery.append(figure);
         }
         item.append(gallery);

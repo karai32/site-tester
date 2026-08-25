@@ -107,6 +107,16 @@ function renderGroups(groups) {
         item.append(link);
       }
 
+      if (check.video) {
+        const objectUrl = dataUriToObjectUrl(check.video);
+        const video = element('video', 'check-video');
+        video.src = objectUrl;
+        video.controls = true;
+        video.muted = true;
+        video.playsInline = true;
+        item.append(video);
+      }
+
       if (Array.isArray(check.screenshots)) {
         const gallery = element('div', 'check-screenshot-gallery');
         for (const shot of check.screenshots) {

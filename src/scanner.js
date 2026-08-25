@@ -43,6 +43,7 @@ import { descriptionPresent } from './checks/seo/description-present.js';
 import { h1Present } from './checks/seo/h1-present.js';
 import { headingHierarchy } from './checks/seo/heading-hierarchy.js';
 import { no404Links } from './checks/seo/no-404-links.js';
+import { yandexSmartcaptcha } from './checks/antispam/yandex-smartcaptcha.js';
 
 const categories = [
   {
@@ -104,6 +105,11 @@ const categories = [
     id: 'seo',
     title: 'SEO',
     checks: [titlePresent, descriptionPresent, h1Present, headingHierarchy, no404Links],
+  },
+  {
+    id: 'antispam',
+    title: 'Защита и антиспам',
+    checks: [yandexSmartcaptcha],
   },
 ];
 

@@ -43,6 +43,11 @@ import { descriptionPresent } from './checks/seo/description-present.js';
 import { h1Present } from './checks/seo/h1-present.js';
 import { headingHierarchy } from './checks/seo/heading-hierarchy.js';
 import { no404Links } from './checks/seo/no-404-links.js';
+import { xmlSitemap } from './checks/seo-infrastructure/xml-sitemap.js';
+import { openGraph } from './checks/seo-infrastructure/open-graph.js';
+import { canonicalUrls } from './checks/seo-infrastructure/canonical-urls.js';
+import { robotsMeta } from './checks/seo-infrastructure/robots-meta.js';
+import { breadcrumbSchema } from './checks/seo-infrastructure/breadcrumb-schema.js';
 import { yandexSmartcaptcha } from './checks/antispam/yandex-smartcaptcha.js';
 
 const categories = [
@@ -105,6 +110,11 @@ const categories = [
     id: 'seo',
     title: 'SEO',
     checks: [titlePresent, descriptionPresent, h1Present, headingHierarchy, no404Links],
+  },
+  {
+    id: 'seo-infrastructure',
+    title: 'SEO-инфраструктура',
+    checks: [xmlSitemap, openGraph, canonicalUrls, robotsMeta, breadcrumbSchema],
   },
   {
     id: 'antispam',

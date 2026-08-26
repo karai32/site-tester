@@ -35,7 +35,7 @@ export const priceListStructure = {
         return { id: this.id, title: this.title, pageUrl: priceUrl, status: 'failed', message: `На странице ${priceUrl} не найдено ни одной цены (${selectors.priceValue}).`, screenshot };
       }
 
-      const zeroPrices = priceTexts.filter((text) => /^0[\s₽]*$/.test(text));
+      const zeroPrices = priceTexts.filter((text) => /^0\s*(₽|руб\.?)?\s*$/i.test(text));
       if (zeroPrices.length > 0) {
         return {
           id: this.id,

@@ -14,6 +14,9 @@ const statusLabels = {
 let groupDefinitions = [];
 let objectUrls = [];
 
+// === Blob URL lifecycle (для скриншотов и видео, которые приходят как base64) ===
+
+// Освобождает все blob-ссылки, выданные на предыдущий рендер
 function releaseObjectUrls() {
   for (const objectUrl of objectUrls) {
     URL.revokeObjectURL(objectUrl);
@@ -21,6 +24,7 @@ function releaseObjectUrls() {
   objectUrls = [];
 }
 
+// Превращает data:-URI (base64) в blob-ссылку, которая открывается в новой вкладке
 function dataUriToObjectUrl(dataUri) {
   const [header, base64] = dataUri.split(',');
   const mime = header.match(/data:([^;]+)/)?.[1] || 'application/octet-stream';
@@ -34,6 +38,9 @@ function dataUriToObjectUrl(dataUri) {
   return objectUrl;
 }
 
+// === DOM-хелперы и рендеринг результатов ===
+
+// Создаёт DOM-узел с классом и текстом за один вызов
 function element(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -41,6 +48,7 @@ function element(tag, className, text) {
   return node;
 }
 
+// Цветной бейдж статуса (пройдено/ошибка/…)
 function statusBadge(status = 'pending') {
   return element(
     'span',
@@ -49,6 +57,7 @@ function statusBadge(status = 'pending') {
   );
 }
 
+// Рисует список категорий и проверок целиком (аккордеон, статусы, скриншоты, видео, ссылки)
 function renderGroups(groups) {
   releaseObjectUrls();
 
@@ -147,6 +156,9 @@ function renderGroups(groups) {
   groupsElement.replaceChildren(...accordions);
 }
 
+// === Селектор истории проверок ===
+
+// Форматирует дату прогона в подпись вида «Проверка 20.08.2026 13:00»
 function formatScanLabel(scan) {
   const date = new Date(scan.created_at);
   const dd = String(date.getDate()).padStart(2, '0');
@@ -157,6 +169,7 @@ function formatScanLabel(scan) {
   return `Проверка ${dd}.${mm}.${yyyy} ${hh}:${min}`;
 }
 
+// Перезагружает список прогонов в выпадающем списке и выбирает нужный пункт
 async function refreshScanHistory(selectedId) {
   const { scans } = await requestJson('/api/scans');
   scanHistoryElement.replaceChildren(
@@ -175,6 +188,9 @@ async function refreshScanHistory(selectedId) {
   return scans;
 }
 
+// === Состояние UI (сообщение, кнопка, заглушки статусов) ===
+
+// Клонирует список категорий/проверок с одинаковым статусом и сообщением (для заглушек)
 function groupsWithStatus(status, message) {
   return groupDefinitions.map((group) => ({
     ...group,
@@ -187,16 +203,21 @@ function groupsWithStatus(status, message) {
   }));
 }
 
+// Текст под шапкой (обычный или об ошибке)
 function setMessage(message, isError = false) {
   messageElement.textContent = message;
   messageElement.classList.toggle('error', isError);
 }
 
+// Блокирует кнопку запуска и меняет её подпись на время проверки
 function setRunning(running) {
   startButton.disabled = running;
   startButton.textContent = running ? 'Проверка выполняется…' : 'Запустить проверку';
 }
 
+// === Сеть ===
+
+// fetch с автоматическим парсингом JSON и выбросом ошибки на не-200 ответ
 async function requestJson(url, options) {
   const response = await fetch(url, options);
   const payload = await response.json();
@@ -208,6 +229,9 @@ async function requestJson(url, options) {
   return payload;
 }
 
+// === Сценарий проверки: запуск, поллинг, переключение между прогонами ===
+
+// Показывает результат уже завершённого прогона (успех/ошибка + сами группы)
 function renderCompletedScan(scan) {
   const groups = scan.report?.groups;
   renderGroups(
@@ -224,6 +248,7 @@ function renderCompletedScan(scan) {
   }
 }
 
+// Опрашивает статус прогона до завершения, затем рендерит результат
 async function followScan(scanId, showRunning = true) {
   if (showRunning) {
     setRunning(true);
@@ -243,6 +268,7 @@ async function followScan(scanId, showRunning = true) {
   }
 }
 
+// При открытии страницы — подхватывает и показывает самый свежий прогон (если есть)
 async function loadLatestScan() {
   const scans = await refreshScanHistory();
   const latest = scans[0];
@@ -252,6 +278,7 @@ async function loadLatestScan() {
   }
 }
 
+// Обработчик клика по кнопке «Запустить проверку»
 async function startScan() {
   setRunning(true);
   renderGroups(groupsWithStatus('running', 'Проверка выполняется…'));
@@ -269,6 +296,7 @@ async function startScan() {
   }
 }
 
+// Обработчик выбора пункта в истории проверок
 async function selectScanFromHistory() {
   const id = Number(scanHistoryElement.value);
   if (Number.isInteger(id) && id > 0) {
@@ -276,6 +304,9 @@ async function selectScanFromHistory() {
   }
 }
 
+// === Точка входа ===
+
+// Загружает настройки сайта и список проверок, затем подхватывает последний прогон
 async function initialize() {
   try {
     const { site, groups } = await requestJson('/api/health');

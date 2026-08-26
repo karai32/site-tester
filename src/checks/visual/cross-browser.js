@@ -24,6 +24,7 @@ export const crossBrowser = {
       try {
         browser = await launcher.launch();
         const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+        let formCount = 0;
 
         for (const path of pagesToCheck) {
           const target = new URL(path, url).href;
@@ -39,6 +40,10 @@ export const crossBrowser = {
             problems.push(`${label}, ${target}: HTTP ${status}`);
           }
 
+          if (path === '/') {
+            formCount = await page.locator('form.wpcf7-form').count().catch(() => 0);
+          }
+
           if (!screenshot) {
             await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
             const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
@@ -46,7 +51,6 @@ export const crossBrowser = {
           }
         }
 
-        const formCount = await page.locator('form.wpcf7-form').count().catch(() => 0);
         if (formCount === 0) {
           problems.push(`${label}: на главной странице не найдено форм.`);
         }

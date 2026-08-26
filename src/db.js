@@ -111,7 +111,8 @@ export function getScan(id) {
 }
 
 export function getActiveScan() {
-  return getActiveScanStatement.get() || null;
+  const scan = getActiveScanStatement.get();
+  return scan ? parseReport(scan) : null;
 }
 
 export function listScans(limit = 30) {

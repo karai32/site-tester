@@ -4,6 +4,7 @@ const query = 'Аллергология';
 const selectors = {
   searchInput: '.page-price__wrap #search',
   submitButton: '.page-price__wrap button[type="submit"]',
+  priceItem: '.spollers-cost__price',
 };
 
 export const priceFilter = {
@@ -24,22 +25,27 @@ export const priceFilter = {
         return { id: this.id, title: this.title, pageUrl: priceUrl, status: 'failed', message: `На странице ${priceUrl} не найдено поле поиска по прайсу.` };
       }
 
+      const itemsBefore = await page.locator(selectors.priceItem).count();
+
       await searchInput.fill(query);
       await page.locator(selectors.submitButton).first().click();
       await page.waitForTimeout(1_500);
 
+      const itemsAfter = await page.locator(selectors.priceItem).count();
       const bodyText = await page.evaluate(() => document.body.innerText);
       await page.addStyleTag({ content: '.modal.js-modal.--open:not(#call) { display: none !important; }' }).catch(() => {});
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 
       const hasQueryHeading = bodyText.toUpperCase().includes(query.toUpperCase());
-      if (!hasQueryHeading) {
+      const isNarrowed = itemsAfter > 0 && itemsAfter < itemsBefore;
+
+      if (!isNarrowed || !hasQueryHeading) {
         return {
           id: this.id,
           title: this.title, pageUrl: priceUrl,
           status: 'failed',
-          message: `После поиска по запросу «${query}» на странице прайса не найдено ожидаемых результатов.`,
+          message: `После поиска по запросу «${query}» список не сузился ожидаемым образом (было ${itemsBefore} позиций, стало ${itemsAfter}).`,
           screenshot,
         };
       }
@@ -48,7 +54,7 @@ export const priceFilter = {
         id: this.id,
         title: this.title, pageUrl: priceUrl,
         status: 'passed',
-        message: `Фильтр по прайсу по запросу «${query}» отображает релевантные позиции.`,
+        message: `Фильтр по прайсу по запросу «${query}» сузил список с ${itemsBefore} до ${itemsAfter} позиций.`,
         screenshot,
       };
     } catch (error) {

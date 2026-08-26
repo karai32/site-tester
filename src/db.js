@@ -7,10 +7,6 @@ const defaultDatabasePath = fileURLToPath(
   new URL('../data/site-checker.sqlite', import.meta.url),
 );
 const databasePath = resolve(process.env.SQLITE_PATH || defaultDatabasePath);
-const maxStoredScans = Math.min(
-  Math.max(Number.parseInt(process.env.MAX_STORED_SCANS || '30', 10) || 30, 1),
-  1000,
-);
 
 mkdirSync(dirname(databasePath), { recursive: true });
 
@@ -73,14 +69,10 @@ const recoverScansStatement = database.prepare(`
   WHERE status IN ('pending', 'running')
 `);
 
-const deleteOldScansStatement = database.prepare(`
+const deleteExpiredScansStatement = database.prepare(`
   DELETE FROM scans
-  WHERE id NOT IN (
-    SELECT id
-    FROM scans
-    ORDER BY id DESC
-    LIMIT ?
-  )
+  WHERE status NOT IN ('pending', 'running')
+    AND julianday(created_at) < julianday('now', '-90 days')
 `);
 
 function parseReport(scan) {
@@ -132,7 +124,7 @@ export function finishScan(id, { passed, report, error = null }) {
     id,
   );
 
-  deleteOldScansStatement.run(maxStoredScans);
+  deleteExpiredScansStatement.run();
 }
 
 export function recoverInterruptedScans() {
@@ -140,6 +132,8 @@ export function recoverInterruptedScans() {
     new Date().toISOString(),
     'Проверка была прервана перезапуском приложения.',
   );
+
+  deleteExpiredScansStatement.run();
 }
 
 export function closeDatabase() {

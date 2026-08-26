@@ -2,6 +2,7 @@ const siteElement = document.querySelector('#site');
 const messageElement = document.querySelector('#message');
 const groupsElement = document.querySelector('#check-groups');
 const startButton = document.querySelector('#start-scan');
+const scanHistoryElement = document.querySelector('#scan-history');
 
 const statusLabels = {
   pending: 'Ожидает запуска',
@@ -146,6 +147,34 @@ function renderGroups(groups) {
   groupsElement.replaceChildren(...accordions);
 }
 
+function formatScanLabel(scan) {
+  const date = new Date(scan.created_at);
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `Проверка ${dd}.${mm}.${yyyy} ${hh}:${min}`;
+}
+
+async function refreshScanHistory(selectedId) {
+  const { scans } = await requestJson('/api/scans');
+  scanHistoryElement.replaceChildren(
+    ...scans.map((scan) => {
+      const option = element('option', '', formatScanLabel(scan));
+      option.value = scan.id;
+      return option;
+    }),
+  );
+
+  const idToSelect = selectedId ?? scans[0]?.id;
+  if (idToSelect !== undefined) {
+    scanHistoryElement.value = String(idToSelect);
+  }
+
+  return scans;
+}
+
 function groupsWithStatus(status, message) {
   return groupDefinitions.map((group) => ({
     ...group,
@@ -215,7 +244,7 @@ async function followScan(scanId, showRunning = true) {
 }
 
 async function loadLatestScan() {
-  const { scans } = await requestJson('/api/scans');
+  const scans = await refreshScanHistory();
   const latest = scans[0];
   if (latest) {
     const isRunning = latest.status === 'pending' || latest.status === 'running';
@@ -230,11 +259,20 @@ async function startScan() {
 
   try {
     const { scan } = await requestJson('/api/scans', { method: 'POST' });
+    await refreshScanHistory(scan.id);
     await followScan(scan.id, false);
+    await refreshScanHistory(scan.id);
   } catch (error) {
     setRunning(false);
     renderGroups(groupsWithStatus('failed', 'Проверка не была выполнена.'));
     setMessage(error.message, true);
+  }
+}
+
+async function selectScanFromHistory() {
+  const id = Number(scanHistoryElement.value);
+  if (Number.isInteger(id) && id > 0) {
+    await followScan(id, false);
   }
 }
 
@@ -254,4 +292,5 @@ async function initialize() {
 }
 
 startButton.addEventListener('click', startScan);
+scanHistoryElement.addEventListener('change', selectScanFromHistory);
 initialize();

@@ -85,6 +85,29 @@ h2 {
   color: #2271b1;
 }
 
+.scan-history-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #646970;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.scan-history {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  padding: 6px 10px;
+  border: 1px solid #8c8f94;
+  border-radius: 3px;
+  background: #fff;
+  color: #1d2327;
+  font: inherit;
+  font-size: 13px;
+}
+
 .message {
   min-height: 20px;
   margin: 16px 0;

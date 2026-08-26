@@ -41,7 +41,7 @@ export const scrollToTop = {
           outcome = { status: 'failed', message: 'Не удалось прокрутить страницу вниз для проверки кнопки.' };
         } else {
           await page.evaluate((selector) => document.querySelector(selector)?.click(), selectors.upButton);
-          await page.waitForTimeout(1_000);
+          await page.waitForTimeout(2_500);
           const scrollY = await page.evaluate(() => window.scrollY);
 
           outcome = scrollY < 50

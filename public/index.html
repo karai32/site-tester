@@ -3,28 +3,35 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Проверка сайта</title>
+    <title>Hadassah</title>
+    <link rel="icon" href="https://hadassah.moscow/wp-content/uploads/2024/06/cropped-favicon-32x32.webp" sizes="32x32">
+    <link rel="icon" href="https://hadassah.moscow/wp-content/uploads/2024/06/cropped-favicon-192x192.webp" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://hadassah.moscow/wp-content/uploads/2024/06/cropped-favicon-180x180.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
     <main class="container">
       <header class="header">
-        <div>
-          <h1>Проверка сайта</h1>
-          <p id="site" class="site">Загрузка настроек…</p>
-          <p class="repository">
-            <a href="https://github.com/karai32/site-tester" target="_blank" rel="noopener noreferrer">
-              GitHub: karai32/site-tester
-            </a>
-          </p>
+        <div class="header-brand">
+          <a id="site-logo-link" class="site-logo-link" target="_blank" rel="noopener noreferrer" hidden>
+            <img id="site-logo" class="site-logo" alt="Логотип сайта">
+          </a>
         </div>
-        <button id="start-scan" type="button">Запустить проверку</button>
+        <div class="header-actions">
+          <div class="scan-history-field">
+            <label for="scan-history" class="scan-history-label">История проверок</label>
+            <select id="scan-history" class="scan-history"></select>
+          </div>
+          <button id="start-scan" type="button">Запустить проверку</button>
+        </div>
       </header>
 
-      <label for="scan-history" class="scan-history-label">История проверок</label>
-      <select id="scan-history" class="scan-history"></select>
-
       <p id="message" class="message" role="status" aria-live="polite"></p>
+
+      <section id="stats" class="stats" aria-label="Сводная статистика"></section>
 
       <section
         id="check-groups"
@@ -32,6 +39,11 @@
         aria-label="Результаты проверки"
       ></section>
     </main>
+
+    <div id="lightbox" class="lightbox" hidden>
+      <button type="button" id="lightbox-close" class="lightbox-close" aria-label="Закрыть просмотр">&times;</button>
+      <div id="lightbox-content" class="lightbox-content"></div>
+    </div>
 
     <script type="module" src="/app.js"></script>
   </body>

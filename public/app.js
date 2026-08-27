@@ -1,8 +1,13 @@
-const siteElement = document.querySelector('#site');
+const siteLogoLinkElement = document.querySelector('#site-logo-link');
+const siteLogoElement = document.querySelector('#site-logo');
 const messageElement = document.querySelector('#message');
+const statsElement = document.querySelector('#stats');
 const groupsElement = document.querySelector('#check-groups');
 const startButton = document.querySelector('#start-scan');
 const scanHistoryElement = document.querySelector('#scan-history');
+const lightboxElement = document.querySelector('#lightbox');
+const lightboxContentElement = document.querySelector('#lightbox-content');
+const lightboxCloseButton = document.querySelector('#lightbox-close');
 
 const statusLabels = {
   pending: 'Ожидает запуска',
@@ -10,6 +15,8 @@ const statusLabels = {
   passed: 'Пройдено',
   failed: 'Ошибка',
 };
+
+const problemsVisibleLimit = 6;
 
 let groupDefinitions = [];
 let objectUrls = [];
@@ -24,7 +31,7 @@ function releaseObjectUrls() {
   objectUrls = [];
 }
 
-// Превращает data:-URI (base64) в blob-ссылку, которая открывается в новой вкладке
+// Превращает data:-URI (base64) в blob-ссылку, пригодную для <img>/<video>/лайтбокса
 function dataUriToObjectUrl(dataUri) {
   const [header, base64] = dataUri.split(',');
   const mime = header.match(/data:([^;]+)/)?.[1] || 'application/octet-stream';
@@ -38,6 +45,23 @@ function dataUriToObjectUrl(dataUri) {
   return objectUrl;
 }
 
+// === Лайтбокс (просмотр скриншота крупным планом) ===
+
+// Открывает скриншот на весь экран
+function openLightbox(objectUrl, alt) {
+  const img = element('img', 'lightbox-image');
+  img.src = objectUrl;
+  img.alt = alt;
+  lightboxContentElement.replaceChildren(img);
+  lightboxElement.hidden = false;
+}
+
+// Закрывает лайтбокс
+function closeLightbox() {
+  lightboxElement.hidden = true;
+  lightboxContentElement.replaceChildren();
+}
+
 // === DOM-хелперы и рендеринг результатов ===
 
 // Создаёт DOM-узел с классом и текстом за один вызов
@@ -48,18 +72,128 @@ function element(tag, className, text) {
   return node;
 }
 
-// Цветной бейдж статуса (пройдено/ошибка/…)
-function statusBadge(status = 'pending') {
-  return element(
-    'span',
-    `status status-${status}`,
-    statusLabels[status] || status,
+// Кружок-иконка статуса конкретной проверки (✓/✕/•)
+function statusIcon(status = 'pending') {
+  return element('span', `status-icon status-icon--${status}`);
+}
+
+// Текстовая подпись статуса конкретной проверки
+function statusText(status = 'pending') {
+  return element('span', `status-text status-text--${status}`, statusLabels[status] || status);
+}
+
+// Плашка «пройдено/всего» в заголовке категории
+function groupCountPill(group) {
+  const total = group.checks.length;
+  const passed = group.checks.filter((check) => check.status === 'passed').length;
+  return element('span', `check-group-count check-group-count--${group.status}`, `${passed}/${total}`);
+}
+
+// Считает сводные цифры по всем категориям для плашек статистики
+function computeStats(groups) {
+  const checks = groups.flatMap((group) => group.checks);
+  const total = checks.length;
+  const passed = checks.filter((check) => check.status === 'passed').length;
+  const failed = checks.filter((check) => check.status === 'failed').length;
+  const rate = total > 0 ? Math.round((passed / total) * 100) : 0;
+  return { total, passed, failed, rate };
+}
+
+// Рисует плашки сводной статистики над списком категорий
+function renderStats(groups) {
+  const { total, passed, failed, rate } = computeStats(groups);
+  const tiles = [
+    { label: 'Всего проверок', value: total, modifier: '' },
+    { label: 'Пройдено', value: passed, modifier: 'passed' },
+    { label: 'Ошибок', value: failed, modifier: 'failed' },
+    { label: 'Успешность', value: `${rate}%`, modifier: '' },
+  ];
+
+  statsElement.replaceChildren(
+    ...tiles.map(({ label, value, modifier }) => {
+      const tile = element('div', `stat-tile${modifier ? ` stat-tile--${modifier}` : ''}`);
+      tile.append(
+        element('div', 'stat-tile-value', String(value)),
+        element('div', 'stat-tile-label', label),
+      );
+      return tile;
+    }),
   );
 }
 
-// Рисует список категорий и проверок целиком (аккордеон, статусы, скриншоты, видео, ссылки)
+// Список проблем: показывает первые N штук, остальные — по кнопке «показать все»
+function appendProblemsList(item, problems) {
+  const problemsList = element('ul', 'check-problems');
+  const visible = problems.slice(0, problemsVisibleLimit);
+  for (const problem of visible) {
+    problemsList.append(element('li', '', problem));
+  }
+  item.append(problemsList);
+
+  if (problems.length <= problemsVisibleLimit) return;
+
+  let expanded = false;
+  const toggle = element('button', 'check-problems-toggle', `Показать все ${problems.length}`);
+  toggle.type = 'button';
+  toggle.addEventListener('click', () => {
+    expanded = !expanded;
+    problemsList.replaceChildren(...(expanded ? problems : visible).map((problem) => element('li', '', problem)));
+    toggle.textContent = expanded ? 'Свернуть' : `Показать все ${problems.length}`;
+  });
+  item.append(toggle);
+}
+
+// Скриншоты/видео проверки в виде миниатюр; клик по скриншоту открывает лайтбокс
+function appendMedia(item, check) {
+  const media = element('div', 'check-media');
+
+  if (check.screenshot) {
+    const objectUrl = dataUriToObjectUrl(check.screenshot);
+    const thumb = element('button', 'check-thumb');
+    thumb.type = 'button';
+    const img = element('img');
+    img.src = objectUrl;
+    img.alt = `Скриншот: ${check.title}`;
+    thumb.append(img);
+    thumb.addEventListener('click', () => openLightbox(objectUrl, img.alt));
+    media.append(thumb);
+  }
+
+  if (check.video) {
+    const objectUrl = dataUriToObjectUrl(check.video);
+    const video = element('video', 'check-video');
+    video.src = objectUrl;
+    video.controls = true;
+    video.muted = true;
+    video.playsInline = true;
+    media.append(video);
+  }
+
+  if (Array.isArray(check.screenshots)) {
+    for (const shot of check.screenshots) {
+      const objectUrl = dataUriToObjectUrl(shot.image);
+      const figure = element('figure', 'check-thumb-figure');
+      const thumb = element('button', 'check-thumb');
+      thumb.type = 'button';
+      const img = element('img');
+      img.src = objectUrl;
+      img.alt = `Скриншот: ${check.title} — ${shot.label}`;
+      thumb.append(img);
+      thumb.addEventListener('click', () => openLightbox(objectUrl, img.alt));
+      figure.append(thumb, element('figcaption', 'check-thumb-caption', shot.label));
+      media.append(figure);
+    }
+  }
+
+  if (media.childElementCount > 0) {
+    item.append(media);
+  }
+}
+
+// Рисует список категорий и проверок целиком (статистика, аккордеон, скриншоты, видео, ссылки)
 function renderGroups(groups) {
   releaseObjectUrls();
+  renderStats(groups);
 
   const accordions = groups.map((group) => {
     const details = element('details', 'check-group');
@@ -68,25 +202,25 @@ function renderGroups(groups) {
     const summary = element('summary');
     summary.append(
       element('span', 'check-group-title', group.title),
-      statusBadge(group.status),
+      groupCountPill(group),
     );
 
     const list = element('div', 'check-list');
     for (const check of group.checks) {
       const item = element('article', 'check-item');
+      item.dataset.status = check.status || 'pending';
+
       const heading = element('div', 'check-item-heading');
-      heading.append(element('h3', '', check.title), statusBadge(check.status));
+      const titleRow = element('div', 'check-item-title-row');
+      titleRow.append(statusIcon(check.status), element('h3', '', check.title));
+      heading.append(titleRow, statusText(check.status));
       item.append(
         heading,
         element('p', 'check-output', check.message || 'Результат отсутствует.'),
       );
 
       if (Array.isArray(check.problems) && check.problems.length > 0) {
-        const problemsList = element('ul', 'check-problems');
-        for (const problem of check.problems) {
-          problemsList.append(element('li', '', problem));
-        }
-        item.append(problemsList);
+        appendProblemsList(item, check.problems);
       }
 
       const pageUrls = check.pageUrls || (check.pageUrl ? [check.pageUrl] : []);
@@ -104,47 +238,7 @@ function renderGroups(groups) {
         item.append(pageLinksLine);
       }
 
-      if (check.screenshot) {
-        const objectUrl = dataUriToObjectUrl(check.screenshot);
-        const link = element('a', 'check-screenshot-link');
-        link.href = objectUrl;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        const screenshot = element('img', 'check-screenshot');
-        screenshot.src = objectUrl;
-        screenshot.alt = `Скриншот: ${check.title}`;
-        link.append(screenshot);
-        item.append(link);
-      }
-
-      if (check.video) {
-        const objectUrl = dataUriToObjectUrl(check.video);
-        const video = element('video', 'check-video');
-        video.src = objectUrl;
-        video.controls = true;
-        video.muted = true;
-        video.playsInline = true;
-        item.append(video);
-      }
-
-      if (Array.isArray(check.screenshots)) {
-        const gallery = element('div', 'check-screenshot-gallery');
-        for (const shot of check.screenshots) {
-          const objectUrl = dataUriToObjectUrl(shot.image);
-          const figure = element('figure', 'check-screenshot-figure');
-          const link = element('a', 'check-screenshot-link');
-          link.href = objectUrl;
-          link.target = '_blank';
-          link.rel = 'noopener';
-          const img = element('img', 'check-screenshot');
-          img.src = objectUrl;
-          img.alt = `Скриншот: ${check.title} — ${shot.label}`;
-          link.append(img);
-          figure.append(link, element('figcaption', '', shot.label));
-          gallery.append(figure);
-        }
-        item.append(gallery);
-      }
+      appendMedia(item, check);
 
       list.append(item);
     }
@@ -310,7 +404,12 @@ async function selectScanFromHistory() {
 async function initialize() {
   try {
     const { site, groups } = await requestJson('/api/health');
-    siteElement.textContent = `${site.name}: ${site.url}`;
+    if (site.logoUrl) {
+      siteLogoElement.src = site.logoUrl;
+      siteLogoElement.alt = `Логотип: ${site.name}`;
+      siteLogoLinkElement.href = site.url;
+      siteLogoLinkElement.hidden = false;
+    }
     groupDefinitions = groups;
     renderGroups(groupsWithStatus(
       'pending',
@@ -324,4 +423,11 @@ async function initialize() {
 
 startButton.addEventListener('click', startScan);
 scanHistoryElement.addEventListener('change', selectScanFromHistory);
+lightboxCloseButton.addEventListener('click', closeLightbox);
+lightboxElement.addEventListener('click', (event) => {
+  if (event.target === lightboxElement) closeLightbox();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !lightboxElement.hidden) closeLightbox();
+});
 initialize();

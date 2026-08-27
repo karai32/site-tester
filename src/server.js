@@ -30,6 +30,7 @@ app.get('/api/health', async () => ({
   site: {
     name: site.name,
     url: site.baseUrl,
+    logoUrl: site.logoUrl,
   },
   groups: getCheckDefinitions(),
 }));

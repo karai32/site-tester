@@ -1,9 +1,14 @@
 import { chromium } from '@playwright/test';
+import { fetchPagesContent, checkPagesStatus } from '../../site-crawler.js';
 
-const selectors = {
-  menuLinks: '.nav > .nav-item a[href]',
-};
-const maxImagesToCheck = 400;
+const maxSourcesShown = 5;
+
+function formatSources(sources) {
+  if (sources.length === 0) return '';
+  const shown = sources.slice(0, maxSourcesShown);
+  const rest = sources.length - shown.length;
+  return ` (найдена на: ${shown.join(', ')}${rest > 0 ? ` и ещё ${rest} стр.` : ''})`;
+}
 
 function extractImageUrls(html, baseUrl) {
   const urls = new Set();
@@ -14,7 +19,6 @@ function extractImageUrls(html, baseUrl) {
       try {
         urls.add(new URL(src, baseUrl).href);
       } catch {
-        // ignore malformed URLs
       }
     }
   }
@@ -26,7 +30,6 @@ function extractImageUrls(html, baseUrl) {
       try {
         urls.add(new URL(firstUrl, baseUrl).href);
       } catch {
-        // ignore malformed URLs
       }
     }
   }
@@ -34,82 +37,59 @@ function extractImageUrls(html, baseUrl) {
   return [...urls];
 }
 
-async function fetchInBatches(api, urls, batchSize, handler) {
-  for (let index = 0; index < urls.length; index += batchSize) {
-    const batch = urls.slice(index, index + batchSize);
-    await Promise.all(batch.map((item) => handler(item)));
-  }
-}
-
 export const brokenImagesSitewide = {
   id: 'broken-images-sitewide',
-  title: 'Отсутствие «битых» изображений по ключевым страницам сайта',
+  title: 'Отсутствие «битых» изображений по всем страницам сайта',
 
-  async run({ url }) {
+  async run({ url, pages, pagesTruncated, pagesError }) {
+    if (pagesError) {
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: не удалось получить список страниц сайта (${pagesError})` };
+    }
+
     let browser;
 
     try {
       browser = await chromium.launch();
       const context = await browser.newContext({ ignoreHTTPSErrors: false });
-      const page = await context.newPage();
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      const pageResults = await fetchPagesContent(context.request, pages);
 
-      const rawLinks = await page.locator(selectors.menuLinks).evaluateAll((links) => links.map((link) => (link.getAttribute('href') || '').trim()));
-      const siteOrigin = new URL(url).origin;
-      const pageUrls = new Set([new URL('/', url).href]);
+      const imageSources = new Map();
+      let pagesWithHtml = 0;
 
-      for (const href of rawLinks) {
-        if (!href || href.startsWith('#') || href.startsWith('javascript:')) continue;
-        const target = new URL(href, url);
-        if (target.origin !== siteOrigin) continue;
-        target.hash = '';
-        pageUrls.add(target.href);
+      for (const [pageUrl, { html }] of pageResults) {
+        if (!html) continue;
+        pagesWithHtml += 1;
+
+        for (const imageUrl of extractImageUrls(html, pageUrl)) {
+          if (!imageSources.has(imageUrl)) imageSources.set(imageUrl, new Set());
+          imageSources.get(imageUrl).add(pageUrl);
+        }
       }
 
-      const imageUrls = new Set();
-      const pageFetchProblems = [];
+      const imageUrls = [...imageSources.keys()];
+      const imageResults = await checkPagesStatus(context.request, imageUrls);
 
-      await fetchInBatches(context.request, [...pageUrls], 6, async (pageUrl) => {
-        try {
-          const response = await context.request.get(pageUrl, { failOnStatusCode: false, timeout: 20_000 });
-          if (response.status() >= 200 && response.status() < 400) {
-            const html = await response.text();
-            for (const imageUrl of extractImageUrls(html, pageUrl)) {
-              imageUrls.add(imageUrl);
-            }
-          }
-          await response.dispose();
-        } catch (error) {
-          const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-          pageFetchProblems.push(`${pageUrl}: не удалось загрузить (${message})`);
-        }
-      });
+      const problems = [];
 
-      const sample = [...imageUrls].slice(0, maxImagesToCheck);
-      const problems = [...pageFetchProblems];
+      for (const [imageUrl, { status, error }] of imageResults) {
+        const isBroken = Boolean(error) || status < 200 || status >= 400;
+        if (!isBroken) continue;
 
-      await fetchInBatches(context.request, sample, 6, async (imageUrl) => {
-        try {
-          const response = await context.request.get(imageUrl, { failOnStatusCode: false, timeout: 20_000 });
-          const status = response.status();
-          await response.dispose();
-          if (status < 200 || status >= 400) {
-            problems.push(`${imageUrl}: HTTP ${status}`);
-          }
-        } catch (error) {
-          const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-          problems.push(`${imageUrl}: ${message}`);
-        }
-      });
+        const sources = [...(imageSources.get(imageUrl) || [])];
+        const reason = error ? error : `HTTP ${status}`;
+        problems.push(`${imageUrl}: ${reason}${formatSources(sources)}`);
+      }
+
+      const truncatedNote = pagesTruncated ? ' Внимание: список страниц обрезан предохранителем обхода, реальных страниц может быть больше.' : '';
 
       return problems.length === 0
         ? {
           id: this.id,
           title: this.title, pageUrl: url,
           status: 'passed',
-          message: `Проверено ${pageUrls.size} страниц и ${sample.length} уникальных изображений, битых не найдено.`,
+          message: `Проверено ${pagesWithHtml} страниц и ${imageUrls.length} уникальных изображений, битых не найдено.${truncatedNote}`,
         }
-        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}.`, problems };
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}. Проверено ${pagesWithHtml} страниц и ${imageUrls.length} изображений.${truncatedNote}`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
       return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };

@@ -1,79 +1,26 @@
 import { chromium } from '@playwright/test';
-
-const maxPages = 500;
-const batchSize = 8;
-const maxDepth = 2;
-
-function extractLinks(html, baseUrl, siteOrigin) {
-  const links = new Set();
-  for (const match of html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>/gi)) {
-    const href = match[1];
-    if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) continue;
-    try {
-      const target = new URL(href, baseUrl);
-      if (target.origin !== siteOrigin) continue;
-      target.hash = '';
-      links.add(target.href);
-    } catch {
-      // ignore malformed URLs
-    }
-  }
-  return [...links];
-}
-
-async function crawlSite(api, startUrl) {
-  const siteOrigin = new URL(startUrl).origin;
-  const visited = new Map();
-  const queued = new Set([startUrl]);
-  const queue = [{ url: startUrl, depth: 0 }];
-
-  while (queue.length > 0 && visited.size < maxPages) {
-    const batch = queue.splice(0, batchSize);
-    await Promise.all(batch.map(async ({ url: pageUrl, depth }) => {
-      if (visited.has(pageUrl) || visited.size >= maxPages) return;
-
-      try {
-        const response = await api.get(pageUrl, { failOnStatusCode: false, timeout: 15_000 });
-        const status = response.status();
-        const contentType = response.headers()['content-type'] || '';
-        const html = status >= 200 && status < 400 && contentType.includes('text/html') ? await response.text() : null;
-        await response.dispose();
-        visited.set(pageUrl, { status, html });
-
-        if (html && depth < maxDepth) {
-          for (const link of extractLinks(html, pageUrl, siteOrigin)) {
-            if (!queued.has(link)) {
-              queued.add(link);
-              queue.push({ url: link, depth: depth + 1 });
-            }
-          }
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-        visited.set(pageUrl, { status: 0, html: null, error: message });
-      }
-    }));
-  }
-
-  return visited;
-}
+import { fetchPagesContent } from '../../site-crawler.js';
 
 export const yandexSmartcaptcha = {
   id: 'yandex-smartcaptcha',
   title: 'Yandex SmartCaptcha подключена на всех страницах, где есть формы',
 
-  async run({ url }) {
+  async run({ url, pages, pagesTruncated, pagesError }) {
+    if (pagesError) {
+      return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: не удалось получить список страниц сайта (${pagesError})` };
+    }
+
     let browser;
 
     try {
       browser = await chromium.launch();
       const context = await browser.newContext();
-      const pages = await crawlSite(context.request, url);
+      const results = await fetchPagesContent(context.request, pages);
 
       const problems = [];
       let pagesWithForms = 0;
 
-      for (const [pageUrl, { html }] of pages) {
+      for (const [pageUrl, { html }] of results) {
         if (!html || !/<form\b/i.test(html)) continue;
         pagesWithForms += 1;
         if (!/smartcaptcha\.cloud\.yandex\.ru\/captcha\.js/i.test(html)) {
@@ -81,9 +28,11 @@ export const yandexSmartcaptcha = {
         }
       }
 
+      const truncatedNote = pagesTruncated ? ' Внимание: список страниц обрезан предохранителем обхода, реальных страниц может быть больше.' : '';
+
       return problems.length === 0
-        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${pagesWithForms} страниц(ы) с формами (обход сайта, глубина ${maxDepth}), скрипт SmartCaptcha подключён везде.` }
-        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}. Проверено ${pagesWithForms} страниц(ы) с формами.`, problems };
+        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${pagesWithForms} страниц(ы) с формами (по общему списку страниц сайта), скрипт SmartCaptcha подключён везде.${truncatedNote}` }
+        : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}. Проверено ${pagesWithForms} страниц(ы) с формами.${truncatedNote}`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
       return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: ${message}` };

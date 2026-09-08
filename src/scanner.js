@@ -42,13 +42,13 @@ import { titlePresent } from './checks/seo/title-present.js';
 import { descriptionPresent } from './checks/seo/description-present.js';
 import { h1Present } from './checks/seo/h1-present.js';
 import { headingHierarchy } from './checks/seo/heading-hierarchy.js';
-import { no404Links } from './checks/seo/no-404-links.js';
 import { xmlSitemap } from './checks/seo-infrastructure/xml-sitemap.js';
 import { openGraph } from './checks/seo-infrastructure/open-graph.js';
 import { canonicalUrls } from './checks/seo-infrastructure/canonical-urls.js';
 import { robotsMeta } from './checks/seo-infrastructure/robots-meta.js';
 import { breadcrumbSchema } from './checks/seo-infrastructure/breadcrumb-schema.js';
 import { yandexSmartcaptcha } from './checks/antispam/yandex-smartcaptcha.js';
+import { discoverSitePages } from './site-crawler.js';
 
 const categories = [
   {
@@ -109,7 +109,7 @@ const categories = [
   {
     id: 'seo',
     title: 'SEO',
-    checks: [titlePresent, descriptionPresent, h1Present, headingHierarchy, no404Links],
+    checks: [titlePresent, descriptionPresent, h1Present, headingHierarchy],
   },
   {
     id: 'seo-infrastructure',
@@ -134,10 +134,30 @@ export function getCheckDefinitions() {
 export async function runScan() {
   const groups = [];
 
+  let sitePages = [];
+  let sitePagesTruncated = false;
+  let sitePagesError = null;
+  let siteLinkSources = new Map();
+
+  try {
+    const discovery = await discoverSitePages(site.baseUrl);
+    sitePages = discovery.pages;
+    sitePagesTruncated = discovery.truncated;
+    siteLinkSources = discovery.linkSources;
+  } catch (error) {
+    sitePagesError = error instanceof Error ? error.message : String(error);
+  }
+
   for (const category of categories) {
     const checks = [];
     for (const check of category.checks) {
-      checks.push(await check.run({ url: site.baseUrl }));
+      checks.push(await check.run({
+        url: site.baseUrl,
+        pages: sitePages,
+        pagesTruncated: sitePagesTruncated,
+        pagesError: sitePagesError,
+        linkSources: siteLinkSources,
+      }));
     }
 
     groups.push({

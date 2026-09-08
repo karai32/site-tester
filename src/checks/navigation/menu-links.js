@@ -53,10 +53,14 @@ export const menuLinks = {
       const rawLinks = await page.locator(selectors.menuLinks).evaluateAll((links) => links.map((link) => ({
         title: (link.textContent || '').replace(/\s+/g, ' ').trim(),
         href: (link.getAttribute('href') || '').trim(),
+        className: link.getAttribute('class') || '',
       })));
       const uniqueLinks = new Map();
 
       for (const link of rawLinks) {
+        const isMegaMenuTitle = link.className.split(/\s+/).includes('mega__title');
+        if (isMegaMenuTitle && link.href === '#') continue;
+
         if (!link.href || link.href.startsWith('#') || link.href.startsWith('javascript:')) {
           problems.push(`«${link.title || 'без названия'}»: некорректный href="${link.href}"`);
           continue;

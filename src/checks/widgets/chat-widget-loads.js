@@ -1,9 +1,10 @@
 import { chromium } from '@playwright/test';
 
 const selectors = {
-  chatFrame: '#__threadswidget_chat__iframe',
+  chatWidget: '#carrotquest-messenger-collapsed-container',
 };
 const maxWaitMs = 8_000;
+const desktopUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
 export const chatWidgetLoads = {
   id: 'chat-widget-loads',
@@ -14,20 +15,19 @@ export const chatWidgetLoads = {
 
     try {
       browser = await chromium.launch();
-      const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+      const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, userAgent: desktopUserAgent });
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
-      const chatFrame = page.locator(selectors.chatFrame);
-      await chatFrame.waitFor({ state: 'attached', timeout: maxWaitMs }).catch(() => {});
+      const chatWidget = page.locator(selectors.chatWidget);
+      await chatWidget.waitFor({ state: 'attached', timeout: maxWaitMs }).catch(() => {});
 
-      if (await chatFrame.count() === 0) {
-        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `На странице не найден виджет чата (${selectors.chatFrame}).` };
+      if (await chatWidget.count() === 0) {
+        return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `На странице не найден виджет чата (${selectors.chatWidget}).` };
       }
 
       await page.waitForTimeout(maxWaitMs);
 
-      const state = await chatFrame.evaluate((el) => ({
-        src: el.getAttribute('src') || '',
+      const state = await chatWidget.evaluate((el) => ({
         width: el.getBoundingClientRect().width,
         height: el.getBoundingClientRect().height,
       }));
@@ -36,12 +36,12 @@ export const chatWidgetLoads = {
       const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 60 });
       const screenshot = `data:image/jpeg;base64,${screenshotBuffer.toString('base64')}`;
 
-      if (!state.src || state.width === 0 || state.height === 0) {
+      if (state.width === 0 || state.height === 0) {
         return {
           id: this.id,
           title: this.title, pageUrl: url,
           status: 'failed',
-          message: `Виджет чата не загрузился за ${maxWaitMs / 1000} сек: src="${state.src}", размер ${state.width}×${state.height}.`,
+          message: `Виджет чата не отображается за ${(maxWaitMs * 2) / 1000} сек после загрузки: размер ${state.width}×${state.height}.`,
           screenshot,
         };
       }

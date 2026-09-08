@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      DEPLOY_HOST: 46.19.69.32
-      DEPLOY_USER: deploy
+      DEPLOY_HOST: 109.235.116.46
+      DEPLOY_USER: root
 
     steps:
       - name: Checkout
@@ -41,11 +41,9 @@ jobs:
 
       - name: Upload application
         run: |
-          SSH_COMMAND="ssh -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes"
-          rsync -az --delete -e "$SSH_COMMAND" src/ "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/src/"
-          rsync -az --delete -e "$SSH_COMMAND" public/ "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/public/"
-          rsync -az --delete -e "$SSH_COMMAND" config/ "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/config/"
-          rsync -az -e "$SSH_COMMAND" package.json package-lock.json "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/"
+          scp -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -r \
+            src public config package.json package-lock.json \
+            "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/"
 
       - name: Install and restart
         run: |
@@ -54,7 +52,7 @@ jobs:
             cd /opt/site-checker
             find src public config -type f -name "*.js" -print0 | xargs -0 -n1 node --check
             npm ci --omit=dev
-            sudo /usr/bin/systemctl restart site-checker.service
+            /usr/bin/systemctl restart site-checker.service
 
             for attempt in $(seq 1 15); do
               if curl --fail --silent http://127.0.0.1:3000/api/health >/dev/null; then

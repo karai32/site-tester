@@ -15,12 +15,11 @@ export const yandexSmartcaptcha = {
     try {
       browser = await chromium.launch();
       const context = await browser.newContext();
-      const results = await fetchPagesContent(context.request, pages);
 
       const problems = [];
       let pagesWithForms = 0;
 
-      for (const [pageUrl, { html }] of results) {
+      for await (const [pageUrl, { html }] of fetchPagesContent(context.request, pages)) {
         if (!html || !/<form\b/i.test(html)) continue;
         pagesWithForms += 1;
         if (!/smartcaptcha\.cloud\.yandex\.ru\/captcha\.js/i.test(html)) {

@@ -314,7 +314,17 @@ function setRunning(running) {
 // fetch с автоматическим парсингом JSON и выбросом ошибки на не-200 ответ
 async function requestJson(url, options) {
   const response = await fetch(url, options);
-  const payload = await response.json();
+  const responseText = await response.text();
+  let payload;
+
+  try {
+    payload = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    if (!response.ok) {
+      throw new Error(`Сервер временно недоступен (HTTP ${response.status}).`);
+    }
+    throw new Error('Сервер вернул ответ в некорректном формате.');
+  }
 
   if (!response.ok) {
     throw new Error(payload.error || 'Ошибка запроса.');

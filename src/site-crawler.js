@@ -2,7 +2,8 @@ import { chromium } from '@playwright/test';
 
 const discoveryBatchSize = 8;
 const discoveryTimeoutMs = 15_000;
-const maxDiscoveredPages = 5000;
+const maxDiscoveredPages = 500;
+const maxLinkSourcesPerUrl = 10;
 
 function extractLinks(html, baseUrl, siteOrigin) {
   const links = new Set();
@@ -13,6 +14,7 @@ function extractLinks(html, baseUrl, siteOrigin) {
       const target = new URL(href, baseUrl);
       if (target.origin !== siteOrigin) continue;
       target.hash = '';
+      target.search = '';
       links.add(target.href);
     } catch {
     }
@@ -21,10 +23,15 @@ function extractLinks(html, baseUrl, siteOrigin) {
 }
 
 export async function discoverSitePages(baseUrl) {
-  const siteOrigin = new URL(baseUrl).origin;
-  const discovered = new Set([baseUrl]);
+  const startUrl = new URL(baseUrl);
+  startUrl.hash = '';
+  startUrl.search = '';
+
+  const normalizedBaseUrl = startUrl.href;
+  const siteOrigin = startUrl.origin;
+  const discovered = new Set([normalizedBaseUrl]);
   const linkSources = new Map();
-  const queue = [baseUrl];
+  const queue = [normalizedBaseUrl];
   const processed = new Set();
   let truncated = false;
 
@@ -64,13 +71,18 @@ export async function discoverSitePages(baseUrl) {
 
           if (html) {
             for (const link of extractLinks(html, pageUrl, siteOrigin)) {
-              if (!linkSources.has(link)) linkSources.set(link, new Set());
-              linkSources.get(link).add(pageUrl);
-
               if (!discovered.has(link)) {
+                if (discovered.size >= maxDiscoveredPages) {
+                  truncated = true;
+                  continue;
+                }
                 discovered.add(link);
                 queue.push(link);
               }
+
+              if (!linkSources.has(link)) linkSources.set(link, new Set());
+              const sources = linkSources.get(link);
+              if (sources.size < maxLinkSourcesPerUrl) sources.add(pageUrl);
             }
           }
         } catch {
@@ -84,12 +96,10 @@ export async function discoverSitePages(baseUrl) {
   return { pages: [...discovered], truncated, linkSources };
 }
 
-export async function fetchPagesContent(request, pageUrls, { batchSize = 8, timeoutMs = 15_000 } = {}) {
-  const results = new Map();
-
+export async function* fetchPagesContent(request, pageUrls, { batchSize = 8, timeoutMs = 15_000 } = {}) {
   for (let index = 0; index < pageUrls.length; index += batchSize) {
     const batch = pageUrls.slice(index, index + batchSize);
-    await Promise.all(batch.map(async (pageUrl) => {
+    const results = await Promise.all(batch.map(async (pageUrl) => {
       try {
         const headResponse = await request.head(pageUrl, { failOnStatusCode: false, timeout: timeoutMs });
         const headStatus = headResponse.status();
@@ -100,8 +110,7 @@ export async function fetchPagesContent(request, pageUrls, { batchSize = 8, time
         const looksLikeHtml = headStatus >= 200 && headStatus < 400 && headContentType.includes('text/html');
 
         if (!looksLikeHtml && !headUnsupported) {
-          results.set(pageUrl, { status: headStatus, html: null });
-          return;
+          return [pageUrl, { status: headStatus, html: null }];
         }
 
         const response = await request.get(pageUrl, { failOnStatusCode: false, timeout: timeoutMs });
@@ -109,15 +118,17 @@ export async function fetchPagesContent(request, pageUrls, { batchSize = 8, time
         const contentType = response.headers()['content-type'] || '';
         const html = status >= 200 && status < 400 && contentType.includes('text/html') ? await response.text() : null;
         await response.dispose();
-        results.set(pageUrl, { status, html });
+        return [pageUrl, { status, html }];
       } catch (error) {
         const message = error instanceof Error ? error.message.split('\n')[0] : String(error);
-        results.set(pageUrl, { status: 0, html: null, error: message });
+        return [pageUrl, { status: 0, html: null, error: message }];
       }
     }));
-  }
 
-  return results;
+    for (const result of results) {
+      yield result;
+    }
+  }
 }
 
 export async function checkPagesStatus(request, pageUrls, { batchSize = 8, timeoutMs = 15_000 } = {}) {

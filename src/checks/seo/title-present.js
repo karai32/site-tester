@@ -19,12 +19,11 @@ export const titlePresent = {
     try {
       browser = await chromium.launch();
       const context = await browser.newContext();
-      const results = await fetchPagesContent(context.request, pages);
 
       const problems = [];
       let checkedCount = 0;
 
-      for (const [pageUrl, { html }] of results) {
+      for await (const [pageUrl, { html }] of fetchPagesContent(context.request, pages)) {
         if (!html) continue;
         checkedCount += 1;
         const title = getTitle(html);

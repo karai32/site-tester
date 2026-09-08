@@ -51,12 +51,11 @@ export const brokenImagesSitewide = {
     try {
       browser = await chromium.launch();
       const context = await browser.newContext({ ignoreHTTPSErrors: false });
-      const pageResults = await fetchPagesContent(context.request, pages);
 
       const imageSources = new Map();
       let pagesWithHtml = 0;
 
-      for (const [pageUrl, { html }] of pageResults) {
+      for await (const [pageUrl, { html }] of fetchPagesContent(context.request, pages)) {
         if (!html) continue;
         pagesWithHtml += 1;
 

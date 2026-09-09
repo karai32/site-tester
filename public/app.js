@@ -177,10 +177,11 @@ function appendMedia(item, check) {
       thumb.type = 'button';
       const img = element('img');
       img.src = objectUrl;
-      img.alt = `Скриншот: ${check.title} — ${shot.label}`;
+      img.alt = shot.label ? `Скриншот: ${check.title} — ${shot.label}` : `Скриншот: ${check.title}`;
       thumb.append(img);
       thumb.addEventListener('click', () => openLightbox(objectUrl, img.alt));
-      figure.append(thumb, element('figcaption', 'check-thumb-caption', shot.label));
+      figure.append(thumb);
+      if (shot.label) figure.append(element('figcaption', 'check-thumb-caption', shot.label));
       media.append(figure);
     }
   }

@@ -29,7 +29,6 @@ import { mobileAdaptiveNoScroll } from './checks/visual/mobile-adaptive-no-scrol
 import { homepageAdvantagesBlock } from './checks/visual/homepage-advantages-block.js';
 import { brokenImagesSitewide } from './checks/visual/broken-images-sitewide.js';
 import { headerBookingForm } from './checks/forms/header-booking-form.js';
-import { headerBookingPrivacyLink } from './checks/forms/header-booking-privacy-link.js';
 import { headerBookingPhoneNormalization } from './checks/forms/header-booking-phone-normalization.js';
 import { headerBookingConsentCheckbox } from './checks/forms/header-booking-consent-checkbox.js';
 import { callbackWidgetOpen } from './checks/widgets/callback-widget-open.js';
@@ -87,12 +86,7 @@ const categories = [
   {
     id: 'forms',
     title: 'Формы, валидация и согласия',
-    checks: [
-      headerBookingForm,
-      headerBookingPrivacyLink,
-      headerBookingPhoneNormalization,
-      headerBookingConsentCheckbox,
-    ],
+    checks: [headerBookingForm, headerBookingPhoneNormalization, headerBookingConsentCheckbox],
   },
   {
     id: 'widgets',

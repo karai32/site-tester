@@ -3,6 +3,7 @@ import { chromium } from '@playwright/test';
 const discoveryBatchSize = 8;
 const discoveryTimeoutMs = 15_000;
 const maxLinkSourcesPerUrl = 10;
+const maxDiscoveredPages = 4000;
 
 function extractLinks(html, baseUrl, siteOrigin) {
   const links = new Set();
@@ -13,6 +14,7 @@ function extractLinks(html, baseUrl, siteOrigin) {
       const target = new URL(href, baseUrl);
       if (target.origin !== siteOrigin) continue;
       target.hash = '';
+      target.search = '';
       links.add(target.href);
     } catch {
     }
@@ -23,6 +25,7 @@ function extractLinks(html, baseUrl, siteOrigin) {
 export async function discoverSitePages(baseUrl) {
   const startUrl = new URL(baseUrl);
   startUrl.hash = '';
+  startUrl.search = '';
 
   const normalizedBaseUrl = startUrl.href;
   const siteOrigin = startUrl.origin;
@@ -30,6 +33,7 @@ export async function discoverSitePages(baseUrl) {
   const linkSources = new Map();
   const queue = [normalizedBaseUrl];
   const processed = new Set();
+  let truncated = false;
 
   let browser;
   try {
@@ -63,6 +67,10 @@ export async function discoverSitePages(baseUrl) {
           if (html) {
             for (const link of extractLinks(html, pageUrl, siteOrigin)) {
               if (!discovered.has(link)) {
+                if (discovered.size >= maxDiscoveredPages) {
+                  truncated = true;
+                  continue;
+                }
                 discovered.add(link);
                 queue.push(link);
               }
@@ -80,7 +88,7 @@ export async function discoverSitePages(baseUrl) {
     await browser?.close().catch(() => {});
   }
 
-  return { pages: [...discovered], truncated: false, linkSources };
+  return { pages: [...discovered], truncated, linkSources };
 }
 
 export async function* fetchPagesContent(request, pageUrls, { batchSize = 8, timeoutMs = 15_000 } = {}) {

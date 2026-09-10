@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { fetchPagesContent } from '../../site-crawler.js';
+import { fetchPagesContent } from '../general.js';
 
 function hasBreadcrumbSchema(html) {
   for (const match of html.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {

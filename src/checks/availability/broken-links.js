@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { checkPagesStatus } from '../../site-crawler.js';
+import { checkPagesStatus } from '../general.js';
 
 const maxSourcesShown = 5;
 

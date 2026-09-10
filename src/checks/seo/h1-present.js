@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { fetchPagesContent } from '../../site-crawler.js';
+import { fetchPagesContent } from '../general.js';
 
 export const h1Present = {
   id: 'h1-present',

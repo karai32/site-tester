@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { fetchPagesContent } from '../../site-crawler.js';
+import { fetchPagesContent } from '../general.js';
 
 function getTitle(html) {
   return html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() || '';

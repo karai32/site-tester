@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { fetchPagesContent } from '../../site-crawler.js';
+import { fetchPagesContent } from '../general.js';
 
 function getMetaDescription(html) {
   for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {

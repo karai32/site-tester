@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { fetchPagesContent } from '../../site-crawler.js';
+import { fetchPagesContent } from '../general.js';
 
 function getRobotsMetaContent(html) {
   const forward = html.match(/<meta[^>]*name=["']robots["'][^>]*content=["']([^"']*)["']/i);

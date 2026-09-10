@@ -16,7 +16,7 @@ export const canonicalUrls = {
   id: 'canonical-urls',
   title: 'Canonical URL указан ровно один раз и является корректной абсолютной ссылкой на всех страницах сайта',
 
-  async run({ url, pages, pagesTruncated, pagesError }) {
+  async run({ url, htmlPages: pages, pagesTruncated, pagesError }) {
     if (pagesError) {
       return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: не удалось получить список страниц сайта (${pagesError})` };
     }
@@ -55,7 +55,7 @@ export const canonicalUrls = {
       const truncatedNote = pagesTruncated ? ' Внимание: список страниц обрезан предохранителем обхода, реальных страниц может быть больше.' : '';
 
       return problems.length === 0
-        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${checkedCount} страниц (по общему списку страниц сайта, ${pages.length} шт.), у всех ровно один корректный canonical.${truncatedNote}` }
+        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${checkedCount} HTML-страниц сайта, у всех ровно один корректный canonical.${truncatedNote}` }
         : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}. Проверено ${checkedCount} страниц.${truncatedNote}`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);

@@ -5,7 +5,7 @@ export const headerBookingConsentCheckbox = {
   id: 'header-booking-consent-checkbox',
   title: 'Чекбокс согласия на обработку ПДн присутствует, не отмечен по умолчанию, ссылка на политику рабочая',
 
-  async run({ url, pages, pagesError }) {
+  async run({ url, htmlPages: pages, pagesError }) {
     if (pagesError) {
       return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: не удалось получить список страниц сайта (${pagesError})` };
     }

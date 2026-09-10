@@ -41,7 +41,7 @@ export const brokenImagesSitewide = {
   id: 'broken-images-sitewide',
   title: 'Отсутствие «битых» изображений по всем страницам сайта',
 
-  async run({ url, pages, pagesTruncated, pagesError }) {
+  async run({ url, htmlPages: pages, pagesTruncated, pagesError }) {
     if (pagesError) {
       return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: не удалось получить список страниц сайта (${pagesError})` };
     }

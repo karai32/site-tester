@@ -129,6 +129,7 @@ export async function runScan() {
   const groups = [];
 
   let sitePages = [];
+  let siteHtmlPages = [];
   let sitePagesTruncated = false;
   let sitePagesError = null;
   let siteLinkSources = new Map();
@@ -136,6 +137,7 @@ export async function runScan() {
   try {
     const discovery = await discoverSitePages(site.baseUrl);
     sitePages = discovery.pages;
+    siteHtmlPages = discovery.htmlPages;
     sitePagesTruncated = discovery.truncated;
     siteLinkSources = discovery.linkSources;
   } catch (error) {
@@ -148,6 +150,7 @@ export async function runScan() {
       checks.push(await check.run({
         url: site.baseUrl,
         pages: sitePages,
+        htmlPages: siteHtmlPages,
         pagesTruncated: sitePagesTruncated,
         pagesError: sitePagesError,
         linkSources: siteLinkSources,

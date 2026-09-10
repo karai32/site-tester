@@ -14,7 +14,7 @@ export const openGraph = {
   id: 'open-graph',
   title: 'Open Graph теги (title, description, image, url, type) присутствуют на всех страницах сайта',
 
-  async run({ url, pages, pagesTruncated, pagesError }) {
+  async run({ url, htmlPages: pages, pagesTruncated, pagesError }) {
     if (pagesError) {
       return { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Проверка не выполнена: не удалось получить список страниц сайта (${pagesError})` };
     }
@@ -41,7 +41,7 @@ export const openGraph = {
       const truncatedNote = pagesTruncated ? ' Внимание: список страниц обрезан предохранителем обхода, реальных страниц может быть больше.' : '';
 
       return problems.length === 0
-        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${checkedCount} страниц (по общему списку страниц сайта, ${pages.length} шт.), Open Graph теги заполнены везде.${truncatedNote}` }
+        ? { id: this.id, title: this.title, pageUrl: url, status: 'passed', message: `Проверено ${checkedCount} HTML-страниц сайта, Open Graph теги заполнены везде.${truncatedNote}` }
         : { id: this.id, title: this.title, pageUrl: url, status: 'failed', message: `Найдено проблем: ${problems.length}. Проверено ${checkedCount} страниц.${truncatedNote}`, problems };
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : String(error);

@@ -30,6 +30,7 @@ export async function discoverSitePages(baseUrl) {
   const normalizedBaseUrl = startUrl.href;
   const siteOrigin = startUrl.origin;
   const discovered = new Set([normalizedBaseUrl]);
+  const htmlPages = new Set();
   const linkSources = new Map();
   const queue = [normalizedBaseUrl];
   const processed = new Set();
@@ -65,6 +66,7 @@ export async function discoverSitePages(baseUrl) {
           }
 
           if (html) {
+            htmlPages.add(pageUrl);
             for (const link of extractLinks(html, pageUrl, siteOrigin)) {
               if (!discovered.has(link)) {
                 if (discovered.size >= maxDiscoveredPages) {
@@ -88,7 +90,7 @@ export async function discoverSitePages(baseUrl) {
     await browser?.close().catch(() => {});
   }
 
-  return { pages: [...discovered], truncated, linkSources };
+  return { pages: [...discovered], htmlPages: [...htmlPages], truncated, linkSources };
 }
 
 export async function* fetchPagesContent(request, pageUrls, { batchSize = 8, timeoutMs = 15_000 } = {}) {

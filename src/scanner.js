@@ -17,6 +17,11 @@ import { doctorsPagination } from './checks/search-pagination/doctors-pagination
 import { newsPagination } from './checks/search-pagination/news-pagination.js';
 import { languageSwitch } from './checks/search-pagination/language-switch.js';
 import { priceFilter } from './checks/search-pagination/price-filter.js';
+import { articlesPagination } from './checks/search-pagination/articles-pagination.js';
+import { galleryPagination } from './checks/search-pagination/gallery-pagination.js';
+import { libraryPagination } from './checks/search-pagination/library-pagination.js';
+import { reviewsPagination } from './checks/search-pagination/reviews-pagination.js';
+import { videosPagination } from './checks/search-pagination/videos-pagination.js';
 import { doctorsHomepageBlock } from './checks/content/doctors-homepage-block.js';
 import { newsFeedHomepage } from './checks/content/news-feed-homepage.js';
 import { doctorProfileOpen } from './checks/content/doctor-profile-open.js';
@@ -63,7 +68,19 @@ const categories = [
   {
     id: 'search-pagination',
     title: 'Поиск, фильтры, пагинация и языковые версии',
-    checks: [searchResults, searchNoResults, doctorsPagination, newsPagination, languageSwitch, priceFilter],
+    checks: [
+      searchResults,
+      searchNoResults,
+      doctorsPagination,
+      newsPagination,
+      articlesPagination,
+      galleryPagination,
+      libraryPagination,
+      reviewsPagination,
+      videosPagination,
+      languageSwitch,
+      priceFilter,
+    ],
   },
   {
     id: 'content',

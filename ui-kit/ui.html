@@ -1,0 +1,2134 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>UI-кит — Аудит</title>
+	<link rel="icon" type="image/svg+xml" href="assets/img/logo-mark.svg">
+
+	<!-- Шрифт 808 Utilities (Poppins) + Montserrat для кириллицы -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap">
+
+	<!-- Библиотеки 808 Utilities (без изменений) -->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+	<link rel="stylesheet" href="assets/css/feather.css">
+	<link rel="stylesheet" href="assets/css/select2.min.css">
+	<link rel="stylesheet" href="assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
+	<link rel="stylesheet" href="assets/plugins/toastr/toatr.css">
+
+	<!-- Цвета Figma + компоненты 808 -->
+	<link rel="stylesheet" href="assets/css/theme.css">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="assets/css/ui-page.css">
+</head>
+<body>
+
+<main class="kit">
+
+	<header class="kit-header">
+		<h1>UI-кит платформы «Аудит»</h1>
+		<nav class="kit-toc">
+			<a href="#colors">Цвета</a>
+			<a href="#type">Типографика</a>
+			<a href="#icons">Иконки</a>
+			<a href="#logo">Логотип</a>
+			<a href="#buttons">Кнопки</a>
+			<a href="#links">Ссылки и крошки</a>
+			<a href="#inputs">Поля ввода</a>
+			<a href="#controls">Чекбоксы, радио, тумблер</a>
+			<a href="#tabs">Табы</a>
+			<a href="#filters">Фильтры</a>
+			<a href="#badges">Бейджи и чипы</a>
+			<a href="#alerts">Алерты, подсказки, тосты</a>
+			<a href="#avatars">Аватары и плитки</a>
+			<a href="#pagination">Пагинация</a>
+			<a href="#stepper">Степпер</a>
+			<a href="#cards">Карточки и списки</a>
+			<a href="#hero">Hero и статистика</a>
+			<a href="#modals">Попапы</a>
+			<a href="#nav">Навигация</a>
+			<a href="#mobile">Мобильная версия</a>
+			<a href="#auth">Форма входа</a>
+		</nav>
+	</header>
+
+	<!-- ================= ЦВЕТА ================= -->
+	<section class="kit-section" id="colors">
+		<h2>Цвета</h2>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Neutral / Surface / Border</div>
+			<div class="kit-colors">
+				<div><div class="kit-color__chip" style="background:#ECECEA"></div><div class="kit-color__name">page-bg</div><div class="kit-color__hex">#ECECEA</div></div>
+				<div><div class="kit-color__chip" style="background:#FFFFFF"></div><div class="kit-color__name">paper</div><div class="kit-color__hex">#FFFFFF</div></div>
+				<div><div class="kit-color__chip" style="background:#16161A"></div><div class="kit-color__name">ink</div><div class="kit-color__hex">#16161A</div></div>
+				<div><div class="kit-color__chip" style="background:#8B8B86"></div><div class="kit-color__name">muted</div><div class="kit-color__hex">#8B8B86</div></div>
+				<div><div class="kit-color__chip" style="background:#B7B7B2"></div><div class="kit-color__name">muted-2</div><div class="kit-color__hex">#B7B7B2</div></div>
+				<div><div class="kit-color__chip" style="background:#E6E6E3"></div><div class="kit-color__name">border</div><div class="kit-color__hex">#E6E6E3</div></div>
+				<div><div class="kit-color__chip" style="background:#F0F0ED"></div><div class="kit-color__name">muted-bg</div><div class="kit-color__hex">#F0F0ED</div></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Dark / Hero</div>
+			<div class="kit-colors">
+				<div><div class="kit-color__chip" style="background:#1C1C20"></div><div class="kit-color__name">dark-1</div><div class="kit-color__hex">#1C1C20</div></div>
+				<div><div class="kit-color__chip" style="background:#2B2C30"></div><div class="kit-color__name">dark-2</div><div class="kit-color__hex">#2B2C30</div></div>
+				<div><div class="kit-color__chip" style="background:#26262B"></div><div class="kit-color__name">ink-hover</div><div class="kit-color__hex">#26262B</div></div>
+				<div><div class="kit-color__chip" style="background:#0D0D10"></div><div class="kit-color__name">ink-press</div><div class="kit-color__hex">#0D0D10</div></div>
+				<div><div class="kit-color__chip" style="background:var(--hero-gradient)"></div><div class="kit-color__name">hero-gradient</div><div class="kit-color__hex">90° #2B2C30 → #0D0D10</div></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Текст</div>
+			<div class="kit-colors">
+				<div><div class="kit-color__chip" style="background:#010101"></div><div class="kit-color__name">ink-2</div><div class="kit-color__hex">#010101</div></div>
+				<div><div class="kit-color__chip" style="background:#6B6B6B"></div><div class="kit-color__name">text-2</div><div class="kit-color__hex">#6B6B6B</div></div>
+				<div><div class="kit-color__chip" style="background:#444444"></div><div class="kit-color__name">text-3</div><div class="kit-color__hex">#444444</div></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Статусы</div>
+			<div class="kit-colors">
+				<div><div class="kit-color__chip" style="background:#3F8F5F"></div><div class="kit-color__name">success</div><div class="kit-color__hex">#3F8F5F</div></div>
+				<div><div class="kit-color__chip" style="background:#E7F2EC"></div><div class="kit-color__name">success-bg</div><div class="kit-color__hex">#E7F2EC</div></div>
+				<div><div class="kit-color__chip" style="background:#C08A34"></div><div class="kit-color__name">warning</div><div class="kit-color__hex">#C08A34</div></div>
+				<div><div class="kit-color__chip" style="background:#F7ECD9"></div><div class="kit-color__name">warning-bg</div><div class="kit-color__hex">#F7ECD9</div></div>
+				<div><div class="kit-color__chip" style="background:#CC3220"></div><div class="kit-color__name">error</div><div class="kit-color__hex">#CC3220</div></div>
+				<div><div class="kit-color__chip" style="background:#F8E9E7"></div><div class="kit-color__name">error-bg</div><div class="kit-color__hex">#F8E9E7</div></div>
+				<div><div class="kit-color__chip" style="background:#3D78B0"></div><div class="kit-color__name">info</div><div class="kit-color__hex">#3D78B0</div></div>
+				<div><div class="kit-color__chip" style="background:#E6EEF7"></div><div class="kit-color__name">info-bg</div><div class="kit-color__hex">#E6EEF7</div></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Акцент (цвет проекта)</div>
+			<div class="kit-colors">
+				<div><div class="kit-color__chip" style="background:#3498A9"></div><div class="kit-color__name">accent</div><div class="kit-color__hex">#3498A9</div></div>
+				<div><div class="kit-color__chip" style="background:#247583"></div><div class="kit-color__name">accent-dark</div><div class="kit-color__hex">#247583</div></div>
+				<div><div class="kit-color__chip" style="background:#F4F7FF"></div><div class="kit-color__name">accent-bg</div><div class="kit-color__hex">#F4F7FF</div></div>
+				<div><div class="kit-color__chip" style="background:rgba(52,152,169,.1)"></div><div class="kit-color__name">accent-soft</div><div class="kit-color__hex">accent · 10%</div></div>
+			</div>
+		</div>
+
+	</section>
+
+	<!-- ================= ТИПОГРАФИКА ================= -->
+	<section class="kit-section" id="type">
+		<h2>Типографика</h2>
+		<div class="kit-group kit-surface">
+			<div class="kit-type"><div><div class="morning-user p-0" style="padding:0"><h2 style="color:var(--ink)">Сценарии</h2></div></div></div>
+			<div class="kit-type"><div><h2 class="mb-0" style="font-size:26px;font-weight:600">Вход в аккаунт</h2></div></div>
+			<div class="kit-type"><div><div class="doctor-table-blk"><h3>Сценарии проверки</h3></div></div></div>
+			<div class="kit-type"><div><div class="form-heading"><h4>Область тестирования</h4></div></div></div>
+			<div class="kit-type"><div><div class="about-info"><h4 class="mb-0">Техническая доступность и безопасность</h4></div></div></div>
+			<div class="kit-type"><div><div class="dash-content"><h4>Проверено страниц</h4></div></div></div>
+			<div class="kit-type"><div><div class="dash-content"><h2>17:00</h2></div></div></div>
+			<div class="kit-type"><div><div class="doctor-content"><h4><span>2</span><span>/4</span></h4></div></div></div>
+			<div class="kit-type"><div><div class="about-me-list"><ul class="list-space"><li><h4>Дата проведения</h4><span>01.09.2026, 12:30</span></li></ul></div></div></div>
+			<div class="kit-type"><div><div class="page-header mb-0"><ul class="breadcrumb"><li class="breadcrumb-item"><a href="#">Проекты</a></li><li class="breadcrumb-item"><i class="feather-chevron-right"></i></li><li class="breadcrumb-item active">Hadassah</li></ul></div></div></div>
+			<div class="kit-type"><div><p class="mb-0" style="font-size:14px">artem_teplov запустил «Полный аудит»</p></div></div>
+			<div class="kit-type"><div><div class="dash-content"><p>Проверка займёт около 5 минут</p></div></div></div>
+			<div class="kit-type"><div><div class="local-forms input-block mb-0" style="height:20px"><label style="position:static;padding:0">Почты для отправки уведомлений</label></div></div></div>
+			<div class="kit-type"><div><ul class="activity-list" style="padding:0"><li style="padding:0;margin:0"><span class="time">17:04 · 28.08.2026</span></li></ul></div></div>
+			<div class="kit-type"><div><button class="btn btn-primary" type="button">Подтвердить</button></div></div>
+		</div>
+	</section>
+
+	<!-- ================= ИКОНКИ ================= -->
+	<section class="kit-section" id="icons">
+		<h2>Иконки</h2>
+		<div class="kit-group kit-icons">
+			<div class="kit-icon"><i class="feather-eye"></i><div><b>eye-open</b><span>feather-eye</span></div></div>
+			<div class="kit-icon"><i class="feather-eye-off"></i><div><b>eye-closed</b><span>feather-eye-off</span></div></div>
+			<div class="kit-icon"><i class="feather-slash"></i><div><b>cancel</b><span>feather-slash</span></div></div>
+			<div class="kit-icon"><i class="feather-settings"></i><div><b>settings</b><span>feather-settings</span></div></div>
+			<div class="kit-icon"><i class="feather-chevron-down"></i><div><b>chevron-down</b><span>feather-chevron-down</span></div></div>
+			<div class="kit-icon"><i class="feather-chevron-up"></i><div><b>chevron-up</b><span>feather-chevron-up</span></div></div>
+			<div class="kit-icon"><i class="feather-chevron-right"></i><div><b>chevron-right</b><span>feather-chevron-right</span></div></div>
+			<div class="kit-icon"><i class="feather-check"></i><div><b>check-01</b><span>feather-check</span></div></div>
+			<div class="kit-icon"><i class="feather-info"></i><div><b>information-circle</b><span>feather-info</span></div></div>
+			<div class="kit-icon"><i class="feather-link"></i><div><b>link</b><span>feather-link</span></div></div>
+			<div class="kit-icon"><i class="feather-edit-2"></i><div><b>edit-04</b><span>feather-edit-2</span></div></div>
+			<div class="kit-icon"><i class="feather-download"></i><div><b>download-01 / 02</b><span>feather-download</span></div></div>
+			<div class="kit-icon"><i class="feather-check-circle"></i><div><b>check-contained</b><span>feather-check-circle</span></div></div>
+			<div class="kit-icon"><i class="feather-clock"></i><div><b>clock-forward</b><span>feather-clock</span></div></div>
+			<div class="kit-icon"><i class="feather-user"></i><div><b>user-profile-03</b><span>feather-user</span></div></div>
+			<div class="kit-icon"><i class="feather-layers"></i><div><b>project (layers-02)</b><span>feather-layers</span></div></div>
+			<div class="kit-icon"><i class="feather-bookmark"></i><div><b>projects (layers-03)</b><span>feather-bookmark</span></div></div>
+			<div class="kit-icon"><i class="feather-plus-circle"></i><div><b>add-square-02</b><span>feather-plus-circle</span></div></div>
+			<div class="kit-icon"><i class="feather-plus"></i><div><b>plus-03</b><span>feather-plus</span></div></div>
+			<div class="kit-icon"><i class="feather-file"></i><div><b>file</b><span>feather-file</span></div></div>
+			<div class="kit-icon"><i class="feather-bar-chart-2"></i><div><b>bar-chart-04</b><span>feather-bar-chart-2</span></div></div>
+			<div class="kit-icon"><i class="feather-shield"></i><div><b>shield-check</b><span>feather-shield</span></div></div>
+			<div class="kit-icon"><i class="feather-arrow-up-right"></i><div><b>arrow-up-right</b><span>feather-arrow-up-right</span></div></div>
+			<div class="kit-icon"><i class="feather-x-circle"></i><div><b>x-circle</b><span>feather-x-circle</span></div></div>
+			<div class="kit-icon"><i class="feather-arrow-right"></i><div><b>arrow-right</b><span>feather-arrow-right</span></div></div>
+			<div class="kit-icon"><i class="feather-check-square"></i><div><b>check-square</b><span>feather-check-square</span></div></div>
+			<div class="kit-icon"><i class="feather-search"></i><div><b>search-01</b><span>feather-search</span></div></div>
+			<div class="kit-icon"><i class="feather-edit-3"></i><div><b>pen-tool-03</b><span>feather-edit-3</span></div></div>
+			<div class="kit-icon"><i class="feather-image"></i><div><b>image</b><span>feather-image</span></div></div>
+			<div class="kit-icon"><i class="feather-mail"></i><div><b>mail</b><span>feather-mail</span></div></div>
+			<div class="kit-icon"><i class="fa-brands fa-telegram"></i><div><b>telegram</b><span>fa-brands fa-telegram</span></div></div>
+			<div class="kit-icon"><i class="feather-more-vertical"></i><div><b>действия в строке</b><span>feather-more-vertical</span></div></div>
+			<div class="kit-icon"><i class="feather-menu"></i><div><b>меню</b><span>feather-menu</span></div></div>
+			<div class="kit-icon"><i class="feather-bell"></i><div><b>уведомления</b><span>feather-bell</span></div></div>
+			<div class="kit-icon"><i class="feather-upload"></i><div><b>загрузка файла</b><span>feather-upload</span></div></div>
+			<div class="kit-icon"><i class="feather-refresh-cw"></i><div><b>обновить список</b><span>feather-refresh-cw</span></div></div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Иконки категорий тестов</div>
+			<div class="kit-icons">
+				<div class="kit-icon"><i class="feather-shield"></i><div><b>Доступность и безопасность</b><span>feather-shield</span></div></div>
+				<div class="kit-icon"><i class="feather-compass"></i><div><b>Навигация, шапка и футер</b><span>feather-compass</span></div></div>
+				<div class="kit-icon"><i class="feather-search"></i><div><b>Поиск, фильтры, пагинации</b><span>feather-search</span></div></div>
+				<div class="kit-icon"><i class="feather-file-text"></i><div><b>Контент и данные</b><span>feather-file-text</span></div></div>
+				<div class="kit-icon"><i class="feather-monitor"></i><div><b>Визуал и адаптивность</b><span>feather-monitor</span></div></div>
+				<div class="kit-icon"><i class="feather-check-square"></i><div><b>Формы и согласия</b><span>feather-check-square</span></div></div>
+				<div class="kit-icon"><i class="feather-message-circle"></i><div><b>Виджеты и связь</b><span>feather-message-circle</span></div></div>
+				<div class="kit-icon"><i class="feather-bar-chart-2"></i><div><b>SEO</b><span>feather-bar-chart-2</span></div></div>
+				<div class="kit-icon"><i class="feather-globe"></i><div><b>SEO-инфраструктура</b><span>feather-globe</span></div></div>
+				<div class="kit-icon"><i class="feather-lock"></i><div><b>Защита и антиспам</b><span>feather-lock</span></div></div>
+			</div>
+		</div>
+
+	</section>
+
+	<!-- ================= ЛОГОТИП ================= -->
+	<section class="kit-section" id="logo">
+		<h2>Логотип</h2>
+		<div class="kit-group kit-row">
+			<div class="kit-item">
+				<div class="kit-surface" style="padding:0 20px"><a href="#" class="logo"><img src="assets/img/logo-mark.svg" width="35" height="35" alt=""><span>Аудит</span></a></div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-surface" style="padding:0 20px"><a href="#" class="logo"><img src="assets/img/logo-mark.svg" width="35" height="35" alt="Аудит"></a></div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= КНОПКИ ================= -->
+	<section class="kit-section" id="buttons">
+		<h2>Кнопки</h2>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Основные</div>
+			<div class="kit-surface kit-row">
+				<div class="kit-item"><button class="btn btn-primary" type="button">Подтвердить</button></div>
+				<div class="kit-item"><button class="btn btn-primary" type="button" disabled>Сохранить</button></div>
+				<div class="kit-item"><button class="btn btn-secondary" type="button">Запустить проверку</button></div>
+				<div class="kit-item"><button class="btn btn-light" type="button">Отменить</button></div>
+				<div class="kit-item"><button class="btn btn-white" type="button">Закрыть</button></div>
+				<div class="kit-item"><button class="btn btn-dark" type="button">Активировать сценарий</button></div>
+				<div class="kit-item"><button class="btn btn-danger" type="button">Удалить</button></div>
+				<div class="kit-item"><button class="btn btn-link" type="button">Ссылка</button></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Скруглённые</div>
+			<div class="kit-surface kit-row">
+				<div class="kit-item"><button class="btn btn-primary btn-rounded" type="button">Запустить</button></div>
+				<div class="kit-item"><button class="btn btn-primary btn-rounded" type="button"><i class="feather-plus me-1"></i> Новый сценарий</button></div>
+				<div class="kit-item"><button class="btn btn-primary btn-rounded" type="button"><i class="feather-download me-1"></i> Сохранить</button></div>
+				<div class="kit-item"><button class="btn btn-outline-primary btn-rounded" type="button">Показать все действия</button></div>
+				<div class="kit-item"><button class="btn btn-outline-primary btn-rounded active" type="button">Показать все действия</button></div>
+				<div class="kit-item"><button class="btn btn-light btn-rounded" type="button">Открыть</button></div>
+				<div class="kit-item"><button class="btn btn-outline-danger btn-rounded" type="button">Удалить логотип</button></div>
+				<div class="kit-item"><button class="btn btn-secondary btn-rounded" type="button">Запустить проверку</button></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Контурные</div>
+			<div class="kit-surface kit-row">
+				<div class="kit-item"><button class="btn btn-outline-primary" type="button">Запустить сейчас</button></div>
+				<div class="kit-item"><button class="btn btn-outline-primary" type="button">Запланировать отложенную проверку</button></div>
+				<div class="kit-item"><button class="btn btn-outline-secondary" type="button">Скопировать и изменить</button></div>
+				<div class="kit-item"><button class="btn btn-outline-success" type="button">Активировать</button></div>
+				<div class="kit-item"><button class="btn btn-outline-danger" type="button">Деактивировать сценарий</button></div>
+				<div class="kit-item"><button class="btn btn-outline-primary" type="button" disabled>Неактивна</button></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Размеры</div>
+			<div class="kit-surface kit-row">
+				<div class="kit-item"><button class="btn btn-primary btn-lg" type="button">Подтвердить</button></div>
+				<div class="kit-item"><button class="btn btn-primary" type="button">Подтвердить</button></div>
+				<div class="kit-item"><button class="btn btn-primary btn-sm" type="button">Подтвердить</button></div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Пара кнопок формы</div>
+				<div class="kit-surface w-100">
+					<div class="doctor-submit">
+						<button type="button" class="btn btn-primary submit-form me-2">Подтвердить</button>
+						<button type="button" class="btn btn-primary cancel-form">Отменить</button>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Кнопка сохранения формы</div>
+				<div class="kit-surface w-100 text-center">
+					<button class="btn btn-primary submit-btn" type="button">Создать сценарий</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Кнопка с загрузкой</div>
+				<div class="kit-surface w-100 kit-row">
+					<button type="button" class="btn btn-primary" disabled><span class="spinner-border spinner-border-sm me-2" role="status"></span>Проверка выполняется…</button>
+					<button type="button" class="btn btn-secondary"><span class="spinner-border spinner-border-sm me-2" role="status"></span>Запуск</button>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Иконки-кнопки</div>
+				<div class="kit-surface w-100 kit-row">
+					<div class="kit-item"><div class="add-group"><button class="btn btn-primary btn-rounded" type="button" aria-label="Скачать"><i class="feather-download"></i></button></div></div>
+					<div class="kit-item"><div class="add-group"><button class="btn btn-primary" type="button" aria-label="Обновить"><i class="feather-refresh-cw"></i></button></div></div>
+					<div class="kit-item"><a href="#" class="btn btn-outline-primary btn-rounded btn-icon-only" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a></div>
+					<div class="kit-item"><a href="#" class="action-icon" aria-label="Действия"><i class="feather-more-vertical"></i></a></div>
+					<div class="kit-item"><button type="button" class="btn-close" aria-label="Закрыть"></button></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">На тёмном фоне</div>
+			<div class="doctor-profile-head kit-row" style="padding:24px">
+				<div class="kit-item"><div class="follow-btn-group"><button type="button" class="btn btn-info follow-btns">Редактировать данные</button></div></div>
+				<div class="kit-item"><div class="follow-btn-group"><button type="button" class="btn btn-info message-btns">Отменить</button><button type="button" class="btn btn-info follow-btns">Сохранить</button></div></div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ССЫЛКИ ================= -->
+	<section class="kit-section" id="links">
+		<h2>Ссылки и хлебные крошки</h2>
+		<div class="kit-group kit-surface kit-row">
+			<div class="kit-item"><a href="#">Страница сценария</a></div>
+			<div class="kit-item"><a href="#" class="patient-views">Смотреть все сценарии</a></div>
+			<div class="kit-item"><a href="#" class="text-danger" style="font-size:14px;font-weight:500">Отменить</a></div>
+			<div class="kit-item"><a href="#" class="text-muted" style="font-size:14px;text-decoration:underline">Страница сценария</a></div>
+			<div class="kit-item"><div class="names-profiles"><h5><i class="feather-link me-1"></i> hadassah-moscow.ru</h5></div></div>
+		</div>
+		<div class="kit-group">
+			<div class="page-header mb-3">
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="#">Проекты</a></li>
+					<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+					<li class="breadcrumb-item"><a href="#">Hadassah</a></li>
+					<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+					<li class="breadcrumb-item active">Сценарии</li>
+				</ul>
+			</div>
+		</div>
+		<div class="kit-group">
+			<div class="kit-group__title">Заголовок страницы</div>
+			<div class="kit-surface" style="background:var(--page-bg);border:1px dashed var(--muted-2)">
+				<div class="page-header mb-3">
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="#">Проекты</a></li>
+						<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+						<li class="breadcrumb-item"><a href="#">Hadassah</a></li>
+						<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+						<li class="breadcrumb-item active">Сценарии</li>
+					</ul>
+				</div>
+				<div class="page-heading">
+					<div class="page-heading-main">
+						<div>
+							<h1>Сценарии</h1>
+							<p><i class="feather-link"></i><a href="#">hadassah-moscow.ru</a> · 14 страниц</p>
+						</div>
+					</div>
+					<div class="page-heading-actions">
+						<button type="button" class="btn btn-primary btn-rounded"><i class="feather-plus me-1"></i> Новый сценарий</button>
+					</div>
+				</div>
+				<div class="page-heading mb-0">
+					<div class="page-heading-main">
+						<div>
+							<h1>Полный аудит <span class="custom-badge status-green" style="min-width:0">Активный</span></h1>
+							<p>Редакция #3 · создан 12.06.2026</p>
+						</div>
+					</div>
+					<div class="page-heading-actions">
+						<span style="font-size:14px;color:var(--muted)">Автор сценария:</span>
+						<span class="profile-image"><a href="#"><span class="avatar avatar-xs">АТ</span>Артем Т.</a></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ПОЛЯ ВВОДА ================= -->
+	<section class="kit-section" id="inputs">
+		<h2>Поля ввода</h2>
+
+		<div class="kit-group kit-surface">
+			<div class="row g-4">
+				<div class="col-md-6">
+					<div class="input-block">
+						<label class="col-form-label">Логин</label>
+						<input type="text" class="form-control" placeholder="Введите логин">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block">
+						<label class="col-form-label">Пароль</label>
+						<div class="position-relative">
+							<input type="password" class="form-control pass-input" placeholder="Введите пароль">
+							<span class="profile-views feather-eye-off toggle-password"></span>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block">
+						<label class="col-form-label">Название сценария <span class="login-danger">*</span></label>
+						<input type="text" class="form-control" value="Аудит 3">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block mb-0">
+						<label class="col-form-label">Telegram ID</label>
+						<input type="text" class="form-control" placeholder="Не привязан">
+					</div>
+					<p class="settings-size">Чтобы получать уведомления в Telegram, привяжите ID в профиле и перейдите в бота <span>@id_bot</span></p>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block">
+						<label class="col-form-label">Логин</label>
+						<input type="text" class="form-control" value="artem_teplov" readonly>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block">
+						<label class="col-form-label">Пароль</label>
+						<div class="d-flex gap-3">
+							<input type="password" class="form-control pass-hidden" value="password" readonly aria-label="Пароль скрыт">
+							<button type="button" class="btn btn-outline-primary btn-rounded flex-shrink-0 px-4">Изменить</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block local-forms mt-2">
+						<label>Название сценария</label>
+						<input type="text" class="form-control" value="Полный аудит #4">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block">
+						<label class="col-form-label">Почта</label>
+						<input type="text" class="form-control" value="artem@808group.ru" disabled>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Поиск</div>
+				<div class="kit-surface w-100">
+					<div class="top-nav-search float-none ms-0">
+						<form onsubmit="return false" style="margin-top:0;width:100%">
+							<input type="text" class="form-control" placeholder="Найти отчёт">
+							<a class="btn"><i class="feather-search"></i></a>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Выбор из списка</div>
+				<div class="kit-surface w-100">
+					<select class="form-control select">
+						<option>Выберите сценарий</option>
+						<option>Полный аудит — Артем Т.</option>
+						<option>Топ-10 страниц — Артем Т.</option>
+						<option>Раздел «Врачи» — Лера М.</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Короткие поля: время, число, дата, процент</div>
+			<div class="kit-row kit-row--top">
+				<div class="kit-item"><div class="time-icon kit-w-time"><input type="text" class="form-control" value="17:00"></div></div>
+				<div class="kit-item"><input type="text" class="form-control kit-w-num" value="6"></div>
+				<div class="kit-item"><div class="cal-icon kit-w-date"><input type="text" class="form-control" value="10.09.2026"></div></div>
+				<div class="kit-item">
+					<div class="input-group" style="width:200px">
+						<span class="input-group-text">от</span>
+						<input type="text" class="form-control text-center" value="80">
+						<span class="input-group-text">%</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Теги</div>
+			<div class="row g-4">
+				<div class="col-md-6">
+					<div class="input-block mb-0">
+						<label class="col-form-label">Почты для отправки уведомлений</label>
+						<input type="text" data-role="tagsinput" class="input-tags form-control" value="artem@808group.ru,lera@808group.ru" placeholder="Добавить почту">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-block mb-0">
+						<label class="col-form-label">Telegram ID, которые могут активировать бота</label>
+						<input type="text" data-role="tagsinput" class="input-tags form-control" value="artem_teplov" placeholder="Добавить ID">
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ЧЕКБОКСЫ ================= -->
+	<section class="kit-section" id="controls">
+		<h2>Чекбоксы, радио, тумблер</h2>
+		<div class="kit-group kit-surface kit-row kit-row--top">
+			<div class="kit-item">
+				<label class="custom_check mb-0">Каждый день в<input type="checkbox"><span class="checkmark"></span></label>
+			</div>
+			<div class="kit-item">
+				<label class="custom_check mb-0">Каждый день в<input type="checkbox" checked><span class="checkmark"></span></label>
+			</div>
+			<div class="kit-item">
+				<label class="custom_check mb-0">Недоступно<input type="checkbox" disabled><span class="checkmark"></span></label>
+			</div>
+			<div class="kit-item">
+				<div class="remember-me"><label class="custom_check">Я не робот<input type="checkbox"><span class="checkmark"></span></label></div>
+			</div>
+			<div class="kit-item">
+				<div class="form-check check-tables"><input class="form-check-input" type="checkbox" checked aria-label="Выбрать строку"></div>
+			</div>
+			<div class="kit-item">
+				<label class="custom_radio"><input type="radio" name="kit-radio" checked><span class="checkmark"></span> Все авторы</label>
+			</div>
+			<div class="kit-item">
+				<label class="custom_radio"><input type="radio" name="kit-radio"><span class="checkmark"></span> Лера М.</label>
+			</div>
+			<div class="kit-item">
+				<div class="status-toggle"><input type="checkbox" id="kit-toggle-1" class="check" checked><label for="kit-toggle-1" class="checktoggle">вкл</label></div>
+			</div>
+			<div class="kit-item">
+				<div class="status-toggle"><input type="checkbox" id="kit-toggle-2" class="check"><label for="kit-toggle-2" class="checktoggle">выкл</label></div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Регулярность</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded d-inline-flex mb-4">
+							<li class="nav-item"><a class="nav-link active" href="#kit-reg-on" data-bs-toggle="tab">Регулярная</a></li>
+							<li class="nav-item"><a class="nav-link" href="#kit-reg-off" data-bs-toggle="tab">Нерегулярная</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane show active" id="kit-reg-on">
+								<div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+									<label class="custom_check mb-0">Каждый день в<input type="checkbox" checked><span class="checkmark"></span></label>
+									<div class="time-icon kit-w-time"><input type="text" class="form-control" value="17:00"></div>
+								</div>
+								<div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+									<label class="custom_check mb-0">Каждые<input type="checkbox"><span class="checkmark"></span></label>
+									<div class="d-flex align-items-center gap-2"><input type="text" class="form-control kit-w-num" value="6"><span style="font-size:14px">часов</span></div>
+								</div>
+								<div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+									<label class="custom_check mb-0">Раз в<input type="checkbox"><span class="checkmark"></span></label>
+									<div class="d-flex align-items-center gap-2"><input type="text" class="form-control kit-w-num" value="3"><span style="font-size:14px">дня в</span><div class="time-icon kit-w-time"><input type="text" class="form-control" value="15:00"></div></div>
+								</div>
+								<div class="d-flex align-items-center justify-content-between pt-2">
+									<label class="custom_check mb-0">По будням в<input type="checkbox"><span class="checkmark"></span></label>
+									<div class="time-icon kit-w-time"><input type="text" class="form-control" value="15:00"></div>
+								</div>
+							</div>
+							<div class="tab-pane" id="kit-reg-off"><p class="mb-0" style="font-size:14px;color:var(--muted)">Сценарий запускается вручную или как отложенная проверка.</p></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Каналы уведомлений</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 py-2 border-bottom">
+							<span style="font-size:14px;font-weight:500">Получать уведомления о проверках?</span>
+							<div class="d-flex gap-3">
+								<label class="custom_check mb-0">Тг<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check mb-0">Почта<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check mb-0">Нет<input type="checkbox" checked><span class="checkmark"></span></label>
+							</div>
+						</div>
+						<div class="d-flex align-items-start justify-content-between flex-wrap gap-2 py-2 border-bottom">
+							<div>
+								<span style="font-size:14px;font-weight:500">О проведённых проверках?</span>
+								<div class="input-group input-group-sm mt-2" style="width:220px">
+									<span class="input-group-text">от</span>
+									<input type="text" class="form-control text-center" value="80">
+									<span class="input-group-text">% успешности</span>
+								</div>
+							</div>
+							<div class="d-flex gap-3">
+								<label class="custom_check mb-0">Тг<input type="checkbox" checked><span class="checkmark"></span></label>
+								<label class="custom_check mb-0">Почта<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check mb-0">Нет<input type="checkbox"><span class="checkmark"></span></label>
+							</div>
+						</div>
+						<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
+							<span style="font-size:14px;font-weight:500">О смене статуса теста?</span>
+							<div class="d-flex gap-3">
+								<label class="custom_check mb-0">Тг<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check mb-0">Почта<input type="checkbox" checked><span class="checkmark"></span></label>
+								<label class="custom_check mb-0">Нет<input type="checkbox"><span class="checkmark"></span></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ТАБЫ ================= -->
+	<section class="kit-section" id="tabs">
+		<h2>Табы</h2>
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-surface w-100">
+					<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded d-inline-flex">
+						<li class="nav-item"><a class="nav-link active" href="#kit-tab-a" data-bs-toggle="tab">Активные сценарии</a></li>
+						<li class="nav-item"><a class="nav-link" href="#kit-tab-b" data-bs-toggle="tab">Неактивные сценарии</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-surface w-100">
+					<ul class="nav nav-tabs nav-tabs-solid d-inline-flex">
+						<li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab">Регулярная</a></li>
+						<li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab">Нерегулярная</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-surface w-100">
+					<ul class="nav nav-tabs nav-tabs-bottom">
+						<li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab">Дашборд</a></li>
+						<li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab">Сценарии</a></li>
+						<li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab">Архив отчётов</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-surface w-100">
+					<div class="tab-content-set mb-0">
+						<ul class="nav">
+							<li><a href="#" class="active"><span class="set-about-icon me-2"><i class="feather-user"></i></span>Данные аккаунта</a></li>
+							<li><a href="#"><span class="set-about-icon me-2"><i class="feather-layers"></i></span>Проекты</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="kit-group">
+			<div class="settings-menu-links">
+				<ul class="nav nav-tabs menu-tabs">
+					<li class="nav-item active"><a class="nav-link" href="#">Все проекты</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">Hadassah</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">Медскан на Яузе</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">ABC Medicine</a></li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ФИЛЬТРЫ ================= -->
+	<section class="kit-section" id="filters">
+		<h2>Фильтры и выпадающие списки</h2>
+		<div class="kit-group kit-surface">
+			<div class="kit-row kit-row--top">
+				<div class="kit-item" style="width:190px">
+					<select class="form-control select">
+						<option>Автор: Все</option>
+						<option>Автор: Лера М.</option>
+						<option>Автор: Артем Т.</option>
+					</select>
+				</div>
+				<div class="kit-item" style="width:220px">
+					<div class="dropdown w-100">
+						<button class="dropdown-select" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-kit-check-label="Категории">Категории: Все</button>
+						<div class="dropdown-menu" style="min-width:320px">
+							<p class="mb-2" style="font-size:12px;color:var(--muted)">Сценарий содержит категории:</p>
+							<label class="custom_check d-block mb-2">Техническая доступность и безопасность<input type="checkbox" checked><span class="checkmark"></span></label>
+							<label class="custom_check d-block mb-2">Навигация, шапка и футер<input type="checkbox" checked><span class="checkmark"></span></label>
+							<label class="custom_check d-block mb-2">Контент и данные<input type="checkbox" checked><span class="checkmark"></span></label>
+							<label class="custom_check d-block mb-0">SEO<input type="checkbox" checked><span class="checkmark"></span></label>
+						</div>
+					</div>
+				</div>
+				<div class="kit-item" style="width:230px">
+					<select class="form-control select">
+						<option>Регулярность: Все</option>
+						<option>Регулярные</option>
+						<option>Нерегулярные</option>
+					</select>
+				</div>
+				<div class="kit-item" style="width:280px">
+					<select class="form-control select">
+						<option>Сортировка: сначала новые</option>
+						<option>Сортировка: сначала старые</option>
+						<option>По числу тестов</option>
+						<option>По числу категорий</option>
+						<option>По числу страниц</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Маленькие фильтры (попап «Все действия»)</div>
+			<div class="kit-row">
+				<div class="dropdown">
+					<button class="dropdown-select dropdown-select-sm" type="button" data-bs-toggle="dropdown">Проект: Все</button>
+					<div class="dropdown-menu">
+						<a class="dropdown-item active" href="#">Все проекты</a>
+						<a class="dropdown-item" href="#">Hadassah</a>
+						<a class="dropdown-item" href="#">Медскан на Яузе</a>
+					</div>
+				</div>
+				<div class="dropdown">
+					<button class="dropdown-select dropdown-select-sm" type="button" data-bs-toggle="dropdown">Участники: Все</button>
+					<div class="dropdown-menu">
+						<a class="dropdown-item active" href="#">Все участники</a>
+						<a class="dropdown-item" href="#">Артем Т.</a>
+						<a class="dropdown-item" href="#">Лера М.</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-row kit-row--top kit-static">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Открытое меню</div>
+				<div class="dropdown-menu">
+					<a class="dropdown-item active" href="#">Все авторы</a>
+					<a class="dropdown-item" href="#">Лера М.</a>
+					<a class="dropdown-item" href="#">Артем Т.</a>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Меню с радио</div>
+				<div class="dropdown-menu p-3" style="min-width:200px">
+					<label class="custom_radio d-block mb-2"><input type="radio" name="kit-sort" checked><span class="checkmark"></span> Сначала новые</label>
+					<label class="custom_radio d-block mb-2"><input type="radio" name="kit-sort"><span class="checkmark"></span> Сначала старые</label>
+					<label class="custom_radio d-block"><input type="radio" name="kit-sort"><span class="checkmark"></span> По названию</label>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Действия в строке</div>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="#"><i class="feather-arrow-up-right m-r-5"></i> Открыть</a>
+					<a class="dropdown-item" href="#"><i class="feather-copy m-r-5"></i> Скопировать и изменить</a>
+					<a class="dropdown-item" href="#"><i class="feather-download m-r-5"></i> Скачать PDF</a>
+					<a class="dropdown-item text-danger" href="#"><i class="feather-slash m-r-5"></i> Деактивировать</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= БЕЙДЖИ ================= -->
+	<section class="kit-section" id="badges">
+		<h2>Бейджи, статусы, теги и чипы</h2>
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Статусы</div>
+			<div class="kit-row">
+				<span class="custom-badge status-green">Активный</span>
+				<span class="custom-badge status-green">Успешно</span>
+				<span class="custom-badge status-red">Провалено</span>
+				<span class="custom-badge status-orange">Отложено</span>
+				<span class="custom-badge status-blue">Выполняется</span>
+				<span class="custom-badge status-grey">Не активный</span>
+				<span class="custom-badge status-purple">Регулярная</span>
+			</div>
+		</div>
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Статус регулярности</div>
+			<div class="kit-row">
+				<span class="custom-badge status-green"><i class="feather-check-circle"></i>Регулярно</span>
+				<span class="custom-badge status-orange"><i class="feather-slash"></i>Отложено</span>
+				<span class="custom-badge status-grey"><i class="feather-info"></i>Не регулярно</span>
+			</div>
+		</div>
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Счётчики</div>
+			<div class="kit-row">
+				<span class="badge badge-soft-success">2/2</span>
+				<span class="badge badge-soft-warning">1/2</span>
+				<span class="badge badge-soft-danger">0/1</span>
+				<span class="badge rounded-pill badge-soft-success">2/2</span>
+				<span class="badge rounded-pill badge-soft-warning">1/2</span>
+				<span class="badge badge-soft-secondary">5 категорий</span>
+				<span class="badge badge-soft-primary">154/154</span>
+				<span class="badge badge-outline-primary">#2</span>
+			</div>
+		</div>
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Теги, автор, контакты</div>
+			<div class="kit-row kit-row--top">
+				<div class="kit-item"><span class="badge badge-soft-dark">Hadassah</span></div>
+				<div class="kit-item"><span class="badge bg-dark">Администратор</span></div>
+				<div class="kit-item"><span class="profile-image"><a href="#"><span class="avatar avatar-xs">АТ</span>Артем Т.</a></span></div>
+				<div class="kit-item"><div class="invoice-load-btn m-0"><button type="button" class="btn"><span></span>Показать ещё 42 ссылки</button></div></div>
+				<div class="kit-item"><div class="personal-activity mb-0"><div class="personal-icons"><i class="fa-brands fa-telegram"></i></div><div class="views-personal"><h5>Telegram</h5><h4>@artem_teplov</h4></div></div></div>
+				<div class="kit-item"><div class="personal-activity mb-0"><div class="personal-icons"><i class="feather-mail"></i></div><div class="views-personal"><h5>Почта</h5><h4>artem_teplov@gmail.com</h4></div></div></div>
+			</div>
+		</div>
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Параметры сценария</div>
+			<div class="follow-group justify-content-start" style="gap:40px">
+				<div class="doctor-follows"><h5>Создан</h5><h4>12.06.2026</h4></div>
+				<div class="doctor-follows"><h5>Категорий</h5><h4>5</h4></div>
+				<div class="doctor-follows"><h5>Тестов</h5><h4>54/154</h4></div>
+				<div class="doctor-follows"><h5>Страниц</h5><h4>12/12</h4></div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= АЛЕРТЫ ================= -->
+	<section class="kit-section" id="alerts">
+		<h2>Алерты, подсказки, тосты</h2>
+		<div class="kit-group">
+			<div class="kit-group__title">Алерты</div>
+			<div class="alert alert-info alert-dismissible fade show" role="alert"><strong>Telegram не привязан.</strong> Чтобы получать уведомления, привяжите свой ID в профиле и перейдите в бота @id_bot<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button></div>
+			<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Вы редактируете данные аккаунта.</strong> Не забудьте сохранить изменения — иначе они не применятся<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button></div>
+			<div class="alert alert-danger fade show" role="alert"><strong>Неверный логин или пароль.</strong> Проверьте раскладку и попробуйте ещё раз</div>
+			<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Регулярность сохранена.</strong> Следующая проверка — 13.10.2026 в 17:00<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button></div>
+			<div class="alert alert-light fade show" role="alert"><strong>Отложенная проверка запланирована</strong> на 10.09.2026, 09:00</div>
+		</div>
+
+		<div class="kit-group kit-row kit-row--top kit-static">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Подсказка</div>
+				<div style="padding-top:6px">
+					<div class="tooltip bs-tooltip-top" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner">Скачать отчёт</div></div>
+				</div>
+				<button type="button" class="btn btn-light btn-sm" data-bs-toggle="tooltip" data-bs-title="Скачать отчёт">Наведите</button>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Поповер</div>
+				<div style="padding-bottom:6px">
+					<div class="popover bs-popover-top" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-header">Ещё 1 участник</h3><div class="popover-body">Показать всех</div></div>
+				</div>
+				<button type="button" class="btn btn-light btn-sm" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-title="Ещё 1 участник" data-bs-content="Показать всех">Наведите</button>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Тосты</div>
+				<div class="toast-container kit-toast-static">
+					<div class="toast toast-success"><button type="button" class="toast-close-button">×</button><div class="toast-title">Логотип удалён</div><div class="toast-message">Для проекта Hadassah снова используется заглушка</div></div>
+					<div class="toast toast-info"><div class="toast-title">Проверка запущена</div><div class="toast-message">«Полный аудит», около 5 минут</div></div>
+					<div class="toast toast-error"><div class="toast-title">Проверка не выполнена</div><div class="toast-message">Сайт не ответил за 30 секунд</div></div>
+				</div>
+				<div class="kit-row" style="gap:8px">
+					<button type="button" class="btn btn-outline-success btn-sm" data-kit-toast="success">Success</button>
+					<button type="button" class="btn btn-outline-info btn-sm" data-kit-toast="info">Info</button>
+					<button type="button" class="btn btn-outline-warning btn-sm" data-kit-toast="warning">Warning</button>
+					<button type="button" class="btn btn-outline-danger btn-sm" data-kit-toast="error">Error</button>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= АВАТАРЫ ================= -->
+	<section class="kit-section" id="avatars">
+		<h2>Аватары и плитки</h2>
+		<div class="kit-group kit-surface kit-row">
+			<div class="kit-item"><span class="avatar avatar-xs">АТ</span></div>
+			<div class="kit-item"><span class="avatar">АТ</span></div>
+			<div class="kit-item"><span class="avatar avatar-sm">АТ</span></div>
+			<div class="kit-item"><span class="avatar avatar-lg">АТ</span></div>
+			<div class="kit-item"><span class="avatar avatar-xl">АТ</span></div>
+			<div class="kit-item"><span class="avatar avatar-sm avatar-online">ЛМ</span></div>
+			<div class="kit-item"><span class="avatar avatar-sm avatar-away">ЛМ</span></div>
+			<div class="kit-item"><span class="avatar-group"><span class="avatar avatar-sm">АТ</span><span class="avatar avatar-sm">ЛМ</span><span class="avatar avatar-sm" style="background:var(--ink)">+1</span></span></div>
+			<div class="kit-item"><span class="avatar avatar-sm shape bg-primary">H</span></div>
+			<div class="kit-item"><span class="avatar avatar-sm bg-primary">1</span></div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-surface w-100 kit-row">
+					<div class="profile-user-img"><span class="avatar avatar-xl shape bg-primary" style="font-size:36px">H</span><label class="profile-edit-icon" aria-label="Изменить логотип"><i class="feather-edit-2"></i><input type="file" accept=".svg,.png"></label></div>
+					<div class="profile-user-img"><span class="avatar avatar-xl shape bg-secondary" style="font-size:36px">H</span></div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-surface w-100 kit-row">
+					<div class="kit-item"><span class="activity-sub-list"><img src="assets/img/activity-01.jpg" width="80" height="64" alt="Скриншот" style="border-radius:8px"></span></div>
+					<div class="kit-item"><span class="dash-boxs comman-flex-center m-0"><i class="feather-image"></i></span></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Плитки категорий</div>
+			<div class="kit-row">
+				<span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-shield"></i></span>
+				<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-compass"></i></span>
+				<span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-search"></i></span>
+				<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-file-text"></i></span>
+				<span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-monitor"></i></span>
+				<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-check-square"></i></span>
+				<span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-message-circle"></i></span>
+				<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-bar-chart-2"></i></span>
+				<span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-globe"></i></span>
+				<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-lock"></i></span>
+			</div>
+			<div class="kit-row mt-4">
+				<span class="doctor-box-icon"><i class="feather-shield"></i></span>
+				<span class="dash-boxs comman-flex-center m-0"><i class="feather-shield"></i></span>
+				<span class="menu-side-demo set-about-icon"><i class="feather-shield"></i></span>
+			</div>
+		</div>
+
+		<div class="kit-group kit-surface">
+			<div class="kit-group__title">Цвета проекта</div>
+			<ul class="theme-colors" data-kit-swatches>
+				<li><span class="active" style="background:#3498A9;border-color:#3498A9" title="#3498A9"><i class="feather-check"></i></span></li>
+				<li><span style="background:#8AAF00;border-color:#8AAF00" title="#8AAF00"><i class="feather-check"></i></span></li>
+				<li><span style="background:#0A73BE;border-color:#0A73BE" title="#0A73BE"><i class="feather-check"></i></span></li>
+				<li><span style="background:#16161A;border-color:#16161A" title="#16161A"><i class="feather-check"></i></span></li>
+				<li><span class="theme-colors-add" title="Добавить цвет"><i class="feather-plus" style="visibility:visible"></i></span></li>
+			</ul>
+		</div>
+	</section>
+
+	<!-- ================= ПАГИНАЦИЯ ================= -->
+	<section class="kit-section" id="pagination">
+		<h2>Пагинация</h2>
+		<div class="kit-group kit-surface">
+			<div class="row align-items-center g-3">
+				<div class="col-sm-5"><div class="dataTables_info" role="status">Показаны 1–5 из 14 сценариев</div></div>
+				<div class="col-sm-7">
+					<div class="dataTables_paginate paging_simple_numbers p-0">
+						<ul class="pagination justify-content-sm-end" data-kit-pagination>
+							<li class="paginate_button page-item previous disabled"><a href="#" class="page-link">Назад</a></li>
+							<li class="paginate_button page-item active"><a href="#" class="page-link">1</a></li>
+							<li class="paginate_button page-item"><a href="#" class="page-link">2</a></li>
+							<li class="paginate_button page-item"><a href="#" class="page-link">3</a></li>
+							<li class="paginate_button page-item disabled"><span class="page-link">…</span></li>
+							<li class="paginate_button page-item"><a href="#" class="page-link">10</a></li>
+							<li class="paginate_button page-item next"><a href="#" class="page-link">Вперёд</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="kit-group kit-surface kit-row">
+			<div class="kit-item">
+				<ul class="pagination mb-0" data-kit-pagination>
+					<li class="page-item"><a class="page-link" href="#" aria-label="Назад">«</a></li>
+					<li class="page-item"><a class="page-link" href="#">1</a></li>
+					<li class="page-item"><span class="page-link">…</span></li>
+					<li class="page-item"><a class="page-link" href="#">6</a></li>
+					<li class="page-item active"><a class="page-link" href="#">7</a></li>
+					<li class="page-item"><a class="page-link" href="#">8</a></li>
+					<li class="page-item"><span class="page-link">…</span></li>
+					<li class="page-item"><a class="page-link" href="#">10</a></li>
+					<li class="page-item"><a class="page-link" href="#" aria-label="Вперёд">»</a></li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= СТЕППЕР ================= -->
+	<section class="kit-section" id="stepper">
+		<h2>Степпер и номера разделов</h2>
+		<div class="kit-group card">
+			<div class="card-body">
+				<div class="wizard">
+					<ul class="nav nav-tabs justify-content-center" role="tablist">
+						<li class="nav-item flex-fill" role="presentation">
+							<a class="nav-link done rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 1 пройден"><i class="feather-check"></i></a>
+							<span class="wizard-label">Область тестирования</span>
+						</li>
+						<li class="nav-item flex-fill" role="presentation">
+							<a class="nav-link active rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 2">2</a>
+							<span class="wizard-label">Регулярность</span>
+						</li>
+						<li class="nav-item flex-fill" role="presentation">
+							<a class="nav-link rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 3">3</a>
+							<span class="wizard-label">Уведомления</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-surface w-100" style="max-width:402px">
+					<div class="wizard wizard-sm">
+						<ul class="nav nav-tabs justify-content-center" role="tablist">
+							<li class="nav-item flex-fill"><a class="nav-link done rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 1 пройден"><i class="feather-check"></i></a><span class="wizard-label">Область<br>тестирования</span></li>
+							<li class="nav-item flex-fill"><a class="nav-link active rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 2">2</a><span class="wizard-label">Регулярность</span></li>
+							<li class="nav-item flex-fill"><a class="nav-link rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 3">3</a><span class="wizard-label">Уведомления</span></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-surface w-100">
+					<div class="d-flex align-items-center gap-3">
+						<span class="avatar avatar-sm bg-primary m-0">1</span>
+						<div class="form-heading"><h4 class="mb-0">Область тестирования</h4></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= КАРТОЧКИ ================= -->
+	<section class="kit-section" id="cards">
+		<h2>Карточки и списки</h2>
+
+		<!-- Сценарии проверки: дашборд -->
+		<div class="kit-group">
+			<div class="kit-group__title">Сценарии проверки (дашборд проекта)</div>
+			<div class="card card-table">
+				<div class="card-body">
+					<div class="page-table-header mb-2">
+						<div class="row align-items-center">
+							<div class="col"><div class="doctor-table-blk"><h3>Сценарии проверки</h3></div></div>
+							<div class="col-auto"><span class="badge badge-soft-dark">3 из 3</span></div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table border-0 custom-table comman-table mb-0">
+							<tbody>
+								<tr>
+									<td>
+										<h2 style="font-weight:500">Полный аудит</h2>
+										<div class="d-flex align-items-center gap-3 mt-1"><span class="profile-image"><a href="#"><span class="avatar avatar-xs">АТ</span>Артем Т.</a></span><a href="#" class="text-muted" style="font-size:12px;text-decoration:underline">Страница сценария</a></div>
+									</td>
+									<td class="text-end"><button type="button" class="btn btn-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#kit-modal-launch">Запустить</button></td>
+								</tr>
+								<tr>
+									<td>
+										<h2 style="font-weight:500">Топ-10 страниц</h2>
+										<div class="d-flex align-items-center gap-3 mt-1"><span class="profile-image"><a href="#"><span class="avatar avatar-xs">АТ</span>Артем Т.</a></span><a href="#" class="text-muted" style="font-size:12px;text-decoration:underline">Страница сценария</a></div>
+									</td>
+									<td class="text-end"><button type="button" class="btn btn-light btn-rounded">Запустить</button></td>
+								</tr>
+								<tr>
+									<td>
+										<h2 style="font-weight:500">Раздел «Врачи»</h2>
+										<div class="d-flex align-items-center gap-3 mt-1"><span class="profile-image"><a href="#"><span class="avatar avatar-xs">ЛМ</span>Лера М.</a></span><a href="#" class="text-muted" style="font-size:12px;text-decoration:underline">Страница сценария</a></div>
+									</td>
+									<td class="text-end"><button type="button" class="btn btn-light btn-rounded">Запустить</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="p-3">
+						<button type="button" class="btn btn-outline-primary btn-rounded w-100">Смотреть все сценарии</button>
+						<div class="alert alert-light mt-3 mb-0" role="alert">
+							<strong style="font-weight:600">Запустить сценарий «Полный аудит»?</strong>
+							<p class="mb-3 mt-1" style="font-size:13px;color:var(--muted)">Проверка займёт около 5 минут, результаты появятся в истории после завершения.</p>
+							<div class="doctor-submit">
+								<button type="button" class="btn btn-primary submit-form me-2">Запустить</button>
+								<button type="button" class="btn btn-primary cancel-form">Отменить</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Список сценариев -->
+		<div class="kit-group">
+			<div class="kit-group__title">Список сценариев (страница «Сценарии»)</div>
+			<div class="card card-table">
+				<div class="card-body">
+					<div class="page-table-header mb-2">
+						<div class="row align-items-center g-2">
+							<div class="col">
+								<div class="doctor-table-blk">
+									<h3>Сценарии</h3>
+									<div class="doctor-search-blk">
+										<div class="top-nav-search table-search-blk">
+											<form onsubmit="return false"><input type="text" class="form-control" placeholder="Найти сценарий"><a class="btn"><i class="feather-search"></i></a></form>
+										</div>
+										<div class="add-group">
+											<a href="#" class="btn btn-primary ms-2" aria-label="Новый сценарий"><i class="feather-plus"></i></a>
+											<a href="#" class="btn btn-primary ms-2" aria-label="Обновить"><i class="feather-refresh-cw"></i></a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-auto">
+								<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
+									<li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab">Активные</a></li>
+									<li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab">Неактивные</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table border-0 custom-table comman-table mb-0">
+							<thead>
+								<tr>
+									<th><div class="form-check check-tables"><input class="form-check-input" type="checkbox" aria-label="Выбрать все"></div></th>
+									<th>Сценарий</th>
+									<th>Автор</th>
+									<th>Создан</th>
+									<th>Категорий</th>
+									<th>Тестов</th>
+									<th>Страниц</th>
+									<th>Регулярность</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><div class="form-check check-tables"><input class="form-check-input" type="checkbox" aria-label="Выбрать"></div></td>
+									<td><h2><a href="#" style="font-weight:500">Полный аудит</a></h2> <span class="badge badge-soft-success ms-1">#3</span></td>
+									<td class="profile-image"><a href="#"><span class="avatar avatar-xs">АТ</span>Артем Т.</a></td>
+									<td>12.06.2026</td>
+									<td>10</td>
+									<td>154/154</td>
+									<td>1 197/1 197</td>
+									<td><span class="custom-badge status-green"><i class="feather-check-circle"></i>Каждый день</span></td>
+									<td class="text-end">
+										<div class="dropdown dropdown-action">
+											<a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Действия"><i class="feather-more-vertical"></i></a>
+											<div class="dropdown-menu dropdown-menu-end">
+												<a class="dropdown-item" href="#"><i class="feather-arrow-up-right m-r-5"></i> Открыть</a>
+												<a class="dropdown-item" href="#"><i class="feather-copy m-r-5"></i> Скопировать и изменить</a>
+												<a class="dropdown-item text-danger" href="#"><i class="feather-slash m-r-5"></i> Деактивировать</a>
+											</div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><div class="form-check check-tables"><input class="form-check-input" type="checkbox" aria-label="Выбрать"></div></td>
+									<td><h2><a href="#" style="font-weight:500">Топ-10 страниц</a></h2> <span class="badge badge-soft-success ms-1">#1</span></td>
+									<td class="profile-image"><a href="#"><span class="avatar avatar-xs">АТ</span>Артем Т.</a></td>
+									<td>03.07.2026</td>
+									<td>5</td>
+									<td>54/154</td>
+									<td>10/1 197</td>
+									<td><span class="custom-badge status-orange"><i class="feather-slash"></i>Отложено</span></td>
+									<td class="text-end"><a href="#" class="action-icon ms-auto" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a></td>
+								</tr>
+								<tr>
+									<td><div class="form-check check-tables"><input class="form-check-input" type="checkbox" aria-label="Выбрать"></div></td>
+									<td><h2><a href="#" style="font-weight:500">Раздел «Врачи»</a></h2> <span class="badge badge-soft-success ms-1">#2</span></td>
+									<td class="profile-image"><a href="#"><span class="avatar avatar-xs">ЛМ</span>Лера М.</a></td>
+									<td>21.08.2026</td>
+									<td>3</td>
+									<td>31/154</td>
+									<td>—</td>
+									<td><span class="custom-badge status-grey"><i class="feather-info"></i>Не регулярно</span></td>
+									<td class="text-end"><a href="#" class="action-icon ms-auto" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="row align-items-center g-2 px-3 pb-3">
+						<div class="col-sm-5"><div class="dataTables_info ps-0">Показаны 1–3 из 14</div></div>
+						<div class="col-sm-7">
+							<div class="dataTables_paginate p-0">
+								<ul class="pagination justify-content-sm-end" data-kit-pagination>
+									<li class="paginate_button page-item previous disabled"><a href="#" class="page-link">Назад</a></li>
+									<li class="paginate_button page-item active"><a href="#" class="page-link">1</a></li>
+									<li class="paginate_button page-item"><a href="#" class="page-link">2</a></li>
+									<li class="paginate_button page-item next"><a href="#" class="page-link">Вперёд</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Архив отчётов -->
+		<div class="kit-group">
+			<div class="kit-group__title">Архив отчётов</div>
+			<div class="card card-table">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table border-0 custom-table comman-table mb-0">
+							<thead><tr><th>Отчёт</th><th>Окончание проверки</th><th></th></tr></thead>
+							<tbody>
+								<tr>
+									<td><div class="d-flex align-items-center gap-3"><span class="doctor-box-icon doctor-box-accent doctor-box-sm m-0"><i class="feather-shield"></i></span><h2>Полный аудит<span>Автор: Артем Т.</span></h2></div></td>
+									<td>17:04:22 28.08.2026</td>
+									<td><div class="d-flex justify-content-end align-items-center gap-2"><a href="#" class="btn btn-light btn-rounded">Открыть</a><div class="add-group"><button type="button" class="btn btn-primary" aria-label="Скачать"><i class="feather-download"></i></button></div></div></td>
+								</tr>
+								<tr>
+									<td><div class="d-flex align-items-center gap-3"><span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-bar-chart-2"></i></span><h2>Топ-10 страниц<span>Автор: Артем Т.</span></h2></div></td>
+									<td>12:30:05 01.09.2026</td>
+									<td><div class="d-flex justify-content-end align-items-center gap-2"><a href="#" class="btn btn-light btn-rounded">Открыть</a><div class="add-group"><button type="button" class="btn btn-primary" aria-label="Скачать"><i class="feather-download"></i></button></div></div></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<!-- Параметр — значение -->
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Параметр — значение</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="heading-detail"><h4>Последняя частичная проверка</h4></div>
+						<div class="about-me-list">
+							<ul class="list-space">
+								<li><h4>Сценарий</h4><span>Топ-10 страниц</span></li>
+								<li><h4>Дата проведения</h4><span>01.09.2026, 12:30</span></li>
+								<li><h4>Проверено страниц</h4><span>10</span></li>
+								<li><h4>Успешных проверок</h4><span>7/10</span></li>
+							</ul>
+						</div>
+						<button type="button" class="btn btn-outline-primary btn-rounded w-100 mt-4">Открыть отчёт</button>
+					</div>
+				</div>
+			</div>
+			<!-- Последние отчёты -->
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Последние отчёты</div>
+				<div class="card card-table mb-0">
+					<div class="card-body">
+						<div class="page-table-header mb-2">
+							<div class="row align-items-center">
+								<div class="col"><div class="doctor-table-blk"><h3>Последние отчёты</h3></div></div>
+								<div class="col-auto"><a href="#" class="patient-views">Все отчёты</a></div>
+							</div>
+						</div>
+						<table class="table border-0 custom-table mb-0">
+							<tbody>
+								<tr><td>Полный аудит</td><td class="text-end" style="color:var(--muted)">28.09.2026</td></tr>
+								<tr><td>Топ-10 страниц</td><td class="text-end" style="color:var(--muted)">28.09.2026</td></tr>
+								<tr><td>Раздел «Врачи»</td><td class="text-end" style="color:var(--muted)">27.09.2026</td></tr>
+								<tr><td>Полный аудит</td><td class="text-end" style="color:var(--muted)">27.09.2026</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<!-- Логи -->
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Логи действий</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="heading-detail"><h4>Логи</h4></div>
+						<div class="activity">
+							<div class="activity-box">
+								<ul class="activity-list">
+									<li>
+										<div class="activity-user"><span class="avatar">АТ</span></div>
+										<div class="activity-content timeline-group-blk">
+											<div class="timeline-group flex-shrink-0"><h4>Сегодня</h4><span class="time">17:00</span></div>
+											<div class="comman-activitys flex-grow-1">
+												<h3>artem_teplov <span>запустил «Полный аудит»</span></h3>
+												<p>Окончание 17:04, 28.08.2026</p>
+												<span class="badge badge-soft-dark mt-2">Hadassah</span>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="activity-user"><span class="avatar">ЛМ</span></div>
+										<div class="activity-content timeline-group-blk">
+											<div class="timeline-group flex-shrink-0"><h4>Вчера</h4><span class="time">12:41</span></div>
+											<div class="comman-activitys flex-grow-1">
+												<h3>lera_m <span>скачала отчёт</span></h3>
+												<p>«Топ-10 страниц», PDF</p>
+												<span class="badge badge-soft-dark mt-2">Hadassah</span>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="text-center mt-3"><button type="button" class="btn btn-outline-primary btn-rounded">Показать все действия</button></div>
+					</div>
+				</div>
+			</div>
+			<!-- Ближайшие проверки -->
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Ближайшие проверки</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="heading-detail"><h4 class="mb-1">Ближайшие проверки</h4><p>9 запланировано</p></div>
+						<ul class="activity-feed">
+							<li class="feed-item d-flex justify-content-between"><div><div style="font-size:14px;font-weight:500">Полный аудит</div><div style="font-size:12px;color:var(--muted)">13.10.2026, 17:00</div></div><a href="#" class="text-danger" style="font-size:13px;font-weight:500">Отменить</a></li>
+							<li class="feed-item d-flex justify-content-between"><div><div style="font-size:14px;font-weight:500">Топ-10 страниц</div><div style="font-size:12px;color:var(--muted)">14.10.2026, 09:00</div></div><a href="#" class="text-danger" style="font-size:13px;font-weight:500">Отменить</a></li>
+							<li class="feed-item d-flex justify-content-between"><div><div style="font-size:14px;font-weight:500">Полный аудит</div><div style="font-size:12px;color:var(--muted)">14.10.2026, 17:00</div></div><a href="#" class="text-danger" style="font-size:13px;font-weight:500">Отменить</a></li>
+						</ul>
+						<button type="button" class="btn btn-outline-primary btn-rounded w-100 mt-4">Показать ещё 6</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Категории и тесты -->
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Категории и тесты (просмотр)</div>
+				<div id="kit-acc-view" class="custom-faq w-100">
+					<div class="card mb-1">
+						<div class="card-header">
+							<h5 class="accordion-faq m-0"><a href="#kit-acc-1" data-bs-toggle="collapse" aria-expanded="true"><span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-shield"></i></span><span class="accordion-faq__title">Техническая доступность и безопасность</span><span class="accordion-faq__count">3 теста</span><i class="feather-chevron-down accordion-faq__chevron"></i></a></h5>
+						</div>
+						<div id="kit-acc-1" class="collapse show" data-bs-parent="#kit-acc-view">
+							<div class="card-body pt-0">
+								<ul class="activity-feed ms-4">
+									<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>SSL-сертификат</li>
+									<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>Редиректы HTTP → HTTPS</li>
+									<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>Заголовки безопасности</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="card mb-1">
+						<div class="card-header">
+							<h5 class="accordion-faq m-0"><a class="collapsed" href="#kit-acc-2" data-bs-toggle="collapse" aria-expanded="false"><span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-compass"></i></span><span class="accordion-faq__title">Навигация, шапка и футер</span><span class="accordion-faq__count">2 теста</span><i class="feather-chevron-down accordion-faq__chevron"></i></a></h5>
+						</div>
+						<div id="kit-acc-2" class="collapse" data-bs-parent="#kit-acc-view">
+							<div class="card-body pt-0">
+								<ul class="activity-feed ms-4">
+									<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>Ссылки меню</li>
+									<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>Мобильное меню</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Категории с выбором (создание сценария)</div>
+				<div id="kit-acc-edit" class="custom-faq w-100">
+					<div class="card mb-1">
+						<div class="card-header">
+							<h5 class="accordion-faq m-0 d-flex align-items-center gap-3">
+								<label class="custom_check mb-0" style="padding-left:20px"><input type="checkbox" checked aria-label="Выбрать категорию"><span class="checkmark"></span></label>
+								<a href="#kit-acc-3" data-bs-toggle="collapse" aria-expanded="true" class="flex-grow-1"><span class="doctor-box-icon doctor-box-accent doctor-box-sm"><i class="feather-shield"></i></span><span class="accordion-faq__title">Техническая доступность и безопасность</span><span class="accordion-faq__count">1 из 3</span><i class="feather-chevron-down accordion-faq__chevron"></i></a>
+							</h5>
+						</div>
+						<div id="kit-acc-3" class="collapse show" data-bs-parent="#kit-acc-edit">
+							<div class="card-body pt-0 ps-5">
+								<label class="custom_check d-block">SSL-сертификат<input type="checkbox" checked><span class="checkmark"></span></label>
+								<label class="custom_check d-block">Редиректы HTTP → HTTPS<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check d-block mb-0">Заголовки безопасности<input type="checkbox"><span class="checkmark"></span></label>
+							</div>
+						</div>
+					</div>
+					<div class="card mb-1">
+						<div class="card-header">
+							<h5 class="accordion-faq m-0 d-flex align-items-center gap-3">
+								<label class="custom_check mb-0" style="padding-left:20px"><input type="checkbox" checked aria-label="Выбрать выборку"><span class="checkmark"></span></label>
+								<a class="collapsed flex-grow-1" href="#kit-acc-4" data-bs-toggle="collapse" aria-expanded="false"><span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-clock"></i></span><span class="accordion-faq__title">Выборки тестирования</span><span class="accordion-faq__count">1 из 4</span><i class="feather-chevron-down accordion-faq__chevron"></i></a>
+							</h5>
+						</div>
+						<div id="kit-acc-4" class="collapse" data-bs-parent="#kit-acc-edit">
+							<div class="card-body pt-0 ps-5">
+								<label class="custom_check d-block">Верхнеуровневые страницы<input type="checkbox" checked><span class="checkmark"></span></label>
+								<label class="custom_check d-block">Синглы разных разделов (до 10 шт.)<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check d-block">Синглы разных разделов (до 100 шт.)<input type="checkbox"><span class="checkmark"></span></label>
+								<label class="custom_check d-block mb-0">Все страницы сайта<input type="checkbox"><span class="checkmark"></span></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Тесты в отчёте -->
+		<div class="kit-group">
+			<div class="kit-group__title">Тесты в отчёте</div>
+			<div class="card">
+				<div class="card-header d-flex align-items-center gap-3">
+					<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="feather-file-text"></i></span>
+					<h4 class="card-title flex-grow-1">Контент и данные</h4>
+					<span class="badge badge-soft-warning">1/2</span>
+				</div>
+				<div class="card-body pt-0">
+					<ul class="list-group notification-list">
+						<li class="list-group-item">
+							<div class="d-flex flex-wrap align-items-start gap-3">
+								<i class="feather-info text-warning" style="font-size:20px"></i>
+								<div class="flex-grow-1" style="min-width:200px;flex-basis:0">
+									<div style="font-size:15px;font-weight:500">Битые ссылки</div>
+									<div style="font-size:14px;color:var(--text-2)">Найдено 47 неработающих внутренних ссылок по всему сайту</div>
+									<ul class="list-unstyled mt-3 mb-0" style="font-size:14px">
+										<li class="py-2 border-top"><a href="#">hadassah.moscow/doctors/old-page/</a> <span style="color:var(--muted)">— HTTP 404</span></li>
+										<li class="py-2 border-top"><a href="#">hadassah.moscow/news/2024/</a> <span style="color:var(--muted)">— HTTP 404</span></li>
+									</ul>
+									<div class="invoice-load-btn text-start mt-2 mb-3"><button type="button" class="btn"><span></span>Показать ещё 45 ссылок</button></div>
+									<ul class="nav activity-sub-list">
+										<li><img src="assets/img/activity-01.jpg" width="80" height="64" alt="Скриншот 1"></li>
+										<li><img src="assets/img/activity-02.jpg" width="80" height="64" alt="Скриншот 2"></li>
+										<li><img src="assets/img/activity-03.jpg" width="80" height="64" alt="Скриншот 3"></li>
+									</ul>
+								</div>
+								<span class="custom-badge status-red">Провалено</span>
+							</div>
+						</li>
+						<li class="list-group-item">
+							<div class="d-flex flex-wrap align-items-start gap-3">
+								<i class="feather-check-circle text-success" style="font-size:20px"></i>
+								<div class="flex-grow-1" style="min-width:200px;flex-basis:0">
+									<div style="font-size:15px;font-weight:500">Актуальность контактных данных</div>
+									<div style="font-size:14px;color:var(--text-2)">Телефоны и адрес совпадают на всех 12 страницах</div>
+								</div>
+								<span class="custom-badge status-green">Успешно</span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<!-- Уведомления -->
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Уведомления (страница сценария)</div>
+				<div class="card mb-0">
+					<div class="card-header"><h4 class="card-title">Уведомления</h4></div>
+					<div class="card-body pt-0">
+						<ul class="list-group notification-list">
+							<li class="list-group-item d-flex flex-wrap align-items-center justify-content-between gap-3">
+								<div><div style="font-size:14px;font-weight:500">Проведённые проверки</div><div style="font-size:12px;color:var(--muted)">Пройдена при успешности от 80%</div></div>
+								<div class="personal-activity mb-0"><div class="personal-icons"><i class="fa-brands fa-telegram"></i></div><div class="views-personal"><h4>@artem_teplov</h4></div></div>
+							</li>
+							<li class="list-group-item d-flex flex-wrap align-items-center justify-content-between gap-3">
+								<div style="font-size:14px;font-weight:500">О смене статуса теста</div>
+								<div class="personal-activity mb-0"><div class="personal-icons"><i class="feather-mail"></i></div><div class="views-personal"><h4>artem_teplov@gmail.com</h4></div></div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- Доступные проекты -->
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Доступные проекты (профиль)</div>
+				<div class="card mb-0">
+					<div class="card-header"><h4 class="card-title">Доступные проекты</h4></div>
+					<div class="card-body pt-0">
+						<ul class="list-group notification-list">
+							<li class="list-group-item d-flex align-items-center gap-3">
+								<span class="avatar avatar-sm shape bg-secondary m-0">H</span>
+								<div class="flex-grow-1"><div style="font-size:14px;font-weight:500">Hadassah</div><span class="avatar-group mt-1"><span class="avatar avatar-xs">АТ</span><span class="avatar avatar-xs">ЛМ</span></span></div>
+								<span style="font-size:12px;color:var(--muted)">Закрепить в меню</span>
+								<div class="status-toggle"><input type="checkbox" id="kit-pin-1" class="check" checked><label for="kit-pin-1" class="checktoggle">вкл</label></div>
+							</li>
+							<li class="list-group-item d-flex align-items-center gap-3">
+								<span class="avatar avatar-sm shape m-0">A</span>
+								<div class="flex-grow-1"><div style="font-size:14px;font-weight:500">ABC Medicine</div><span class="avatar-group mt-1"><span class="avatar avatar-xs">АТ</span></span></div>
+								<span style="font-size:12px;color:var(--muted)">Закрепить в меню</span>
+								<div class="status-toggle"><input type="checkbox" id="kit-pin-2" class="check"><label for="kit-pin-2" class="checktoggle">выкл</label></div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Загрузка логотипа -->
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Загрузка логотипа</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="input-block mb-0">
+							<label class="col-form-label">Логотип проекта <span class="star-red">*</span></label>
+							<div class="settings-btn">
+								<input type="file" accept=".svg,.png" name="logo" class="hide-input" data-kit-file>
+								<span class="file-name" data-kit-file-name>Файл не выбран</span>
+								<label class="upload" aria-label="Выбрать файл"><i class="feather-upload"></i></label>
+							</div>
+							<p class="settings-size">Формат <span>SVG или PNG</span>, минимум <span>70×70 px</span></p>
+							<div class="upload-images">
+								<span class="avatar avatar-lg shape bg-secondary m-0">H</span>
+								<button type="button" class="btn-icon" aria-label="Удалить логотип"><i class="feather-x-circle"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Карточка с шапкой</div>
+				<div class="card mb-0">
+					<div class="card-header"><h4 class="card-title">Выборки тестирования</h4></div>
+					<div class="card-body pt-0">
+						<ul class="activity-feed activity-feed-check ms-2">
+							<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>Верхнеуровневые страницы</li>
+							<li class="feed-item"><i class="feather-check-circle text-success me-2"></i>Все страницы сайта</li>
+						</ul>
+					</div>
+				</div>
+				<div class="card-box w-100 mb-0 mt-2">
+					<div class="heading-detail"><h4 class="mb-1">Отправка уведомлений</h4><p class="mb-0">По этому сценарию уведомления не отправляются</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Запуск проверки (страница сценария)</div>
+			<div class="card">
+				<div class="card-header"><h4 class="card-title">Запуск проверки</h4></div>
+				<div class="card-body pt-0">
+					<div class="d-flex flex-wrap gap-2 mb-3">
+						<button type="button" class="btn btn-outline-primary btn-rounded">Запустить сейчас</button>
+						<button type="button" class="btn btn-outline-primary btn-rounded active">Запланировать отложенную проверку</button>
+						<button type="button" class="btn btn-outline-danger btn-rounded">Отменить отложенную проверку</button>
+					</div>
+					<div class="card-box card-box-tint">
+						<div class="d-flex flex-wrap align-items-end gap-3">
+							<div class="local-forms mb-0"><label>Дата</label><div class="cal-icon kit-w-date"><input type="text" class="form-control" value="10.09.2026"></div></div>
+							<div class="local-forms mb-0"><label>Время</label><div class="time-icon kit-w-time"><input type="text" class="form-control" value="09:00"></div></div>
+							<button type="button" class="btn btn-primary btn-rounded px-4" style="height:45px">Подтвердить</button>
+						</div>
+					</div>
+					<div class="alert alert-warning mt-3 mb-0" role="alert"><i class="feather-info me-2"></i><strong>Отложенная проверка запланирована</strong> на 10.09.2026, 09:00</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Регулярность проверки (страница сценария)</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+							<div class="heading-detail"><h4 class="mb-1">Регулярность проверки</h4><p class="mb-0">Автоматический запуск по расписанию</p></div>
+							<span class="custom-badge status-green" style="min-width:0"><i class="feather-check-circle"></i>Регулярно</span>
+						</div>
+						<div class="card-box card-box-tint d-flex align-items-center justify-content-between gap-3">
+							<div class="dash-content"><p class="mb-1">Время проверки</p><h2 class="mb-0">17:00</h2></div>
+							<button type="button" class="btn btn-primary btn-rounded px-4">Изменить</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Сводка по сценарию (дашборд проекта)</div>
+				<div class="card card-table mb-0">
+					<div class="card-body">
+						<div class="page-table-header mb-3">
+							<div class="doctor-table-blk mb-3"><h3>Сводка по сценарию</h3></div>
+							<select class="form-control select">
+								<option>Полный аудит — Артем Т.</option>
+								<option>Топ-10 страниц — Артем Т.</option>
+								<option>Раздел «Врачи» — Лера М.</option>
+							</select>
+						</div>
+						<table class="table border-0 custom-table mb-0">
+							<tbody>
+								<tr><td><h2>28.08.2026, 17:00<span>12 страниц, 33/50 успешных</span></h2></td><td class="text-end"><a href="#" class="patient-views">Открыть</a></td></tr>
+								<tr><td><h2>27.08.2026, 17:00<span>12 страниц, 35/50 успешных</span></h2></td><td class="text-end"><a href="#" class="patient-views">Открыть</a></td></tr>
+								<tr><td><h2>26.08.2026, 17:00<span>12 страниц, 35/50 успешных</span></h2></td><td class="text-end"><a href="#" class="patient-views">Открыть</a></td></tr>
+							</tbody>
+						</table>
+						<div class="invoice-load-btn my-3"><button type="button" class="btn"><span></span>Загрузить более ранние отчёты</button></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= HERO ================= -->
+	<section class="kit-section" id="hero">
+		<h2>Hero-блоки и статистика</h2>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Сводка отчёта</div>
+			<div class="good-morning-blk">
+				<div class="row align-items-center">
+					<div class="col-auto ps-4">
+						<div class="wallet-widget general-health">
+							<div class="circle-bar">
+								<div data-kit-circle="66">
+									<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"></circle><circle class="kit-circle-arc" cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"></circle></svg>
+									<b>66%</b>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="morning-user ps-0">
+							<h2>33 из 50 тестов прошли успешно</h2>
+							<p>Сводка по проверке «Полный аудит» · завершена в 17:04:22 28.08.2026</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Шапка профиля</div>
+			<div class="doctor-profile-head profile-head-row">
+				<div class="profile-user-box">
+					<div class="profile-user-img"><span class="avatar avatar-xl">АТ</span></div>
+					<div class="names-profiles"><h4>artem_teplov</h4><h5>artem@808group.ru</h5></div>
+				</div>
+				<div class="follow-btn-group"><button type="button" class="btn btn-info follow-btns">Редактировать данные</button></div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Шапка профиля в режиме редактирования</div>
+			<div class="doctor-profile-head profile-head-row">
+				<div class="profile-user-box">
+					<div class="profile-user-img"><span class="avatar avatar-xl">АТ</span><label class="profile-edit-icon" aria-label="Изменить аватар"><i class="feather-edit-2"></i><input type="file" accept="image/*"></label></div>
+					<div class="names-profiles"><h4>artem_teplov</h4><h5>artem@808group.ru</h5></div>
+				</div>
+				<div class="follow-btn-group"><button type="button" class="btn btn-info message-btns">Отменить</button><button type="button" class="btn btn-info follow-btns">Сохранить</button></div>
+			</div>
+			<div class="alert alert-warning mt-3 mb-0" role="alert"><i class="feather-info me-2"></i><strong>Вы редактируете данные аккаунта.</strong> Не забудьте сохранить изменения — иначе они не применятся</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Виджеты</div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="dash-widget">
+						<div class="dash-boxs comman-flex-center"><i class="feather-file"></i></div>
+						<div class="dash-content dash-count">
+							<h4>Проверено страниц</h4>
+							<h2>1 197</h2>
+							<p><span class="passive-view"><i class="feather-arrow-up-right me-1"></i>12%</span> к прошлой проверке</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="dash-widget">
+						<div class="dash-boxs comman-flex-center"><i class="feather-check-circle"></i></div>
+						<div class="dash-content dash-count">
+							<h4>Успешных тестов</h4>
+							<h2>33/50</h2>
+							<p><span class="negative-view"><i class="feather-arrow-down-right me-1"></i>4%</span> к прошлой проверке</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="dash-widget">
+						<div class="dash-boxs comman-flex-center"><i class="feather-alert-triangle"></i></div>
+						<div class="dash-content dash-count">
+							<h4>Повторяющихся ошибок</h4>
+							<h2>4</h2>
+							<p>не пройдены 3 раза подряд</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-group__title">Плитки по категориям</div>
+			<div class="doctor-list-blk">
+				<div class="row g-3">
+					<div class="col-xl col-md-4 col-sm-6"><div class="doctor-widget border-right-bg"><div class="doctor-box-icon flex-shrink-0"><i class="feather-shield"></i></div><div class="doctor-content flex-grow-1"><h4><span>2</span><span>/4</span><span class="status-orange">50%</span></h4><h5>Безопасность</h5></div></div></div>
+					<div class="col-xl col-md-4 col-sm-6"><div class="doctor-widget border-right-bg"><div class="doctor-box-icon flex-shrink-0"><i class="feather-compass"></i></div><div class="doctor-content flex-grow-1"><h4><span>7</span><span>/7</span><span class="status-green">100%</span></h4><h5>Навигация</h5></div></div></div>
+					<div class="col-xl col-md-4 col-sm-6"><div class="doctor-widget border-right-bg"><div class="doctor-box-icon flex-shrink-0"><i class="feather-file-text"></i></div><div class="doctor-content flex-grow-1"><h4><span>5</span><span>/7</span><span class="status-orange">71%</span></h4><h5>Контент</h5></div></div></div>
+					<div class="col-xl col-md-4 col-sm-6"><div class="doctor-widget border-right-bg"><div class="doctor-box-icon flex-shrink-0"><i class="feather-bar-chart-2"></i></div><div class="doctor-content flex-grow-1"><h4><span>1</span><span>/4</span><span class="status-red">25%</span></h4><h5>SEO</h5></div></div></div>
+					<div class="col-xl col-md-4 col-sm-6"><div class="doctor-widget"><div class="doctor-box-icon flex-shrink-0"><i class="feather-lock"></i></div><div class="doctor-content flex-grow-1"><h4><span>1</span><span>/1</span><span class="status-green">100%</span></h4><h5>Антиспам</h5></div></div></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group kit-grid-2">
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Детализация по категориям</div>
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="heading-detail"><h4>Успешные проверки по категориям</h4></div>
+						<div class="skill-statistics"><div class="skills-head"><h5>Техническая доступность</h5><p>100%</p></div><div class="progress mb-0"><div class="progress-bar bg-success" style="width:100%"></div></div></div>
+						<div class="skill-statistics"><div class="skills-head"><h5>Контент и данные</h5><p>71%</p></div><div class="progress mb-0"><div class="progress-bar" style="width:71%;background:var(--accent)"></div></div></div>
+						<div class="skill-statistics"><div class="skills-head"><h5>SEO</h5><p>25%</p></div><div class="progress mb-0"><div class="progress-bar bg-danger" style="width:25%"></div></div></div>
+						<div class="skill-statistics mb-0"><div class="skills-head"><h5>Формы и согласия</h5><p>50%</p></div><div class="progress mb-0"><div class="progress-bar bg-warning" style="width:50%"></div></div></div>
+					</div>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-group__title mb-0">Кольцо на белом</div>
+				<div class="card wallet-widget general-health mb-0">
+					<div class="row align-items-center">
+						<div class="col-auto">
+							<div class="circle-bar">
+								<div data-kit-circle="66">
+									<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--border)" stroke-width="8"></circle><circle class="kit-circle-arc" cx="50" cy="50" r="44" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"></circle></svg>
+									<b><i class="feather-check-circle"></i></b>
+								</div>
+							</div>
+						</div>
+						<div class="col">
+							<div class="main-limit text-start">
+								<p>Успешность последней полной проверки</p>
+								<h4>66%</h4>
+								<ul class="nav chat-user-total mt-2"><li><i class="fa fa-circle old-users"></i>Успешно 33</li><li><i class="fa fa-circle low-users"></i>Провалено 17</li></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ПОПАПЫ ================= -->
+	<section class="kit-section" id="modals">
+		<h2>Попапы</h2>
+		<div class="kit-group kit-row">
+			<button type="button" class="btn btn-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#kit-modal-launch">Запустить «Полный аудит»</button>
+			<button type="button" class="btn btn-outline-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#kit-modal-members">Участники</button>
+			<button type="button" class="btn btn-outline-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#kit-modal-actions">Все действия</button>
+			<button type="button" class="btn btn-outline-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#kit-modal-logo">Логотип проекта</button>
+			<button type="button" class="btn btn-outline-danger btn-rounded" data-bs-toggle="modal" data-bs-target="#kit-modal-delete">Удалить логотип</button>
+		</div>
+
+		<div class="kit-group kit-grid-2 kit-modal-static">
+			<div class="kit-item">
+				<div class="modal" tabindex="-1">
+					<div class="modal-dialog m-0">
+						<div class="modal-content">
+							<div class="modal-header">
+								<div><h4 class="modal-title">Участники</h4><p class="mb-0" style="font-size:13px;color:var(--muted)">Проект Hadassah — 3 человека</p></div>
+								<button type="button" class="btn-close" aria-label="Закрыть"></button>
+							</div>
+							<div class="modal-body py-0">
+								<ul class="list-group list-group-flush notification-list">
+									<li class="list-group-item d-flex align-items-center gap-3 px-0"><span class="avatar avatar-sm m-0">АТ</span><div class="flex-grow-1"><div style="font-size:14px;font-weight:500">Артем Т.</div><div style="font-size:12px;color:var(--muted)">artem_teplov</div></div><span class="badge bg-dark">Администратор</span></li>
+									<li class="list-group-item d-flex align-items-center gap-3 px-0"><span class="avatar avatar-sm m-0">ЛМ</span><div class="flex-grow-1"><div style="font-size:14px;font-weight:500">Лера М.</div><div style="font-size:12px;color:var(--muted)">lera_m</div></div><span class="badge badge-soft-dark">Дизайнер</span></li>
+								</ul>
+							</div>
+							<div class="modal-footer"><button type="button" class="btn btn-outline-primary btn-rounded w-100">+ Пригласить участника</button></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="kit-item mt-4">
+					<div class="modal" tabindex="-1">
+						<div class="modal-dialog m-0">
+							<div class="modal-content">
+							<div class="modal-header"><h4 class="modal-title">Логотип проекта</h4><button type="button" class="btn-close" aria-label="Закрыть"></button></div>
+							<div class="modal-body">
+								<div class="d-flex align-items-center gap-3 mb-3">
+									<span class="avatar avatar-lg shape bg-secondary m-0">H</span>
+									<div><div style="font-size:14px;font-weight:500">Текущий логотип</div><div style="font-size:12px;color:var(--muted)">Загруженный логотип</div></div>
+								</div>
+								<div class="settings-btn">
+									<input type="file" accept=".svg,.png" class="hide-input" >
+									<span class="file-name" -name>Загрузить новый логотип</span>
+									<label class="upload" aria-label="Выбрать файл"><i class="feather-upload"></i></label>
+								</div>
+								<p class="settings-size">Формат <span>SVG или PNG</span>, минимум <span>70×70 px</span></p>
+								<div class="doctor-submit d-flex gap-2 mt-4">
+									<button type="button" class="btn btn-primary cancel-form flex-fill">Отменить</button>
+									<button type="button" class="btn btn-primary submit-form flex-fill" disabled>Сохранить</button>
+								</div>
+								<button type="button" class="btn btn-outline-danger btn-rounded w-100 mt-3">Удалить логотип</button>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="kit-col">
+				<div class="kit-item">
+					<div class="modal delete-modal" tabindex="-1">
+						<div class="modal-dialog m-0">
+							<div class="modal-content">
+								<div class="modal-body text-center">
+									<span class="dash-boxs comman-flex-center mx-auto" style="color:var(--error);background:var(--error-bg);border-color:var(--error-bg)"><i class="feather-trash-2"></i></span>
+									<h3>Удалить логотип?</h3>
+									<p class="mt-2 mb-0" style="font-size:13px;color:var(--muted)">Загруженный файл будет удалён. Вместо него появится заглушка с буквой «H»</p>
+									<div class="m-t-20"><a href="#" class="btn btn-white">Отмена</a> <button type="button" class="btn btn-danger">Удалить</button></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="kit-item">
+					<div class="modal" tabindex="-1">
+						<div class="modal-dialog m-0">
+							<div class="modal-content">
+								<div class="modal-header"><h4 class="modal-title">Сохранить новый логотип?</h4><button type="button" class="btn-close" aria-label="Закрыть"></button></div>
+								<div class="modal-body"><p class="mb-0" style="font-size:14px;color:var(--text-2)">Он заменит текущий знак проекта. Изменение будет видно в списке проектов и на странице Hadassah.</p></div>
+								<div class="modal-footer"><button type="button" class="btn btn-light">Отменить</button><button type="button" class="btn btn-primary">Сохранить</button></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= НАВИГАЦИЯ ================= -->
+	<section class="kit-section" id="nav">
+		<h2>Навигация</h2>
+		<div class="kit-group">
+			<div class="kit-app" data-kit-app>
+				<div class="header">
+					<div class="header-left"><a href="#" class="logo"><img src="assets/img/logo-mark.svg" width="35" height="35" alt=""><span>Аудит</span></a></div>
+					<a id="toggle_btn" href="javascript:void(0);" data-kit-toggle-mini aria-label="Свернуть меню"><i class="feather-menu"></i></a>
+					<div class="top-nav-search">
+						<form onsubmit="return false"><input type="text" class="form-control" placeholder="Поиск по проекту"><a class="btn"><i class="feather-search"></i></a></form>
+					</div>
+					<ul class="nav user-menu float-end">
+						<li class="nav-item dropdown">
+							<a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-label="Уведомления"><i class="feather-bell"></i><span class="pulse"></span></a>
+							<div class="dropdown-menu dropdown-menu-end notifications">
+								<div class="topnav-dropdown-header"><span>Уведомления</span></div>
+								<div class="drop-scroll" style="height:auto">
+									<ul class="notification-list">
+										<li class="notification-message"><a href="#"><div class="media"><span class="avatar">АТ</span><div class="media-body"><p class="noti-details"><span class="noti-title">Полный аудит</span> завершён: 33 из 50 тестов</p><p class="noti-time"><span class="notification-time">4 минуты назад</span></p></div></div></a></li>
+										<li class="notification-message"><a href="#"><div class="media"><span class="avatar">ЛМ</span><div class="media-body"><p class="noti-details"><span class="noti-title">Лера М.</span> изменила сценарий <span class="noti-title">Топ-10 страниц</span></p><p class="noti-time"><span class="notification-time">2 часа назад</span></p></div></div></a></li>
+									</ul>
+								</div>
+								<div class="topnav-dropdown-footer"><a href="#">Все уведомления</a></div>
+							</div>
+						</li>
+						<li class="nav-item dropdown has-arrow user-profile-list">
+							<a href="#" class="dropdown-toggle nav-link user-link" data-bs-toggle="dropdown">
+								<div class="user-names"><h5>Артем Т.</h5><span>Администратор</span></div>
+								<span class="user-img"><span class="avatar">АТ</span></span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a class="dropdown-item" href="#">Профиль</a>
+								<a class="dropdown-item" href="#">Настройки</a>
+								<a class="dropdown-item" href="#">Выйти</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="sidebar">
+					<div class="sidebar-inner">
+						<div class="sidebar-menu">
+							<ul>
+								<li class="menu-title">Меню</li>
+								<li><a href="#"><span class="menu-side"><i class="feather-user"></i></span> <span>Профиль</span></a></li>
+								<li><a href="#"><span class="menu-side"><i class="feather-layers"></i></span> <span>Проекты</span></a></li>
+								<li class="submenu">
+									<a href="#" class="subdrop"><span class="menu-side"><i class="feather-bookmark"></i></span> <span>Выбранные проекты</span> <span class="menu-arrow"></span></a>
+									<ul style="display:block">
+										<li><a class="active" href="#"><span class="avatar avatar-xs shape bg-secondary m-0">H</span>Hadassah</a></li>
+										<li><a href="#"><span class="avatar avatar-xs shape m-0">М</span>Медскан на Яузе</a></li>
+									</ul>
+								</li>
+								<li><a href="#"><span class="menu-side"><i class="feather-settings"></i></span> <span>Настройки</span></a></li>
+							</ul>
+						</div>
+						<div class="sidebar-user">
+							<div class="logout-btn"><a href="#"><span class="avatar">АТ</span> <span>Артем Т.</span></a></div>
+						</div>
+					</div>
+				</div>
+				<div class="page-wrapper">
+					<div class="content">
+						<div class="page-header">
+							<ul class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">Проекты</a></li>
+								<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+								<li class="breadcrumb-item active">Hadassah</li>
+							</ul>
+						</div>
+						<div class="page-heading">
+							<div class="page-heading-main">
+								<div class="profile-user-img m-0"><span class="avatar avatar-lg shape bg-primary m-0" style="font-size:28px">H</span><label class="profile-edit-icon" aria-label="Изменить логотип"><i class="feather-edit-2"></i><input type="file" accept=".svg,.png"></label></div>
+								<div><h1>Hadassah</h1><p><i class="feather-link"></i><a href="#">hadassah-moscow.ru</a></p></div>
+							</div>
+						</div>
+						<div class="dash-widget mb-0">
+							<div class="dash-content"><h4>Последняя полная проверка</h4><h2 class="mb-2">66%</h2><p>33 из 50 тестов · 01.09.2026, 12:30</p></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="kit-group">
+			<div class="kit-app mini-sidebar" style="height:560px">
+				<div class="header">
+					<div class="header-left"><a href="#" class="logo"><img src="assets/img/logo-mark.svg" width="35" height="35" alt="Аудит"><span>Аудит</span></a></div>
+					<a id="toggle_btn_mini" href="javascript:void(0);" style="color:var(--ink);float:left;font-size:22px;height:70px;display:flex;align-items:center;padding:0 10px" aria-label="Развернуть меню"><i class="feather-menu"></i></a>
+				</div>
+				<div class="sidebar">
+					<div class="sidebar-inner">
+						<div class="sidebar-menu">
+							<ul>
+								<li class="menu-title">Меню</li>
+								<li><a href="#" title="Профиль"><span class="menu-side"><i class="feather-user"></i></span> <span>Профиль</span></a></li>
+								<li><a href="#" title="Проекты"><span class="menu-side"><i class="feather-layers"></i></span> <span>Проекты</span></a></li>
+								<li><a href="#" class="active" title="Выбранные проекты"><span class="menu-side"><i class="feather-bookmark"></i></span> <span>Выбранные проекты</span></a></li>
+								<li><a href="#" title="Настройки"><span class="menu-side"><i class="feather-settings"></i></span> <span>Настройки</span></a></li>
+							</ul>
+						</div>
+						<div class="sidebar-user">
+							<div class="logout-btn"><a href="#" title="Артем Т."><span class="avatar">АТ</span> <span>Артем Т.</span></a></div>
+						</div>
+					</div>
+				</div>
+				<div class="page-wrapper"><div class="content"><div class="page-header"><ul class="breadcrumb"><li class="breadcrumb-item"><a href="#">Проекты</a></li><li class="breadcrumb-item"><i class="feather-chevron-right"></i></li><li class="breadcrumb-item active">Hadassah</li></ul></div></div></div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= МОБИЛЬНЫЕ ================= -->
+	<section class="kit-section" id="mobile">
+		<h2>Мобильная версия</h2>
+		<div class="kit-group kit-row kit-row--top">
+			<div class="kit-item">
+				<div class="kit-phone has-tabbar">
+					<div class="header">
+						<div class="header-left kit-left"><a href="#" class="logo"><img src="assets/img/logo-mark.svg" width="35" height="35" alt=""><span>Аудит</span></a></div>
+					</div>
+					<div class="kit-phone__body">
+						<div class="page-header mb-2"><ul class="breadcrumb" style="font-size:13px"><li class="breadcrumb-item"><a href="#">Hadassah</a></li><li class="breadcrumb-item"><i class="feather-chevron-right"></i></li><li class="breadcrumb-item"><a href="#">Полный аудит</a></li><li class="breadcrumb-item"><i class="feather-chevron-right"></i></li><li class="breadcrumb-item active">Обновление</li></ul></div>
+						<div class="page-heading mb-3"><div class="page-heading-main"><div><h1>Обновление сценария</h1></div></div></div>
+						<div class="alert alert-info mb-3" role="alert" style="font-size:12px"><i class="feather-info me-1"></i>Предзаполнено из сценария «Полный аудит». Измените любой параметр и сохраните как новую редакцию.</div>
+						<div class="card mb-3"><div class="card-body p-3">
+							<div class="wizard wizard-sm">
+								<ul class="nav nav-tabs justify-content-center">
+									<li class="nav-item flex-fill"><a class="nav-link done rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 1 пройден"><i class="feather-check"></i></a><span class="wizard-label">Область<br>тестирования</span></li>
+									<li class="nav-item flex-fill"><a class="nav-link active rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 2">2</a><span class="wizard-label">Регулярность</span></li>
+									<li class="nav-item flex-fill"><a class="nav-link rounded-circle mx-auto d-flex align-items-center justify-content-center" href="#" aria-label="Шаг 3">3</a><span class="wizard-label">Уведомления</span></li>
+								</ul>
+							</div>
+						</div></div>
+						<div class="card mb-3"><div class="card-body p-3">
+							<div class="input-block mb-0"><label class="col-form-label pt-0">Название сценария</label><input type="text" class="form-control" value="Полный аудит #4"></div>
+						</div></div>
+						<div class="doctor-submit d-flex gap-2">
+							<button type="button" class="btn btn-primary submit-form flex-fill">Сохранить</button>
+							<button type="button" class="btn btn-primary cancel-form flex-fill">Отменить</button>
+						</div>
+					</div>
+					<nav class="mobile-tabbar">
+						<a href="#"><span class="menu-side"><i class="feather-layers"></i></span>Проекты</a>
+						<a href="#" class="active"><span class="menu-side"><i class="feather-user"></i></span>Профиль</a>
+						<a href="#"><span class="menu-side">H</span>Hadassah</a>
+						<a href="#"><span class="menu-side">A</span>ABC Med</a>
+					</nav>
+				</div>
+			</div>
+			<div class="kit-item">
+				<div class="kit-phone slide-nav" data-kit-phone>
+					<div class="header">
+						<div class="header-left"><a href="#" class="logo"><img src="assets/img/logo-mark.svg" width="35" height="35" alt=""><span>Аудит</span></a></div>
+						<a class="mobile_btn" href="#" data-kit-mobile-btn aria-label="Меню"><i class="feather-menu"></i></a>
+					</div>
+					<div class="kit-phone__body">
+						<div class="page-heading mb-3"><div class="page-heading-main"><div><h1>Страница профиля</h1><p>Данные аккаунта и доступные проекты</p></div></div></div>
+						<div class="doctor-profile-head profile-head-row">
+							<div class="profile-user-box"><div class="profile-user-img"><span class="avatar avatar-lg">АТ</span></div><div class="names-profiles"><h4>artem_teplov</h4><h5>artem@808group.ru</h5></div></div>
+							<div class="follow-btn-group w-100"><button type="button" class="btn btn-info follow-btns w-100">Редактировать данные</button></div>
+						</div>
+					</div>
+					<div class="sidebar-overlay" data-kit-overlay></div>
+					<div class="sidebar">
+						<div class="sidebar-inner">
+							<div class="sidebar-menu">
+								<ul>
+									<li class="menu-title">Меню</li>
+									<li><a href="#" class="active"><span class="menu-side"><i class="feather-user"></i></span> <span>Профиль</span></a></li>
+									<li><a href="#"><span class="menu-side"><i class="feather-layers"></i></span> <span>Проекты</span></a></li>
+									<li class="submenu">
+										<a href="#" class="subdrop"><span class="menu-side"><i class="feather-bookmark"></i></span> <span>Выбранные</span> <span class="menu-arrow"></span></a>
+										<ul style="display:block">
+											<li><a href="#"><span class="avatar avatar-xs shape bg-secondary m-0">H</span>Hadassah</a></li>
+										</ul>
+									</li>
+									<li><a href="#"><span class="menu-side"><i class="feather-settings"></i></span> <span>Настройки</span></a></li>
+								</ul>
+							</div>
+							<div class="sidebar-user">
+								<div class="logout-btn"><a href="#"><span class="avatar">АТ</span> <span>Артем Т.</span></a></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= ВХОД ================= -->
+	<section class="kit-section" id="auth">
+		<h2>Форма входа</h2>
+		<div class="kit-group">
+			<div class="login-wrapper login-center">
+				<div class="loginbox">
+					<div class="login-right">
+						<h2>Вход в аккаунт</h2>
+						<p class="account-subtitle">Введите логин и пароль для доступа к панели</p>
+						<form data-kit-auth novalidate>
+							<div class="input-block">
+								<label for="kit-login">Логин</label>
+								<input class="form-control" id="kit-login" type="text" placeholder="Введите логин" required>
+							</div>
+							<div class="input-block">
+								<label for="kit-pass">Пароль</label>
+								<div class="position-relative">
+									<input class="form-control pass-input" id="kit-pass" type="password" placeholder="Введите пароль" required>
+									<span class="profile-views feather-eye-off toggle-password"></span>
+								</div>
+							</div>
+							<div class="captcha-box remember-me">
+								<label class="custom_check">Я не робот<input type="checkbox" required><span class="checkmark"></span></label>
+							</div>
+							<div class="alert alert-danger d-none" role="alert" data-kit-auth-error>
+								<div class="d-flex align-items-start gap-2">
+									<i class="feather-x-circle" style="font-size:18px;margin-top:1px"></i>
+									<div><strong>Неверный логин или пароль</strong><div style="font-size:12px">Проверьте раскладку и попробуйте ещё раз</div></div>
+								</div>
+							</div>
+							<div class="login-btn mb-0">
+								<button class="btn btn-primary btn-block" type="submit">Войти</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+</main>
+
+<!-- ================= Модальные окна ================= -->
+<div class="modal fade" id="kit-modal-launch" tabindex="-1" aria-labelledby="kit-modal-launch-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div><h4 class="modal-title" id="kit-modal-launch-title">Запустить «Полный аудит»</h4><p class="mb-0" style="font-size:13px;color:var(--muted)">Проверьте настройки сценария. Запуск начнётся после подтверждения</p></div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+			<div class="modal-body">
+				<div class="about-me-list">
+					<ul class="list-space">
+						<li><h4>1. Область тестирования</h4><span>10 категорий · 154 теста · все страницы</span></li>
+						<li><h4>2. Регулярность</h4><span>Каждый день в 17:00</span></li>
+						<li><h4>3. Уведомления</h4><span>О проверках и критических ошибках</span></li>
+					</ul>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Отменить</button>
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-kit-toast="info">Запустить</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="kit-modal-members" tabindex="-1" aria-labelledby="kit-modal-members-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div><h4 class="modal-title" id="kit-modal-members-title">Участники</h4><p class="mb-0" style="font-size:13px;color:var(--muted)">Проект Hadassah — 3 человека</p></div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+			<div class="modal-body py-0">
+				<ul class="list-group list-group-flush notification-list">
+					<li class="list-group-item d-flex align-items-center gap-3 px-0"><span class="avatar avatar-sm m-0">АТ</span><div class="flex-grow-1"><div style="font-size:14px;font-weight:500">Артем Т.</div><div style="font-size:12px;color:var(--muted)">artem_teplov</div></div><span class="badge bg-dark">Администратор</span></li>
+					<li class="list-group-item d-flex align-items-center gap-3 px-0"><span class="avatar avatar-sm m-0">ЛМ</span><div class="flex-grow-1"><div style="font-size:14px;font-weight:500">Лера М.</div><div style="font-size:12px;color:var(--muted)">lera_m</div></div><span class="badge badge-soft-dark">Дизайнер</span></li>
+					<li class="list-group-item d-flex align-items-center gap-3 px-0"><span class="avatar avatar-sm m-0">ИК</span><div class="flex-grow-1"><div style="font-size:14px;font-weight:500">Игорь К.</div><div style="font-size:12px;color:var(--muted)">igor_k</div></div><span class="badge badge-soft-dark">Тестировщик</span></li>
+				</ul>
+			</div>
+			<div class="modal-footer"><button type="button" class="btn btn-outline-primary btn-rounded w-100">+ Пригласить участника</button></div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="kit-modal-logo" tabindex="-1" aria-label="Логотип проекта" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header"><h4 class="modal-title">Логотип проекта</h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div>
+			<div class="modal-body">
+				<div class="d-flex align-items-center gap-3 mb-3">
+					<span class="avatar avatar-lg shape bg-secondary m-0">H</span>
+					<div><div style="font-size:14px;font-weight:500">Текущий логотип</div><div style="font-size:12px;color:var(--muted)">Загруженный логотип</div></div>
+				</div>
+				<div class="settings-btn">
+					<input type="file" accept=".svg,.png" class="hide-input" data-kit-file>
+					<span class="file-name" data-kit-file-name>Загрузить новый логотип</span>
+					<label class="upload" aria-label="Выбрать файл"><i class="feather-upload"></i></label>
+				</div>
+				<p class="settings-size">Формат <span>SVG или PNG</span>, минимум <span>70×70 px</span></p>
+				<div class="doctor-submit d-flex gap-2 mt-4">
+					<button type="button" class="btn btn-primary cancel-form flex-fill" data-bs-dismiss="modal">Отменить</button>
+					<button type="button" class="btn btn-primary submit-form flex-fill" disabled>Сохранить</button>
+				</div>
+				<button type="button" class="btn btn-outline-danger btn-rounded w-100 mt-3" data-kit-swap-modal="#kit-modal-delete">Удалить логотип</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="kit-modal-actions" tabindex="-1" aria-labelledby="kit-modal-actions-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div><h4 class="modal-title" id="kit-modal-actions-title">Все действия</h4><p class="mb-0" style="font-size:13px;color:var(--muted)">По всем участникам и проектам</p></div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+			<div class="modal-body">
+				<div class="d-flex gap-2 mb-4">
+					<div class="dropdown">
+						<button class="dropdown-select dropdown-select-sm" type="button" data-bs-toggle="dropdown">Проект: Все</button>
+						<div class="dropdown-menu"><a class="dropdown-item active" href="#">Все проекты</a><a class="dropdown-item" href="#">Hadassah</a><a class="dropdown-item" href="#">Медскан на Яузе</a></div>
+					</div>
+					<div class="dropdown">
+						<button class="dropdown-select dropdown-select-sm" type="button" data-bs-toggle="dropdown">Участники: Все</button>
+						<div class="dropdown-menu"><a class="dropdown-item active" href="#">Все участники</a><a class="dropdown-item" href="#">Артем Т.</a><a class="dropdown-item" href="#">Лера М.</a></div>
+					</div>
+				</div>
+				<div class="activity">
+					<ul class="activity-list">
+						<li><div class="activity-user"><span class="avatar">АТ</span></div><div class="activity-content timeline-group-blk"><div class="timeline-group flex-shrink-0"><h4>Сегодня</h4><span class="time">17:00</span></div><div class="comman-activitys flex-grow-1"><h3>artem_teplov <span>запустил «Полный аудит»</span></h3><p>Окончание 17:04, 28.08.2026</p><span class="badge badge-soft-dark mt-2">Hadassah</span></div></div></li>
+						<li><div class="activity-user"><span class="avatar">АТ</span></div><div class="activity-content timeline-group-blk"><div class="timeline-group flex-shrink-0"><h4>Сегодня</h4><span class="time">16:12</span></div><div class="comman-activitys flex-grow-1"><h3>artem_teplov <span>скачал отчёт</span></h3><p>«Топ-10 страниц», PDF</p><span class="badge badge-soft-dark mt-2">Hadassah</span></div></div></li>
+						<li><div class="activity-user"><span class="avatar">ЛМ</span></div><div class="activity-content timeline-group-blk"><div class="timeline-group flex-shrink-0"><h4>Вчера</h4><span class="time">12:41</span></div><div class="comman-activitys flex-grow-1"><h3>lera_m <span>создала сценарий «Раздел „Врачи“»</span></h3><p>3 категории, 31 тест</p><span class="badge badge-soft-dark mt-2">Медскан на Яузе</span></div></div></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="kit-modal-delete" class="modal fade delete-modal" tabindex="-1" aria-label="Удалить логотип" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body text-center">
+				<span class="dash-boxs comman-flex-center mx-auto" style="color:var(--error);background:var(--error-bg);border-color:var(--error-bg)"><i class="feather-trash-2"></i></span>
+				<h3>Удалить логотип?</h3>
+				<p class="mt-2 mb-0" style="font-size:13px;color:var(--muted)">Загруженный файл будет удалён. Вместо него появится заглушка с буквой «H»</p>
+				<div class="m-t-20"><a href="#" class="btn btn-white" data-bs-dismiss="modal">Отмена</a> <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-kit-toast="success">Удалить</button></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="assets/js/jquery-3.7.1.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/select2.min.js"></script>
+<script src="assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+<script src="assets/plugins/toastr/toastr.min.js"></script>
+<script src="assets/js/kit.js"></script>
+</body>
+</html>

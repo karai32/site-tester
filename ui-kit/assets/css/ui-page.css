@@ -1,0 +1,504 @@
+/* Оформление страницы UI-кита (на страницах платформы не используется) */
+
+.kit {
+	max-width: 1180px;
+	margin: 0 auto;
+	padding: 60px 40px 120px;
+}
+
+.kit-header h1 {
+	font-size: 32px;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.kit-lead {
+	margin-top: 16px;
+	max-width: 860px;
+	font-size: 15px;
+	line-height: 1.6;
+	color: var(--text-2);
+}
+
+.kit-toc {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 30px;
+}
+
+.kit-toc a {
+	display: inline-flex;
+	align-items: center;
+	height: 32px;
+	padding: 0 14px;
+	border-radius: 8px;
+	background: var(--paper);
+	color: var(--ink);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.kit-toc a:hover {
+	background: var(--ink);
+	color: var(--paper);
+}
+
+.kit-section {
+	margin-top: 80px;
+	scroll-margin-top: 30px;
+}
+
+.kit-section > h2 {
+	font-size: 24px;
+	font-weight: 600;
+	padding-bottom: 16px;
+	margin-bottom: 0;
+	border-bottom: 2px solid var(--border);
+}
+
+.kit-desc {
+	margin-top: 14px;
+	margin-bottom: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	color: var(--text-2);
+	max-width: 900px;
+}
+
+.kit-group {
+	margin-top: 36px;
+}
+
+.kit-group__title {
+	margin-bottom: 16px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.kit-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 30px 24px;
+}
+
+.kit-row--top {
+	align-items: flex-start;
+}
+
+.kit-col {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.kit-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+	min-width: 0;
+}
+
+.kit-item--wide {
+	width: 100%;
+}
+
+.kit-grid-2 {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+}
+
+.kit-grid-3 {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 24px;
+}
+
+/* Подпись под элементом: что это в макете и из какого компонента 808 */
+.kit-spec {
+	font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+	font-size: 11.5px;
+	line-height: 1.55;
+	color: var(--text-2);
+}
+
+.kit-spec b {
+	font-weight: 600;
+	color: var(--ink);
+}
+
+.kit-spec .kit-src {
+	color: var(--accent-dark);
+}
+
+/* Белая подложка — элементы, которые в 808 лежат на карточке */
+.kit-surface {
+	padding: 24px;
+	border-radius: 12px;
+	background: var(--paper);
+}
+
+.kit-surface--dark {
+	background: var(--hero-gradient);
+}
+
+.kit-surface--dark .kit-spec,
+.kit-surface--dark .kit-spec b,
+.doctor-profile-head .kit-spec,
+.doctor-profile-head .kit-spec b {
+	color: var(--muted-2);
+}
+
+/* Палитра */
+.kit-colors {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 16px;
+}
+
+.kit-color__chip {
+	height: 80px;
+	border-radius: 12px;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.kit-color__name {
+	margin-top: 10px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.kit-color__hex {
+	margin-top: 2px;
+	font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+	font-size: 12px;
+}
+
+.kit-color__use {
+	margin-top: 2px;
+	font-size: 12px;
+	line-height: 1.4;
+	color: var(--text-2);
+}
+
+/* Замена цветов 808 → Figma */
+.kit-swap {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+	gap: 12px;
+}
+
+.kit-swap__row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	background: var(--paper);
+	font-size: 12px;
+}
+
+.kit-swap__chip {
+	width: 34px;
+	height: 34px;
+	flex-shrink: 0;
+	border-radius: 8px;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.kit-swap__arrow {
+	color: var(--muted);
+	font-size: 16px;
+}
+
+.kit-swap__text {
+	line-height: 1.4;
+}
+
+.kit-swap__text code {
+	font-size: 11px;
+	color: var(--ink);
+}
+
+/* Типографика */
+.kit-type {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	align-items: center;
+	gap: 30px;
+	padding: 20px 0;
+	border-bottom: 1px solid var(--border);
+}
+
+.kit-type:first-child {
+	padding-top: 0;
+}
+
+.kit-type:last-child {
+	border-bottom: 0;
+	padding-bottom: 0;
+}
+
+.kit-type > div:first-child > * {
+	margin-bottom: 0;
+}
+
+/* Иконки */
+.kit-icons {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 8px;
+}
+
+.kit-icon {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 54px;
+	padding: 8px 14px;
+	border-radius: 12px;
+	background: var(--paper);
+	font-size: 12px;
+	line-height: 1.35;
+}
+
+.kit-icon > i {
+	font-size: 20px;
+	width: 24px;
+	text-align: center;
+	flex-shrink: 0;
+}
+
+.kit-icon b {
+	display: block;
+	font-weight: 500;
+	color: var(--ink);
+}
+
+.kit-icon span {
+	color: var(--muted);
+	font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+	font-size: 11px;
+}
+
+/* Фиксированные ширины демонстраций */
+.w-280 { width: 280px; max-width: 100%; }
+.w-360 { width: 360px; max-width: 100%; }
+.w-420 { width: 420px; max-width: 100%; }
+.w-500 { width: 500px; max-width: 100%; }
+.w-560 { width: 560px; max-width: 100%; }
+
+/* Компактные поля из макета (время, число, процент) */
+.kit-w-time { width: 110px; }
+.kit-w-num { width: 70px; text-align: center; }
+.kit-w-date { width: 150px; }
+
+/* Выпадающие списки, подсказки и тосты в раскрытом виде */
+.kit-static .dropdown-menu {
+	display: block;
+	position: static;
+	margin-top: 4px;
+}
+
+.kit-static .tooltip,
+.kit-static .popover {
+	position: relative;
+	opacity: 1;
+}
+
+.kit-static .popover {
+	max-width: 260px;
+}
+
+/* Стрелку подсказки обычно ставит Popper; в статичном примере ставим её сами */
+.kit-static .tooltip-arrow,
+.kit-static .popover-arrow {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.kit-static .tooltip {
+	margin-bottom: var(--bs-tooltip-arrow-height);
+}
+
+.kit-static .popover {
+	margin-bottom: var(--bs-popover-arrow-height);
+}
+
+.kit-toast-static.toast-container {
+	position: static;
+	pointer-events: auto;
+}
+
+/* Bootstrap прячет .toast без .show; toastr показывает тост через jQuery,
+   поэтому в статичном примере включаем его явно */
+.kit-toast-static.toast-container > div {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.kit-modal-static .modal {
+	display: block;
+	position: static;
+	z-index: auto;
+	overflow: visible;
+	height: auto;
+	width: auto;
+}
+
+.kit-modal-static .modal-dialog {
+	margin: 0;
+	transform: none !important;
+	pointer-events: auto;
+}
+
+/* Мини-приложение: шапка и меню 808 внутри рамки, а не на весь экран */
+.kit-app {
+	position: relative;
+	height: 640px;
+	overflow: hidden;
+	border-radius: 16px;
+	background: var(--page-bg);
+	border: 1px solid var(--border);
+}
+
+.kit-app .header {
+	position: absolute;
+}
+
+.kit-app .sidebar {
+	position: absolute;
+	top: 90px;
+	bottom: 0;
+	height: auto;
+}
+
+.kit-app .page-wrapper {
+	height: 100%;
+	overflow: hidden;
+}
+
+/* Телефон: в рамке шириной 402 включаем мобильные правила 808 вручную */
+.kit-phone {
+	position: relative;
+	width: 402px;
+	max-width: 100%;
+	height: 760px;
+	overflow: hidden;
+	border-radius: 28px;
+	background: var(--page-bg);
+	border: 1px solid var(--border);
+	display: flex;
+	flex-direction: column;
+}
+
+.kit-phone .header {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.kit-phone .header .header-left {
+	position: absolute;
+	width: 100%;
+	padding-left: 60px;
+}
+
+.kit-phone .header .logo {
+	justify-content: center;
+	margin-left: -60px;
+}
+
+.kit-phone .mobile_btn {
+	display: block;
+	color: var(--ink);
+	font-size: 24px;
+	height: 70px;
+	left: 0;
+	line-height: 70px;
+	padding: 0 20px;
+	position: absolute;
+	top: 0;
+	width: 60px;
+	z-index: 10;
+}
+
+.kit-phone .kit-phone__body {
+	flex: 1;
+	overflow: hidden;
+	padding: 15px 12px;
+}
+
+.kit-phone .sidebar {
+	position: absolute;
+	top: 70px;
+	bottom: 0;
+	height: auto;
+	width: 225px;
+	margin-left: -225px;
+}
+
+.kit-phone.slide-nav .sidebar {
+	margin-left: 0;
+}
+
+.kit-phone .sidebar-overlay {
+	display: none;
+	position: absolute;
+	inset: 70px 0 0 0;
+	background: rgba(22, 22, 26, 0.25);
+	z-index: 1038;
+}
+
+.kit-phone.slide-nav .sidebar-overlay {
+	display: block;
+}
+
+.kit-phone .mobile-tabbar {
+	flex-shrink: 0;
+}
+
+@media (max-width: 991.98px) {
+	.kit {
+		padding: 30px 16px 80px;
+	}
+	.kit-grid-2,
+	.kit-grid-3 {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.kit-type {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 8px;
+	}
+	.kit-app {
+		height: auto;
+	}
+}
+
+/* В рамке телефона панель не фиксируется к окну, а стоит внизу рамки */
+.kit-phone .mobile-tabbar {
+	display: flex;
+	position: static;
+}
+.kit-phone .header .header-left.kit-left {
+	position: relative;
+	width: auto;
+	padding-left: 12px;
+}
+.kit-phone .header .header-left.kit-left .logo {
+	margin-left: 0;
+	justify-content: flex-start;
+}
+
+/* Форма входа внутри страницы кита — без высоты на весь экран */
+.kit .login-wrapper.login-center {
+	min-height: 0;
+	border-radius: 16px;
+	padding: 50px 15px;
+}

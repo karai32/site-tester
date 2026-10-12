@@ -1,0 +1,139 @@
+/* =========================================================
+   Тема «Аудит» для компонентов 808 Utilities
+   ---------------------------------------------------------
+   Компоненты, размеры, радиусы и шрифт (Poppins) взяты из
+   UI-кита 808 Utilities (Preclinic, Bootstrap 5.3.3).
+   Цвета заменены палитрой из Figma-макета «Аудит».
+
+   Как заменены цвета 808 → Figma:
+     #2E37A4  основной (индиго)        → --ink        #16161A
+     #00D3C7  второй (бирюзовый)       → --accent     #3498A9
+     #009EFB  синий (hover, info)      → --info       #3D78B0
+     #333448  текст                    → --ink        #16161A
+     rgba(51,52,72,.5) вторичный текст → --muted      #8B8B86
+     rgba(46,55,164,.5) текст подменю  → --text-2     #6B6B6B
+     rgba(46,55,164,.05) подложки      → --muted-bg   #F0F0ED
+     rgba(46,55,164,.1) рамки полей    → --border     #E6E6E3
+     rgba(46,55,164,.3) плейсхолдеры   → --muted-2    #B7B7B2
+     #55CE63 / #00D3C7 успех           → --success    #3F8F5F
+     #F62D51 / #FE0000 / #FF3667 ошибка → --error     #CC3220
+     #FFBC34 / #FF9B01 предупреждение  → --warning    #C08A34
+     фон страницы (серо-голубой)       → --page-bg    #ECECEA
+     градиент кнопки входа             → --hero-gradient
+   ========================================================= */
+
+:root {
+  /* --- Neutral / Surface / Border (Figma) --- */
+  --page-bg: #ececea;
+  --paper: #ffffff;
+  --ink: #16161a;
+  --muted: #8b8b86;
+  --muted-2: #b7b7b2;
+  --border: #e6e6e3;
+  --muted-bg: #f0f0ed;
+
+  /* --- Dark / Hero (Figma) --- */
+  --dark-1: #1c1c20;
+  --dark-2: #2b2c30;
+  --ink-hover: #26262b;
+  --ink-press: #0d0d10;
+  --hero-gradient: linear-gradient(90deg, var(--dark-2) 0%, var(--ink-press) 183.13%);
+
+  /* --- Дополнительный текст (Figma) --- */
+  --ink-2: #010101;
+  --text-2: #6b6b6b;
+  --text-3: #444444;
+
+  /* --- Статусы (Figma) --- */
+  --success: #3f8f5f;
+  --success-bg: #e7f2ec;
+  --warning: #c08a34;
+  --warning-bg: #f7ecd9;
+  --error: #cc3220;
+  --error-bg: #f8e9e7;
+  --info: #3d78b0;
+  --info-bg: #e6eef7;
+
+  /* --- Акцент, цвет проекта (Figma) --- */
+  --accent: #3498a9;
+  --accent-bg: #f4f7ff;
+  --accent-dark: #247583;
+  --accent-soft: rgba(52, 152, 169, 0.1); /* подложка в стиле 808: цвет с прозрачностью 10% */
+
+  /* --- Тень 808 в цветах макета --- */
+  --shadow-soft: 0 0 3px var(--border);
+  --shadow-sidebar: 5px 20px 14px rgba(22, 22, 26, 0.05);
+  --shadow-header: 0 0 14px rgba(183, 183, 178, 0.25);
+
+  /* --- Bootstrap 5.3: переменные темы --- */
+  /* В Poppins нет кириллицы: русские буквы берутся из Montserrat (тоже геометрический) */
+  --font-main: "Poppins", "Montserrat", sans-serif;
+  --bs-font-sans-serif: var(--font-main);
+  --bs-body-font-family: var(--font-main);
+  --bs-body-color: #16161a;
+  --bs-body-color-rgb: 22, 22, 26;
+  /* Фон body задаётся в style.css; эта переменная — фон полей, списков и модалок */
+  --bs-body-bg: #ffffff;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-emphasis-color: #000;
+  --bs-secondary-color: #6b6b6b;
+  --bs-tertiary-color: #8b8b86;
+  --bs-secondary-bg: #f0f0ed;
+  --bs-tertiary-bg: #f0f0ed;
+  --bs-heading-color: inherit;
+  --bs-border-color: #e6e6e3;
+  --bs-border-color-translucent: rgba(22, 22, 26, 0.1);
+
+  --bs-link-color: #16161a;
+  --bs-link-color-rgb: 22, 22, 26;
+  --bs-link-hover-color: #3498a9;
+  --bs-link-hover-color-rgb: 52, 152, 169;
+  --bs-focus-ring-color: rgba(52, 152, 169, 0.25);
+
+  --bs-primary: #16161a;
+  --bs-primary-rgb: 22, 22, 26;
+  --bs-secondary: #3498a9;
+  --bs-secondary-rgb: 52, 152, 169;
+  --bs-success: #3f8f5f;
+  --bs-success-rgb: 63, 143, 95;
+  --bs-info: #3d78b0;
+  --bs-info-rgb: 61, 120, 176;
+  --bs-warning: #c08a34;
+  --bs-warning-rgb: 192, 138, 52;
+  --bs-danger: #cc3220;
+  --bs-danger-rgb: 204, 50, 32;
+  --bs-light: #ececea;
+  --bs-light-rgb: 236, 236, 234;
+  --bs-dark: #1c1c20;
+  --bs-dark-rgb: 28, 28, 32;
+
+  --bs-primary-text-emphasis: #16161a;
+  --bs-primary-bg-subtle: #f0f0ed;
+  --bs-primary-border-subtle: #e6e6e3;
+  --bs-secondary-text-emphasis: #247583;
+  --bs-secondary-bg-subtle: #ebf5f6;
+  --bs-secondary-border-subtle: #c2e0e5;
+  --bs-success-text-emphasis: #3f8f5f;
+  --bs-success-bg-subtle: #e7f2ec;
+  --bs-success-border-subtle: #c5ddcf;
+  --bs-info-text-emphasis: #3d78b0;
+  --bs-info-bg-subtle: #e6eef7;
+  --bs-info-border-subtle: #c5d7ea;
+  --bs-warning-text-emphasis: #c08a34;
+  --bs-warning-bg-subtle: #f7ecd9;
+  --bs-warning-border-subtle: #ecd6b0;
+  --bs-danger-text-emphasis: #cc3220;
+  --bs-danger-bg-subtle: #f8e9e7;
+  --bs-danger-border-subtle: #efc9c3;
+  --bs-light-text-emphasis: #444444;
+  --bs-light-bg-subtle: #f0f0ed;
+  --bs-light-border-subtle: #e6e6e3;
+  --bs-dark-text-emphasis: #16161a;
+  --bs-dark-bg-subtle: #e6e6e3;
+  --bs-dark-border-subtle: #b7b7b2;
+
+  --bs-form-valid-color: #3f8f5f;
+  --bs-form-valid-border-color: #3f8f5f;
+  --bs-form-invalid-color: #cc3220;
+  --bs-form-invalid-border-color: #cc3220;
+}

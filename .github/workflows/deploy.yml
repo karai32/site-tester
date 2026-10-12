@@ -42,7 +42,7 @@ jobs:
       - name: Upload application
         run: |
           scp -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -r \
-            src public config package.json package-lock.json \
+            src public config ui-kit package.json package-lock.json \
             "$DEPLOY_USER@$DEPLOY_HOST:/opt/site-checker/"
 
       - name: Install and restart

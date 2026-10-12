@@ -17,6 +17,7 @@ import { getCheckDefinitions, runScan } from './scanner.js';
 
 const app = Fastify({ logger: true });
 const publicDirectory = fileURLToPath(new URL('../public', import.meta.url));
+const uiKitDirectory = fileURLToPath(new URL('../ui-kit', import.meta.url));
 
 recoverInterruptedScans();
 
@@ -24,6 +25,15 @@ await app.register(fastifyStatic, {
   root: publicDirectory,
   prefix: '/',
 });
+
+// UI-кит новой версии интерфейса, отдельно от текущего интерфейса сервиса
+await app.register(fastifyStatic, {
+  root: uiKitDirectory,
+  prefix: '/ui-kit/',
+  decorateReply: false,
+});
+
+app.get('/ui.html', async (_request, reply) => reply.redirect('/ui-kit/ui.html'));
 
 app.get('/api/health', async () => ({
   status: 'ok',

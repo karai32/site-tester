@@ -14,10 +14,11 @@
 					<li class="submenu">
 						<a href="#" class="subdrop"><span class="menu-side"><i class="feather-bookmark"></i></span> <span>Выбранные проекты</span> <span class="menu-arrow"></span></a>
 						<ul style="display:block">
-							<% for (const project of sidebarProjects) { %>
+							<% for (const item of sidebarProjects) { %>
 								<li>
-									<a href="/projects/<%= project.id %>" class="<%= isActive('/projects/' + project.id) ? 'active' : '' %>">
-										<span class="avatar avatar-xs shape bg-secondary m-0"><%= initials(project.name) %></span><%= project.name %>
+									<%# Проект активен на всех его страницах, включая отчёты: страница передаёт project %>
+									<a href="/projects/<%= item.id %>" class="<%= locals.project?.id === item.id ? 'active' : '' %>">
+										<span class="avatar avatar-xs shape bg-secondary m-0"><%= initials(item.name) %></span><%= item.name %>
 									</a>
 								</li>
 							<% } %>

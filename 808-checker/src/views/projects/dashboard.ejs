@@ -1,6 +1,92 @@
 <%- include('../partials/project-head') %>
 
-<div class="card-box">
-	<h4 class="mb-1">Дашборд проекта</h4>
-	<p class="mb-0 text-muted-2">Здесь появятся запуск проверки, сводка по последним проверкам и ссылки на отчёты</p>
+<div class="row">
+	<div class="col-xl-7">
+		<div class="card card-table">
+			<div class="card-body">
+				<div class="page-table-header mb-2">
+					<div class="row align-items-center">
+						<div class="col"><div class="doctor-table-blk"><h3>Сценарии проверки</h3></div></div>
+						<div class="col-auto"><span class="badge badge-soft-dark"><%= scenarios.length %></span></div>
+					</div>
+				</div>
+
+				<% if (scenarios.length === 0) { %>
+					<p class="p-3 mb-0 text-muted-2">Активных сценариев нет</p>
+				<% } else { %>
+					<div class="table-responsive">
+						<table class="table border-0 custom-table comman-table mb-0">
+							<tbody>
+								<% for (const scenario of scenarios) { %>
+									<tr>
+										<td>
+											<h2 class="scenario-name"><%= scenario.name %> <span class="d-inline text-muted-2">#<%= scenario.revision %></span></h2>
+											<div class="d-flex align-items-center gap-3 mt-1">
+												<span class="profile-image"><span class="avatar avatar-xs"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span>
+											</div>
+										</td>
+										<td class="text-end">
+											<button type="button" class="btn btn-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#launch-modal" data-scenario-id="<%= scenario.id %>" data-scenario-name="<%= scenario.name %>">Запустить</button>
+										</td>
+									</tr>
+								<% } %>
+							</tbody>
+						</table>
+					</div>
+				<% } %>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xl-5">
+		<div class="card card-table">
+			<div class="card-body">
+				<div class="page-table-header mb-2">
+					<div class="row align-items-center">
+						<div class="col"><div class="doctor-table-blk"><h3>Последние отчёты</h3></div></div>
+						<div class="col-auto"><a href="/projects/<%= project.id %>/reports" class="patient-views">Все отчёты</a></div>
+					</div>
+				</div>
+
+				<% if (recentReports.length === 0) { %>
+					<p class="p-3 mb-0 text-muted-2">Проверок ещё не было</p>
+				<% } else { %>
+					<div class="table-responsive">
+						<table class="table border-0 custom-table mb-0">
+							<tbody>
+								<% for (const report of recentReports) { %>
+									<% const status = reportStatus(report); %>
+									<tr>
+										<td><a href="/reports/<%= report.id %>"><%= report.scenario_name %></a></td>
+										<td class="text-end text-nowrap text-muted-2"><%= formatDate(report.finished_at || report.created_at) %></td>
+										<td class="text-end"><span class="custom-badge status-<%= status.color %>"><%= status.label %></span></td>
+									</tr>
+								<% } %>
+							</tbody>
+						</table>
+					</div>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Подтверждение запуска. Сценарий подставляет app.js из кнопки «Запустить». -->
+<div class="modal fade" id="launch-modal" tabindex="-1" aria-labelledby="launch-modal-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<form class="modal-content" method="post" action="/projects/<%= project.id %>/checks">
+			<input type="hidden" name="scenario_id" value="">
+			<div class="modal-header">
+				<h4 class="modal-title" id="launch-modal-title">Запустить проверку?</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+			<div class="modal-body">
+				<p class="mb-0">Сценарий «<span data-launch-scenario-name></span>» встанет в очередь и начнётся, как только закончатся проверки перед ним. Страницу отчёта можно закрыть — проверка продолжится.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Отменить</button>
+				<button type="submit" class="btn btn-primary">Запустить</button>
+			</div>
+		</form>
+	</div>
 </div>

@@ -1,6 +1,7 @@
 // Все тесты сервиса по категориям.
 // Новый тест: создайте файл в папке категории (по образцу соседних) и добавьте его в список ниже.
 // Порядок здесь — порядок запуска тестов и вывода в отчёте.
+// icon — иконка категории из набора Feather (см. раздел «Иконки» в UI-ките).
 
 import httpsAndSsl from './availability/https-and-ssl.js';
 import homepageHttpStatus from './availability/homepage-http-status.js';
@@ -68,16 +69,19 @@ import yandexSmartcaptcha from './antispam/yandex-smartcaptcha.js';
 export const categories = [
   {
     id: 'availability',
+    icon: 'feather-shield',
     title: 'Техническая доступность и безопасность',
     tests: [httpsAndSsl, homepageHttpStatus, custom404Page, brokenLinks, formsSpamProtection],
   },
   {
     id: 'navigation',
+    icon: 'feather-compass',
     title: 'Навигация, шапка и футер',
     tests: [menuLinks, dropdownSubmenu, mobileMenu, logoHome, footerContent, footerSocialLinks, scrollToTop],
   },
   {
     id: 'search-pagination',
+    icon: 'feather-search',
     title: 'Поиск, фильтры, пагинации и языковые сервисы',
     tests: [
       searchResults,
@@ -95,6 +99,7 @@ export const categories = [
   },
   {
     id: 'content',
+    icon: 'feather-file-text',
     title: 'Контент и данные',
     tests: [
       doctorsHomepageBlock,
@@ -108,16 +113,19 @@ export const categories = [
   },
   {
     id: 'visual',
+    icon: 'feather-monitor',
     title: 'Визуал, адаптивность и кроссбраузерность',
     tests: [mobileAdaptiveNoScroll, crossBrowser, homepageAdvantagesBlock, brokenImagesSitewide],
   },
   {
     id: 'forms',
+    icon: 'feather-check-square',
     title: 'Формы, валидации и согласия',
     tests: [headerBookingForm, headerBookingPhoneNormalization, headerBookingConsentCheckbox],
   },
   {
     id: 'widgets',
+    icon: 'feather-message-circle',
     title: 'Виджеты, связь и внешние сервисы',
     tests: [
       callbackWidgetOpen,
@@ -130,16 +138,19 @@ export const categories = [
   },
   {
     id: 'seo',
+    icon: 'feather-bar-chart-2',
     title: 'SEO',
     tests: [titlePresent, descriptionPresent, h1Present, headingHierarchy],
   },
   {
     id: 'seo-infrastructure',
+    icon: 'feather-globe',
     title: 'SEO-инфраструктура',
     tests: [xmlSitemap, openGraph, canonicalUrls, robotsMeta, breadcrumbSchema],
   },
   {
     id: 'antispam',
+    icon: 'feather-lock',
     title: 'Защита и антиспам',
     tests: [yandexSmartcaptcha],
   },

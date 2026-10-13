@@ -63,3 +63,102 @@
 		padding-left: 60px;
 	}
 }
+
+/* Название сценария в списке на дашборде */
+.scenario-name {
+	font-size: 15px;
+	font-weight: 500;
+	margin-bottom: 0;
+}
+
+/* --- Страница отчёта --- */
+
+.report-alert-icon {
+	font-size: 18px;
+	margin-top: 2px;
+}
+
+/* Плитка категории — ссылка на её блок ниже */
+.report-tile {
+	color: var(--ink);
+	height: 100%;
+}
+.report-tile:hover {
+	color: var(--ink);
+}
+
+.report-category {
+	scroll-margin-top: 90px; /* блок не прячется под шапкой при переходе по плитке */
+}
+
+.report-search form {
+	width: 100%;
+}
+.report-search .form-control {
+	background: var(--paper); /* поле стоит на фоне страницы, а не в карточке */
+}
+
+.report-test__icon {
+	font-size: 20px;
+}
+.report-test__body {
+	min-width: 200px;
+	flex-basis: 0;
+}
+.report-test__title {
+	font-size: 15px;
+	font-weight: 500;
+}
+.report-test__comment {
+	font-size: 14px;
+	color: var(--text-2);
+	white-space: pre-line; /* у некоторых тестов комментарий в несколько строк */
+}
+.report-test__problems {
+	font-size: 14px;
+	word-break: break-word;
+}
+.report-test__pages {
+	font-size: 13px;
+	color: var(--muted);
+	word-break: break-all;
+}
+
+/* Миниатюра скриншота — кнопка, открывающая его крупно */
+.report-thumb {
+	padding: 0;
+	border: 0;
+	background: none;
+}
+/* Миниатюра показывает левый верхний угол: у страницы — шапку сайта, у поля формы — начало текста.
+   Целиком скриншот открывается по клику. */
+.report-thumb img {
+	width: 120px;
+	height: 80px;
+	object-fit: cover;
+	object-position: left top;
+	background: var(--muted-bg);
+	border: 1px solid var(--border);
+}
+.report-test__media li {
+	margin-bottom: 10px;
+}
+.report-video {
+	display: block;
+	width: 320px;
+	max-width: 100%;
+	border-radius: 8px;
+	border: 1px solid var(--border);
+}
+.report-media-full {
+	max-width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
+
+/* Сводка отчёта на телефоне: заголовок помельче, чтобы не занимал полэкрана */
+@media (max-width: 575.98px) {
+	.good-morning-blk .morning-user h2 {
+		font-size: 20px;
+	}
+}

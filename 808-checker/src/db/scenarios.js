@@ -11,8 +11,15 @@ export function findScenarioById(id) {
   return parseScenario(db.prepare('SELECT * FROM scenarios WHERE id = ?').get(id));
 }
 
+// Сценарии проекта вместе с именем автора
 export function getProjectScenarios(projectId) {
-  return db.prepare('SELECT * FROM scenarios WHERE project_id = ? ORDER BY id').all(projectId).map(parseScenario);
+  return db.prepare(`
+    SELECT scenarios.*, users.name AS author_name
+    FROM scenarios
+    LEFT JOIN users ON users.id = scenarios.author_id
+    WHERE scenarios.project_id = ?
+    ORDER BY scenarios.id
+  `).all(projectId).map(parseScenario);
 }
 
 // Возвращает id нового сценария

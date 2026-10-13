@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<script>
+		// Свёрнутое меню включаем до отрисовки страницы, чтобы оно не мигало
+		try { if (localStorage.getItem('mini-sidebar') === '1') document.body.classList.add('mini-sidebar'); } catch (error) {}
+	</script>
+	<div class="main-wrapper">
+		<%- include('../partials/header') %>
+		<%- include('../partials/sidebar') %>
+
+		<div class="page-wrapper">
+			<div class="content">
+				<%- body %>
+			</div>
+		</div>
+
+		<div class="sidebar-overlay" data-mobile-close></div>
+	</div>
+
+	<script src="/assets/js/jquery-3.7.1.min.js"></script>
+	<script src="/assets/js/bootstrap.bundle.min.js"></script>
+	<script src="/assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<div class="page-heading">
+	<div class="page-heading-main">
+		<div>
+			<h1>Профиль</h1>
+			<p>Данные аккаунта</p>
+		</div>
+	</div>
+</div>
+
+<div class="doctor-profile-head profile-head-row mb-4">
+	<div class="profile-user-box">
+		<div class="profile-user-img"><span class="avatar avatar-xl"><%= initials(user.name) %></span></div>
+		<div class="names-profiles"><h4><%= user.name %></h4><h5><%= user.email || 'Почта не указана' %></h5></div>
+	</div>
+</div>
+
+<div class="card-box">
+	<div class="about-me-list">
+		<ul class="list-space">
+			<li><h4>Логин</h4><span><%= user.login %></span></li>
+			<li><h4>Почта</h4><span><%= user.email || '—' %></span></li>
+			<li><h4>Telegram ID</h4><span><%= user.telegram_id || 'Не привязан' %></span></li>
+		</ul>
+	</div>
+</div>

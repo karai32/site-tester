@@ -1,48 +1,67 @@
 /* =========================================================
-   Тема «Аудит» для компонентов 808 Utilities
+   Тема «808 Checker» для компонентов 808 Utilities
    ---------------------------------------------------------
    Компоненты, размеры, радиусы и шрифт (Poppins) взяты из
    UI-кита 808 Utilities (Preclinic, Bootstrap 5.3.3).
-   Цвета заменены палитрой из Figma-макета «Аудит».
+   Цвета заменены палитрой из Figma-макета «808 Checker».
+
+   Основной цвет макета — градиент
+   linear-gradient(90deg, #33414E 0%, #2C3B49 100%).
+   Им залиты меню, кнопки, активные вкладки, плитки и hero.
+   Там, где нужен один цвет (рамки, галочки, иконки), — #33414E.
 
    Как заменены цвета 808 → Figma:
-     #2E37A4  основной (индиго)        → --ink        #16161A
-     #00D3C7  второй (бирюзовый)       → --accent     #3498A9
+     #2E37A4  основной (индиго)        → --primary    #33414E (+ градиент)
+     #00D3C7  второй (бирюзовый)       → --accent     = основной (второго цвета в макете нет)
      #009EFB  синий (hover, info)      → --info       #3D78B0
-     #333448  текст                    → --ink        #16161A
-     rgba(51,52,72,.5) вторичный текст → --muted      #8B8B86
-     rgba(46,55,164,.5) текст подменю  → --text-2     #6B6B6B
-     rgba(46,55,164,.05) подложки      → --muted-bg   #F0F0ED
-     rgba(46,55,164,.1) рамки полей    → --border     #E6E6E3
-     rgba(46,55,164,.3) плейсхолдеры   → --muted-2    #B7B7B2
+     #333448  текст                    → --ink        #12182A
+     rgba(51,52,72,.5) вторичный текст → --muted      #8593A4
+     rgba(46,55,164,.5) текст подменю  → --text-2     #8593A4
+     rgba(46,55,164,.05) подложки      → --muted-bg   #F0F3F6
+     rgba(46,55,164,.1) рамки полей    → --border     #DAE0E7
+     rgba(46,55,164,.3) плейсхолдеры   → --muted-2    #A4AAB7
      #55CE63 / #00D3C7 успех           → --success    #3F8F5F
      #F62D51 / #FE0000 / #FF3667 ошибка → --error     #CC3220
      #FFBC34 / #FF9B01 предупреждение  → --warning    #C08A34
-     фон страницы (серо-голубой)       → --page-bg    #ECECEA
-     градиент кнопки входа             → --hero-gradient
+     фон страницы (серо-голубой)       → --page-bg    #F1F4F7
+     градиент кнопки входа             → --primary-gradient
    ========================================================= */
 
 :root {
-  /* --- Neutral / Surface / Border (Figma) --- */
-  --page-bg: #ececea;
-  --paper: #ffffff;
-  --ink: #16161a;
-  --muted: #8b8b86;
-  --muted-2: #b7b7b2;
-  --border: #e6e6e3;
-  --muted-bg: #f0f0ed;
+  /* --- Основной цвет (Figma) --- */
+  --primary: #33414e;
+  --primary-dark: #2c3b49;
+  --primary-gradient: linear-gradient(90deg, #33414e 0%, #2c3b49 100%);
+  /* Наведения и нажатия в макете нет: чуть светлее и чуть темнее основного */
+  --primary-hover: #3d4c5a;
+  --primary-hover-gradient: linear-gradient(90deg, #3d4c5a 0%, #34434f 100%);
+  --primary-press: #222e3a;
+  --primary-soft: rgba(51, 65, 78, 0.1);
 
-  /* --- Dark / Hero (Figma) --- */
-  --dark-1: #1c1c20;
-  --dark-2: #2b2c30;
-  --ink-hover: #26262b;
-  --ink-press: #0d0d10;
-  --hero-gradient: linear-gradient(90deg, var(--dark-2) 0%, var(--ink-press) 183.13%);
+  /* --- Neutral / Surface / Border (Figma) --- */
+  --page-bg: #f1f4f7;
+  --paper: #fefefe;
+  --ink: #12182a;
+  --muted: #8593a4;
+  --muted-2: #a4aab7;
+  --border: #dae0e7;
+  --muted-bg: #f0f3f6;
+  --toggle-off: #a8afb9;
+
+  /* --- Hero: в макете hero-блоки залиты основным градиентом --- */
+  --hero-gradient: var(--primary-gradient);
+
+  /* Старые имена из первой версии кита — на основной цвет */
+  --dark-1: var(--primary);
+  --dark-2: var(--primary-dark);
+  --ink-hover: var(--primary-hover);
+  --ink-press: var(--primary-press);
 
   /* --- Дополнительный текст (Figma) --- */
-  --ink-2: #010101;
-  --text-2: #6b6b6b;
+  --ink-2: #12182a;
+  --text-2: #8593a4;
   --text-3: #444444;
+  --neutral-bg: #ececea; /* фон статуса «Не регулярно» */
 
   /* --- Статусы (Figma) --- */
   --success: #3f8f5f;
@@ -54,46 +73,47 @@
   --info: #3d78b0;
   --info-bg: #e6eef7;
 
-  /* --- Акцент, цвет проекта (Figma) --- */
-  --accent: #3498a9;
-  --accent-bg: #f4f7ff;
-  --accent-dark: #247583;
-  --accent-soft: rgba(52, 152, 169, 0.1); /* подложка в стиле 808: цвет с прозрачностью 10% */
+  /* --- Акцент: в новом макете отдельного цвета нет, это основной цвет --- */
+  --accent: var(--primary);
+  --accent-dark: var(--primary-dark);
+  --accent-bg: var(--muted-bg);
+  --accent-soft: var(--primary-soft);
 
-  /* --- Тень 808 в цветах макета --- */
+  /* --- Тени --- */
   --shadow-soft: 0 0 3px var(--border);
-  --shadow-sidebar: 5px 20px 14px rgba(22, 22, 26, 0.05);
-  --shadow-header: 0 0 14px rgba(183, 183, 178, 0.25);
+  --shadow-card: 0 15px 16px rgba(130, 126, 126, 0.1);
+  --shadow-sidebar: 5px 20px 14px rgba(18, 24, 42, 0.05);
+  --shadow-header: 0 0 14px rgba(164, 170, 183, 0.25);
 
   /* --- Bootstrap 5.3: переменные темы --- */
   /* В Poppins нет кириллицы: русские буквы берутся из Montserrat (тоже геометрический) */
   --font-main: "Poppins", "Montserrat", sans-serif;
   --bs-font-sans-serif: var(--font-main);
   --bs-body-font-family: var(--font-main);
-  --bs-body-color: #16161a;
-  --bs-body-color-rgb: 22, 22, 26;
+  --bs-body-color: #12182a;
+  --bs-body-color-rgb: 18, 24, 42;
   /* Фон body задаётся в style.css; эта переменная — фон полей, списков и модалок */
-  --bs-body-bg: #ffffff;
-  --bs-body-bg-rgb: 255, 255, 255;
-  --bs-emphasis-color: #000;
-  --bs-secondary-color: #6b6b6b;
-  --bs-tertiary-color: #8b8b86;
-  --bs-secondary-bg: #f0f0ed;
-  --bs-tertiary-bg: #f0f0ed;
+  --bs-body-bg: #fefefe;
+  --bs-body-bg-rgb: 254, 254, 254;
+  --bs-emphasis-color: #12182a;
+  --bs-secondary-color: #8593a4;
+  --bs-tertiary-color: #a4aab7;
+  --bs-secondary-bg: #f0f3f6;
+  --bs-tertiary-bg: #f0f3f6;
   --bs-heading-color: inherit;
-  --bs-border-color: #e6e6e3;
-  --bs-border-color-translucent: rgba(22, 22, 26, 0.1);
+  --bs-border-color: #dae0e7;
+  --bs-border-color-translucent: rgba(18, 24, 42, 0.1);
 
-  --bs-link-color: #16161a;
-  --bs-link-color-rgb: 22, 22, 26;
-  --bs-link-hover-color: #3498a9;
-  --bs-link-hover-color-rgb: 52, 152, 169;
-  --bs-focus-ring-color: rgba(52, 152, 169, 0.25);
+  --bs-link-color: #12182a;
+  --bs-link-color-rgb: 18, 24, 42;
+  --bs-link-hover-color: #33414e;
+  --bs-link-hover-color-rgb: 51, 65, 78;
+  --bs-focus-ring-color: rgba(51, 65, 78, 0.25);
 
-  --bs-primary: #16161a;
-  --bs-primary-rgb: 22, 22, 26;
-  --bs-secondary: #3498a9;
-  --bs-secondary-rgb: 52, 152, 169;
+  --bs-primary: #33414e;
+  --bs-primary-rgb: 51, 65, 78;
+  --bs-secondary: #33414e;
+  --bs-secondary-rgb: 51, 65, 78;
   --bs-success: #3f8f5f;
   --bs-success-rgb: 63, 143, 95;
   --bs-info: #3d78b0;
@@ -102,17 +122,17 @@
   --bs-warning-rgb: 192, 138, 52;
   --bs-danger: #cc3220;
   --bs-danger-rgb: 204, 50, 32;
-  --bs-light: #ececea;
-  --bs-light-rgb: 236, 236, 234;
-  --bs-dark: #1c1c20;
-  --bs-dark-rgb: 28, 28, 32;
+  --bs-light: #f0f3f6;
+  --bs-light-rgb: 240, 243, 246;
+  --bs-dark: #12182a;
+  --bs-dark-rgb: 18, 24, 42;
 
-  --bs-primary-text-emphasis: #16161a;
-  --bs-primary-bg-subtle: #f0f0ed;
-  --bs-primary-border-subtle: #e6e6e3;
-  --bs-secondary-text-emphasis: #247583;
-  --bs-secondary-bg-subtle: #ebf5f6;
-  --bs-secondary-border-subtle: #c2e0e5;
+  --bs-primary-text-emphasis: #12182a;
+  --bs-primary-bg-subtle: #f0f3f6;
+  --bs-primary-border-subtle: #dae0e7;
+  --bs-secondary-text-emphasis: #33414e;
+  --bs-secondary-bg-subtle: #f0f3f6;
+  --bs-secondary-border-subtle: #dae0e7;
   --bs-success-text-emphasis: #3f8f5f;
   --bs-success-bg-subtle: #e7f2ec;
   --bs-success-border-subtle: #c5ddcf;
@@ -126,11 +146,11 @@
   --bs-danger-bg-subtle: #f8e9e7;
   --bs-danger-border-subtle: #efc9c3;
   --bs-light-text-emphasis: #444444;
-  --bs-light-bg-subtle: #f0f0ed;
-  --bs-light-border-subtle: #e6e6e3;
-  --bs-dark-text-emphasis: #16161a;
-  --bs-dark-bg-subtle: #e6e6e3;
-  --bs-dark-border-subtle: #b7b7b2;
+  --bs-light-bg-subtle: #f0f3f6;
+  --bs-light-border-subtle: #dae0e7;
+  --bs-dark-text-emphasis: #12182a;
+  --bs-dark-bg-subtle: #dae0e7;
+  --bs-dark-border-subtle: #a4aab7;
 
   --bs-form-valid-color: #3f8f5f;
   --bs-form-valid-border-color: #3f8f5f;

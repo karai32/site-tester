@@ -1,0 +1,111 @@
+<%
+	// Скачиваемый отчёт: один HTML-файл без внешних стилей и картинок, открывается без сервера.
+	// Скриншоты встроены как data:-адреса (item.dataUrl готовит routes/reports.js).
+	const percent = percentOf(report.tests_passed, report.tests_total);
+%><!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><%= report.scenario_name %> — отчёт #<%= report.id %></title>
+	<style>
+		/* Цвета повторяют theme.css: скачанный файл открывается без сервера и не видит его стилей */
+		:root { --ink: #12182a; --muted: #8593a4; --border: #dae0e7; --page: #f1f4f7; --paper: #fefefe; --success: #3f8f5f; --success-bg: #e7f2ec; --error: #cc3220; --error-bg: #f8e9e7; --primary: #33414e; }
+		* { box-sizing: border-box; }
+		body { margin: 0; padding: 32px 16px; font: 15px/1.5 "Montserrat", "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--page); }
+		main { max-width: 1000px; margin: 0 auto; }
+		h1 { margin: 0 0 4px; font-size: 26px; }
+		h2 { margin: 0; font-size: 18px; }
+		a { color: var(--primary); word-break: break-all; }
+		.muted { color: var(--muted); }
+		.summary { margin: 24px 0; padding: 24px; border-radius: 16px; color: var(--paper); background: linear-gradient(90deg, #33414e 0%, #2c3b49 100%); }
+		.summary b { font-size: 36px; margin-right: 12px; }
+		.note { margin-bottom: 24px; padding: 12px 16px; border-radius: 10px; background: #f7ecd9; }
+		.category { margin-bottom: 24px; padding: 20px; border-radius: 12px; background: var(--paper); }
+		.category-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+		.test { padding: 14px 0; border-top: 1px solid var(--border); }
+		.test-head { display: flex; justify-content: space-between; gap: 12px; font-weight: 600; }
+		.badge { flex-shrink: 0; padding: 2px 10px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+		.badge.passed { color: var(--success); background: var(--success-bg); }
+		.badge.failed { color: var(--error); background: var(--error-bg); }
+		.comment { white-space: pre-line; color: #444; }
+		ul { margin: 8px 0 0; padding-left: 20px; }
+		.media { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+		.media figure { margin: 0; max-width: 100%; }
+		.media img, .media video { display: block; max-width: 100%; max-height: 480px; border: 1px solid var(--border); border-radius: 8px; }
+		.media figcaption { font-size: 13px; color: var(--muted); }
+	</style>
+</head>
+<body>
+<main>
+	<h1><%= report.scenario_name %> #<%= report.scenario_revision %></h1>
+	<div class="muted">
+		Отчёт #<%= report.id %> · <a href="<%= project.url %>"><%= displayUrl(project.url) %></a> ·
+		запустил <%= authorName(report.started_by_name) %> ·
+		завершена в <%= formatDateTime(report.finished_at) %>
+	</div>
+
+	<div class="summary">
+		<% if (report.status === 'done') { %>
+			<b><%= percent %>%</b>
+			<%= report.tests_passed %> из <%= report.tests_total %> <%= plural(report.tests_total, ['теста', 'тестов', 'тестов']) %> прошли успешно ·
+			проверено <%= report.pages_count %> <%= plural(report.pages_count, ['страница', 'страницы', 'страниц']) %>
+		<% } else if (report.status === 'error') { %>
+			Проверка не выполнена: <%= report.error %>
+		<% } else { %>
+			Проверка ещё не закончена: выполнено <%= report.tests_done %> из <%= report.tests_total || '?' %> тестов
+		<% } %>
+	</div>
+
+	<% if (report.note) { %>
+		<div class="note"><%= report.note %></div>
+	<% } %>
+
+	<% for (const category of categories) { %>
+		<section class="category">
+			<div class="category-head">
+				<h2><%= category.title %></h2>
+				<span class="muted"><%= category.passedCount %>/<%= category.results.length %></span>
+			</div>
+
+			<% for (const result of category.results) { %>
+				<div class="test">
+					<div class="test-head">
+						<span><%= result.test_title %></span>
+						<span class="badge <%= result.passed ? 'passed' : 'failed' %>"><%= result.passed ? 'Успешно' : 'Провалено' %></span>
+					</div>
+					<div class="comment"><%= result.comment %></div>
+
+					<% if (result.problems.length > 0) { %>
+						<ul>
+							<% for (const problem of result.problems) { %><li><%= problem %></li><% } %>
+						</ul>
+					<% } %>
+
+					<div class="muted">
+						<%= result.pages.length > 1 ? 'Страницы:' : 'Страница:' %>
+						<% result.pages.forEach((pageUrl, index) => { %><a href="<%= pageUrl %>"><%= displayUrl(pageUrl) %></a><%= index < result.pages.length - 1 ? ', ' : '' %><% }) %>
+					</div>
+
+					<% const media = result.media.filter((item) => item.dataUrl); %>
+					<% if (media.length > 0) { %>
+						<div class="media">
+							<% for (const item of media) { %>
+								<figure>
+									<% if (item.file.endsWith('.webm')) { %>
+										<video src="<%= item.dataUrl %>" controls></video>
+									<% } else { %>
+										<img src="<%= item.dataUrl %>" alt="<%= item.caption || 'Скриншот' %>">
+									<% } %>
+									<% if (item.caption) { %><figcaption><%= item.caption %></figcaption><% } %>
+								</figure>
+							<% } %>
+						</div>
+					<% } %>
+				</div>
+			<% } %>
+		</section>
+	<% } %>
+</main>
+</body>
+</html>

@@ -14,6 +14,7 @@ import * as helpers from './helpers.js';
 import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import profileRoutes from './routes/profile.js';
+import reportRoutes from './routes/reports.js';
 import settingsRoutes from './routes/settings.js';
 import { startQueue } from './runner/queue.js';
 
@@ -67,6 +68,7 @@ app.addHook('preHandler', async (request, reply) => {
 
 await app.register(authRoutes);
 await app.register(projectRoutes);
+await app.register(reportRoutes);
 await app.register(profileRoutes);
 await app.register(settingsRoutes);
 

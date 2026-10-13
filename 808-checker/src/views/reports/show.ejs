@@ -1,0 +1,158 @@
+<%
+	const isActive = report.status === 'queued' || report.status === 'running';
+	const percent = percentOf(report.tests_passed, report.tests_total);
+	const hasResults = categories.length > 0;
+%>
+<div class="page-header">
+	<ul class="breadcrumb">
+		<li class="breadcrumb-item"><a href="/projects">Проекты</a></li>
+		<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+		<li class="breadcrumb-item"><a href="/projects/<%= project.id %>"><%= project.name %></a></li>
+		<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+		<li class="breadcrumb-item"><a href="/projects/<%= project.id %>/reports">Архив отчётов</a></li>
+		<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+		<li class="breadcrumb-item active">Отчёт #<%= report.id %></li>
+	</ul>
+</div>
+
+<div class="page-heading">
+	<div class="page-heading-main">
+		<div>
+			<h1><%= report.scenario_name %> <span class="text-muted-2">#<%= report.scenario_revision %></span></h1>
+			<p>Отчёт #<%= report.id %> · запустил <%= authorName(report.started_by_name) %> · <i class="feather-link"></i><a href="<%= project.url %>" target="_blank" rel="noopener"><%= displayUrl(project.url) %></a></p>
+		</div>
+	</div>
+	<% if (report.status === 'done') { %>
+		<div class="page-heading-actions">
+			<a href="/reports/<%= report.id %>/download" class="btn btn-primary btn-rounded"><i class="feather-download me-1"></i> Скачать отчёт</a>
+		</div>
+	<% } %>
+</div>
+
+<%# Пока проверка идёт, app.js обновляет страницу каждые 5 секунд %>
+<% if (report.status === 'queued') { %>
+	<div class="alert alert-info d-flex align-items-start gap-2" role="status" data-auto-refresh="5">
+		<i class="feather-clock report-alert-icon"></i>
+		<div><strong>Проверка в очереди</strong><div>Она начнётся, как только закончатся проверки перед ней. Страница обновляется сама.</div></div>
+	</div>
+<% } %>
+
+<% if (report.status === 'running') { %>
+	<div class="card" data-auto-refresh="5">
+		<div class="card-body">
+			<% if (!report.tests_total) { %>
+				<div class="heading-detail"><h4 class="mb-1">Обход сайта</h4></div>
+				<p class="mb-3 text-muted-2">Сервис собирает страницы сайта. На большом сайте это занимает несколько минут.</p>
+				<div class="progress mb-0"><div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div></div>
+			<% } else { %>
+				<div class="skill-statistics mb-0">
+					<div class="skills-head"><h5>Выполнено <%= report.tests_done %> из <%= report.tests_total %> <%= plural(report.tests_total, ['теста', 'тестов', 'тестов']) %></h5><p><%= percentOf(report.tests_done, report.tests_total) %>%</p></div>
+					<div class="progress mb-0"><div class="progress-bar" style="width:<%= percentOf(report.tests_done, report.tests_total) %>%"></div></div>
+				</div>
+				<p class="mt-3 mb-0 text-muted-2">Страниц в выборке: <%= report.pages_count %>. Страница обновляется сама.</p>
+			<% } %>
+		</div>
+	</div>
+<% } %>
+
+<% if (report.status === 'error') { %>
+	<div class="alert alert-danger d-flex align-items-start gap-2" role="alert">
+		<i class="feather-x-circle report-alert-icon"></i>
+		<div><strong>Проверка не выполнена</strong><div><%= report.error %></div></div>
+	</div>
+<% } %>
+
+<% if (report.status === 'done') { %>
+	<div class="good-morning-blk">
+		<div class="row align-items-center">
+			<div class="col-auto ps-4">
+				<div class="wallet-widget general-health">
+					<div class="circle-bar">
+						<div>
+							<svg viewBox="0 0 100 100" aria-hidden="true">
+								<circle cx="50" cy="50" r="44" fill="none" stroke-width="8" style="stroke: var(--muted)"></circle>
+								<circle cx="50" cy="50" r="44" fill="none" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="<%= ringDash(percent) %>" style="stroke: var(--paper)"></circle>
+							</svg>
+							<b><%= percent %>%</b>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col">
+				<div class="morning-user ps-0">
+					<h2><%= report.tests_passed %> из <%= report.tests_total %> <%= plural(report.tests_total, ['теста', 'тестов', 'тестов']) %> прошли успешно</h2>
+					<p>Завершена в <%= formatDateTime(report.finished_at) %> · длилась <%= formatDuration(report.started_at, report.finished_at) %> · проверено <%= report.pages_count %> <%= plural(report.pages_count, ['страница', 'страницы', 'страниц']) %></p>
+				</div>
+			</div>
+		</div>
+	</div>
+<% } %>
+
+<% if (report.note) { %>
+	<div class="alert alert-warning d-flex align-items-start gap-2" role="alert">
+		<i class="feather-alert-triangle report-alert-icon"></i>
+		<div><%= report.note %></div>
+	</div>
+<% } %>
+
+<% if (hasResults) { %>
+	<div class="doctor-list-blk mb-4">
+		<div class="row g-3">
+			<% for (const category of categories) { %>
+				<% const categoryPercent = percentOf(category.passedCount, category.results.length); %>
+				<div class="col-xl-3 col-md-4 col-sm-6">
+					<a class="doctor-widget report-tile" href="#category-<%= category.id %>">
+						<div class="doctor-box-icon flex-shrink-0"><i class="<%= category.icon %>"></i></div>
+						<div class="doctor-content flex-grow-1">
+							<h4><span><%= category.passedCount %></span><span>/<%= category.results.length %></span><span class="status-<%= percentColor(categoryPercent) %>"><%= categoryPercent %>%</span></h4>
+							<h5><%= category.title %></h5>
+						</div>
+					</a>
+				</div>
+			<% } %>
+		</div>
+	</div>
+
+	<div class="top-nav-search float-none ms-0 mb-4 report-search">
+		<form role="search" onsubmit="return false">
+			<input type="search" class="form-control" placeholder="Поиск по отчёту: тест, ошибка, адрес страницы" data-report-search>
+			<span class="btn"><i class="feather-search"></i></span>
+		</form>
+	</div>
+	<p class="text-muted-2 d-none" data-report-search-empty>По запросу ничего не найдено</p>
+
+	<% for (const category of categories) { %>
+		<% const badge = category.passedCount === category.results.length ? 'success' : category.passedCount === 0 ? 'danger' : 'warning'; %>
+		<div class="card report-category" id="category-<%= category.id %>">
+			<div class="card-header d-flex align-items-center gap-3">
+				<span class="dash-boxs dash-boxs-accent dash-boxs-sm comman-flex-center"><i class="<%= category.icon %>"></i></span>
+				<h4 class="card-title flex-grow-1"><%= category.title %></h4>
+				<span class="badge badge-soft-<%= badge %>"><%= category.passedCount %>/<%= category.results.length %></span>
+			</div>
+			<div class="card-body pt-0">
+				<ul class="list-group notification-list">
+					<% for (const result of category.results) { %>
+						<li class="list-group-item report-test">
+							<%- include('../partials/report-test', { result }) %>
+						</li>
+					<% } %>
+				</ul>
+			</div>
+		</div>
+	<% } %>
+<% } %>
+
+<!-- Скриншот крупно. Картинку и подпись подставляет app.js. -->
+<div class="modal fade" id="media-modal" tabindex="-1" aria-label="Скриншот" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" data-media-modal-caption>Скриншот</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+			<div class="modal-body text-center">
+				<img src="" alt="" class="report-media-full" data-media-modal-image>
+			</div>
+		</div>
+	</div>
+</div>

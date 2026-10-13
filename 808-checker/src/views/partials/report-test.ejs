@@ -1,0 +1,52 @@
+<%# Один тест в отчёте. Нужен result — строка из report_results. %>
+<% const PROBLEMS_SHOWN = 5; %>
+<div class="d-flex flex-wrap align-items-start gap-3">
+	<% if (result.passed) { %>
+		<i class="feather-check-circle text-success report-test__icon"></i>
+	<% } else { %>
+		<i class="feather-x-circle text-danger report-test__icon"></i>
+	<% } %>
+
+	<div class="flex-grow-1 report-test__body">
+		<div class="report-test__title"><%= result.test_title %></div>
+		<div class="report-test__comment"><%= result.comment %></div>
+
+		<% if (result.problems.length > 0) { %>
+			<ul class="list-unstyled report-test__problems mt-3 mb-0">
+				<% result.problems.forEach((problem, index) => { %>
+					<li class="py-2 border-top <%= index >= PROBLEMS_SHOWN ? 'd-none' : '' %>" <%= index >= PROBLEMS_SHOWN ? 'data-more-item' : '' %>><%= problem %></li>
+				<% }) %>
+			</ul>
+			<% if (result.problems.length > PROBLEMS_SHOWN) { %>
+				<div class="invoice-load-btn text-start mt-2 mb-0">
+					<button type="button" class="btn" data-show-more>Показать ещё <%= result.problems.length - PROBLEMS_SHOWN %></button>
+				</div>
+			<% } %>
+		<% } %>
+
+		<div class="report-test__pages mt-2">
+			<%= result.pages.length > 1 ? 'Страницы:' : 'Страница:' %>
+			<% result.pages.forEach((pageUrl, index) => { %>
+				<a href="<%= pageUrl %>" target="_blank" rel="noopener"><%= displayUrl(pageUrl) %></a><%= index < result.pages.length - 1 ? ',' : '' %>
+			<% }) %>
+		</div>
+
+		<% if (result.media.length > 0) { %>
+			<ul class="nav activity-sub-list report-test__media mt-3">
+				<% for (const item of result.media) { %>
+					<li>
+						<% if (item.file.endsWith('.webm')) { %>
+							<video src="/media/<%= item.file %>" controls preload="metadata" class="report-video"></video>
+						<% } else { %>
+							<button type="button" class="report-thumb" data-media-preview="/media/<%= item.file %>" data-media-caption="<%= item.caption || result.test_title %>" title="<%= item.caption || 'Открыть скриншот' %>">
+								<img src="/media/<%= item.file %>" width="120" height="80" alt="<%= item.caption || 'Скриншот' %>" loading="lazy">
+							</button>
+						<% } %>
+					</li>
+				<% } %>
+			</ul>
+		<% } %>
+	</div>
+
+	<span class="custom-badge status-<%= result.passed ? 'green' : 'red' %>"><%= result.passed ? 'Успешно' : 'Провалено' %></span>
+</div>

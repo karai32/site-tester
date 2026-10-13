@@ -6,6 +6,30 @@ export function findReportById(id) {
   return db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
 }
 
+// Отчёты вместе с названием сценария и именем того, кто запустил проверку
+const reportsWithNames = `
+  SELECT reports.*,
+         scenarios.name     AS scenario_name,
+         scenarios.revision AS scenario_revision,
+         users.name         AS started_by_name
+  FROM reports
+  JOIN scenarios ON scenarios.id = reports.scenario_id
+  LEFT JOIN users ON users.id = reports.started_by
+`;
+
+export function findReportWithNames(id) {
+  return db.prepare(`${reportsWithNames} WHERE reports.id = ?`).get(id);
+}
+
+// Все отчёты проекта, новые сверху
+export function getProjectReports(projectId) {
+  return db.prepare(`${reportsWithNames} WHERE reports.project_id = ? ORDER BY reports.id DESC`).all(projectId);
+}
+
+export function getRecentReports(projectId, limit) {
+  return db.prepare(`${reportsWithNames} WHERE reports.project_id = ? ORDER BY reports.id DESC LIMIT ?`).all(projectId, limit);
+}
+
 // Ставит проверку в очередь. Возвращает id отчёта.
 export function createReport({ projectId, scenarioId, startedBy }) {
   const result = db.prepare('INSERT INTO reports (project_id, scenario_id, started_by) VALUES (?, ?, ?)')

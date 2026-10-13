@@ -1,6 +1,56 @@
 <%- include('../partials/project-head') %>
 
-<div class="card-box">
-	<h4 class="mb-1">Архив отчётов</h4>
-	<p class="mb-0 text-muted-2">Здесь появятся все отчёты проекта с поиском, фильтрами и скачиванием</p>
+<div class="card card-table">
+	<div class="card-body">
+		<div class="page-table-header mb-2">
+			<div class="row align-items-center g-3">
+				<div class="col"><div class="doctor-table-blk"><h3>Архив отчётов</h3></div></div>
+				<div class="col-12 col-md-auto">
+					<div class="top-nav-search float-none ms-0">
+						<form method="get" action="/projects/<%= project.id %>/reports">
+							<input type="text" name="q" class="form-control" placeholder="Сценарий, автор или дата" value="<%= search %>">
+							<button class="btn" type="submit" aria-label="Найти"><i class="feather-search"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<% if (pagination.total === 0) { %>
+			<p class="p-3 mb-0 text-muted-2"><%= search ? `По запросу «${search}» ничего не найдено` : 'Проверок ещё не было' %></p>
+		<% } else { %>
+			<div class="table-responsive">
+				<table class="table border-0 custom-table comman-table mb-0">
+					<thead><tr><th>Отчёт</th><th>Окончание проверки</th><th>Результат</th><th></th></tr></thead>
+					<tbody>
+						<% for (const report of pagination.items) { %>
+							<% const status = reportStatus(report); %>
+							<tr>
+								<td>
+									<div class="d-flex align-items-center gap-3">
+										<span class="doctor-box-icon doctor-box-accent doctor-box-sm m-0"><i class="feather-file-text"></i></span>
+										<h2><%= report.scenario_name %> <span class="d-inline text-muted-2">#<%= report.scenario_revision %></span><span>Отчёт #<%= report.id %> · запустил <%= authorName(report.started_by_name) %></span></h2>
+									</div>
+								</td>
+								<td class="text-nowrap"><%= formatDateTime(report.finished_at) %></td>
+								<td><span class="custom-badge status-<%= status.color %>"><%= status.label %></span></td>
+								<td>
+									<div class="d-flex justify-content-end align-items-center gap-2">
+										<a href="/reports/<%= report.id %>" class="btn btn-light btn-rounded">Открыть</a>
+										<% if (report.status === 'done') { %>
+											<div class="add-group"><a href="/reports/<%= report.id %>/download" class="btn btn-primary" aria-label="Скачать"><i class="feather-download"></i></a></div>
+										<% } %>
+									</div>
+								</td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+			</div>
+		<% } %>
+
+		<div class="px-3 pb-3">
+			<%- include('../partials/pagination', { noun: plural(pagination.total, ['отчёта', 'отчётов', 'отчётов']) }) %>
+		</div>
+	</div>
 </div>

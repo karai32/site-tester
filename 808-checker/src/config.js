@@ -1,4 +1,4 @@
-// Настройки сервиса. Меняются переменными окружения (или файлом .env).
+// Настройки сервиса. Меняются переменными окружения, например: PORT=3005 npm run dev
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';

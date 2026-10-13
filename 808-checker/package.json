@@ -8,11 +8,11 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node --env-file-if-exists=.env --watch src/server.js",
-    "start": "node --env-file-if-exists=.env src/server.js",
-    "add-user": "node --env-file-if-exists=.env scripts/add-user.js",
-    "add-project": "node --env-file-if-exists=.env scripts/add-project.js",
-    "check": "node --env-file-if-exists=.env scripts/run-check.js"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "add-user": "node scripts/add-user.js",
+    "add-project": "node scripts/add-project.js",
+    "check": "node scripts/run-check.js"
   },
   "dependencies": {
     "@fastify/cookie": "11.1.2",

@@ -1,21 +1,28 @@
 {
-  "name": "site-checker",
+  "name": "808-checker",
   "version": "0.1.0",
   "private": true,
-  "description": "Проверка одного настроенного сайта с помощью Fastify и Playwright Test",
+  "description": "808 Checker — сервис проверки сайтов",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node --env-file-if-exists=.env --watch src/server.js",
-    "start": "node --env-file-if-exists=.env src/server.js",
-    "pw:install": "playwright install chromium"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "add-user": "node scripts/add-user.js",
+    "add-project": "node scripts/add-project.js",
+    "check": "node scripts/run-check.js",
+    "queue-check": "node scripts/queue-check.js"
   },
   "dependencies": {
-    "@fastify/static": "^10.1.3",
-    "@playwright/test": "^1.62.1",
-    "better-sqlite3": "^13.0.3",
-    "fastify": "^5.12.1"
+    "@fastify/cookie": "11.1.2",
+    "@fastify/formbody": "9.0.0",
+    "@fastify/static": "10.1.4",
+    "@fastify/view": "12.0.0",
+    "better-sqlite3": "13.0.3",
+    "ejs": "6.0.1",
+    "fastify": "5.12.5",
+    "playwright": "1.62.1"
   }
 }

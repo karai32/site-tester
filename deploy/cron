@@ -1,0 +1,4 @@
+# Ночная полная проверка. На сервере: /etc/cron.d/808-checker
+# Время сервера — UTC: 00:00 UTC = 03:00 по Москве.
+# Ставит в очередь сценарий 1 (полная проверка Hadassah), выполняет её сервер.
+0 0 * * * checker cd /opt/808-checker && set -a && . /etc/808-checker.env && set +a && /usr/bin/node scripts/queue-check.js 1 >/dev/null 2>&1

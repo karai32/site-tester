@@ -1,0 +1,29 @@
+<div class="page-heading">
+	<div class="page-heading-main">
+		<div>
+			<h1>Проекты</h1>
+			<p>Сайты, которые проверяет сервис</p>
+		</div>
+	</div>
+</div>
+
+<% if (projects.length === 0) { %>
+	<div class="card-box">
+		<h4 class="mb-1">Проектов пока нет</h4>
+		<p class="mb-0 text-muted-2">Добавьте проект командой <code>npm run add-project</code></p>
+	</div>
+<% } %>
+
+<div class="row">
+	<% for (const project of projects) { %>
+		<div class="col-12 col-md-6 col-xl-4">
+			<a class="card-box project-card" href="/projects/<%= project.id %>">
+				<span class="avatar avatar-lg shape bg-primary m-0"><%= initials(project.name) %></span>
+				<div>
+					<h4 class="mb-1"><%= project.name %></h4>
+					<p class="mb-0"><i class="feather-link"></i> <%= displayUrl(project.url) %></p>
+				</div>
+			</a>
+		</div>
+	<% } %>
+</div>

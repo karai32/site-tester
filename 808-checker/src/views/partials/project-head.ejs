@@ -1,0 +1,24 @@
+<%# Шапка страницы проекта: крошки, название, ссылка на сайт и вкладки. Нужны project и tab. %>
+<div class="page-header">
+	<ul class="breadcrumb">
+		<li class="breadcrumb-item"><a href="/projects">Проекты</a></li>
+		<li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+		<li class="breadcrumb-item active"><%= project.name %></li>
+	</ul>
+</div>
+
+<div class="page-heading">
+	<div class="page-heading-main">
+		<div class="profile-user-img m-0"><span class="avatar avatar-lg shape bg-primary m-0"><%= initials(project.name) %></span></div>
+		<div>
+			<h1><%= project.name %></h1>
+			<p><i class="feather-link"></i><a href="<%= project.url %>" target="_blank" rel="noopener"><%= displayUrl(project.url) %></a></p>
+		</div>
+	</div>
+</div>
+
+<ul class="nav nav-tabs nav-tabs-bottom mb-4">
+	<li class="nav-item"><a class="nav-link <%= tab === 'dashboard' ? 'active' : '' %>" href="/projects/<%= project.id %>">Дашборд</a></li>
+	<li class="nav-item"><a class="nav-link <%= tab === 'scenarios' ? 'active' : '' %>" href="/projects/<%= project.id %>/scenarios">Сценарии</a></li>
+	<li class="nav-item"><a class="nav-link <%= tab === 'reports' ? 'active' : '' %>" href="/projects/<%= project.id %>/reports">Архив отчётов</a></li>
+</ul>

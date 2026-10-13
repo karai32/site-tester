@@ -1,0 +1,10 @@
+<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="logo-bg" x1="0" y1="0" x2="44" y2="0" gradientUnits="userSpaceOnUse">
+<stop stop-color="#33414E"/>
+<stop offset="1" stop-color="#2C3B49"/>
+</linearGradient>
+</defs>
+<rect width="44" height="44" rx="16" fill="url(#logo-bg)"/>
+<rect x="12" y="22" width="13.743" height="13.743" transform="rotate(-45 12 22)" fill="#FEFEFE"/>
+</svg>

@@ -1,0 +1,36 @@
+<div class="login-wrapper login-center">
+	<div class="loginbox">
+		<div class="login-right">
+			<div class="text-center mb-4"><img src="/assets/img/logo-mark.svg" width="44" height="44" alt="808 Checker"></div>
+			<h2>Вход в аккаунт</h2>
+			<p class="account-subtitle">Введите логин и пароль для доступа к панели</p>
+
+			<form method="post" action="/login">
+				<div class="input-block">
+					<label for="login">Логин</label>
+					<input class="form-control" id="login" name="login" type="text" placeholder="Введите логин" value="<%= login %>" autocomplete="username" required <%= error ? '' : 'autofocus' %>>
+				</div>
+				<div class="input-block">
+					<label for="password">Пароль</label>
+					<div class="position-relative">
+						<input class="form-control pass-input" id="password" name="password" type="password" placeholder="Введите пароль" autocomplete="current-password" required <%= error ? 'autofocus' : '' %>>
+						<span class="profile-views feather-eye-off toggle-password"></span>
+					</div>
+				</div>
+
+				<% if (error) { %>
+					<div class="alert alert-danger" role="alert">
+						<div class="d-flex align-items-start gap-2">
+							<i class="feather-x-circle" style="font-size:18px;margin-top:1px"></i>
+							<div><strong>Неверный логин или пароль</strong><div style="font-size:12px">Проверьте раскладку и попробуйте ещё раз</div></div>
+						</div>
+					</div>
+				<% } %>
+
+				<div class="login-btn mb-0">
+					<button class="btn btn-primary btn-block" type="submit">Войти</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,65 @@
+/* Правила самого сервиса, которых нет в UI-ките.
+   Цвета — только переменные из theme.css. */
+
+.text-muted-2 {
+	color: var(--muted);
+}
+
+/* Затемнение под открытым мобильным меню */
+.sidebar-overlay {
+	display: none;
+	position: fixed;
+	inset: 70px 0 0 0;
+	background: rgba(18, 24, 42, 0.25);
+	z-index: 1038;
+}
+@media (max-width: 991.98px) {
+	.slide-nav .sidebar-overlay {
+		display: block;
+	}
+}
+
+/* Кнопка «Выйти» в выпадающем меню выглядит как ссылка */
+.user-menu .dropdown-menu form {
+	margin: 0;
+}
+.user-menu .dropdown-menu button.dropdown-item {
+	width: 100%;
+	text-align: left;
+}
+
+/* Карточка проекта в списке проектов */
+.project-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	color: var(--ink);
+	box-shadow: var(--shadow-card);
+	transition: box-shadow 0.2s ease;
+}
+.project-card:hover {
+	color: var(--ink);
+	box-shadow: 0 15px 24px rgba(130, 126, 126, 0.2);
+}
+.project-card p {
+	color: var(--muted);
+	font-size: 14px;
+}
+
+/* Вкладки проекта в одну строку; на узком экране прокручиваются вбок */
+.nav-tabs-bottom {
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+}
+.nav-tabs-bottom .nav-link {
+	white-space: nowrap;
+}
+
+/* Телефон: логотип справа от кнопки меню, а не под ней */
+@media (max-width: 991.98px) {
+	.header .header-left {
+		padding-left: 60px;
+	}
+}

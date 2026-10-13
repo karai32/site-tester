@@ -1,0 +1,25 @@
+{
+  "name": "808-checker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "808 Checker — сервис проверки сайтов",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "add-user": "node --env-file-if-exists=.env scripts/add-user.js",
+    "add-project": "node --env-file-if-exists=.env scripts/add-project.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "11.1.2",
+    "@fastify/formbody": "9.0.0",
+    "@fastify/static": "10.1.4",
+    "@fastify/view": "12.0.0",
+    "better-sqlite3": "13.0.3",
+    "ejs": "6.0.1",
+    "fastify": "5.12.5"
+  }
+}

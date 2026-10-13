@@ -1,0 +1,35 @@
+<%
+	// Пункт меню активен, если текущий адрес начинается с его ссылки
+	const isActive = (href) => currentPath === href || currentPath.startsWith(href + '/');
+%>
+<div class="sidebar">
+	<div class="sidebar-inner">
+		<div class="sidebar-menu">
+			<ul>
+				<li class="menu-title">Меню</li>
+				<li><a href="/profile" class="<%= isActive('/profile') ? 'active' : '' %>"><span class="menu-side"><i class="feather-user"></i></span> <span>Профиль</span></a></li>
+				<li><a href="/projects" class="<%= currentPath === '/projects' ? 'active' : '' %>"><span class="menu-side"><i class="feather-layers"></i></span> <span>Проекты</span></a></li>
+
+				<% if (sidebarProjects.length > 0) { %>
+					<li class="submenu">
+						<a href="#" class="subdrop"><span class="menu-side"><i class="feather-bookmark"></i></span> <span>Выбранные проекты</span> <span class="menu-arrow"></span></a>
+						<ul style="display:block">
+							<% for (const project of sidebarProjects) { %>
+								<li>
+									<a href="/projects/<%= project.id %>" class="<%= isActive('/projects/' + project.id) ? 'active' : '' %>">
+										<span class="avatar avatar-xs shape bg-secondary m-0"><%= initials(project.name) %></span><%= project.name %>
+									</a>
+								</li>
+							<% } %>
+						</ul>
+					</li>
+				<% } %>
+
+				<li><a href="/settings" class="<%= isActive('/settings') ? 'active' : '' %>"><span class="menu-side"><i class="feather-settings"></i></span> <span>Настройки</span></a></li>
+			</ul>
+		</div>
+		<div class="sidebar-user">
+			<div class="logout-btn"><a href="/profile"><span class="avatar"><%= initials(user.name) %></span> <span><%= shortName(user.name) %></span></a></div>
+		</div>
+	</div>
+</div>

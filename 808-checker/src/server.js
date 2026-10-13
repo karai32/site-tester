@@ -8,15 +8,14 @@ import fastifyView from '@fastify/view';
 import ejs from 'ejs';
 
 import { getCurrentUser } from './auth/session.js';
+import { HOST, MEDIA_DIR, PORT } from './config.js';
 import { getProjects } from './db/projects.js';
 import * as helpers from './helpers.js';
 import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import profileRoutes from './routes/profile.js';
 import settingsRoutes from './routes/settings.js';
-
-const PORT = Number(process.env.PORT) || 3001;
-const HOST = process.env.HOST || '127.0.0.1';
+import { startQueue } from './runner/queue.js';
 
 const app = Fastify({ logger: true });
 
@@ -28,6 +27,13 @@ await app.register(fastifyFormbody);
 await app.register(fastifyStatic, {
   root: fileURLToPath(new URL('../public/assets', import.meta.url)),
   prefix: '/assets/',
+});
+
+// Скриншоты отчётов из папки data/media. Открываются только после входа.
+await app.register(fastifyStatic, {
+  root: MEDIA_DIR,
+  prefix: '/media/',
+  decorateReply: false,
 });
 
 // Шаблоны EJS из src/views. Функции из helpers.js доступны в любом шаблоне.
@@ -71,3 +77,13 @@ app.setNotFoundHandler(async (_request, reply) => {
 });
 
 await app.listen({ port: PORT, host: HOST });
+
+// Очередь проверок: запускает отчёты со статусом queued по одному
+startQueue(app.log);
+
+// Остановка сервера (systemctl stop, Ctrl+C): выходим сразу, браузер закроет Playwright.
+// Без этого Playwright перехватывает сигнал, и сервер продолжает работать.
+// Идущая проверка будет отмечена прерванной при следующем запуске.
+for (const signal of ['SIGTERM', 'SIGINT']) {
+  process.on(signal, () => process.exit(0));
+}

@@ -1,19 +1,27 @@
 // Подключение к базе SQLite. Остальные файлы папки db берут отсюда `db`.
-import { mkdirSync, readFileSync } from 'node:fs';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readdirSync, readFileSync } from 'node:fs';
 import Database from 'better-sqlite3';
+import { DB_PATH } from '../config.js';
 
-// Путь к файлу базы можно поменять переменной окружения DB_PATH
-const dbPath = process.env.DB_PATH || fileURLToPath(new URL('../../data/app.db', import.meta.url));
-mkdirSync(dirname(dbPath), { recursive: true });
-
-export const db = new Database(dbPath);
+export const db = new Database(DB_PATH);
 
 // WAL: чтение не ждёт записи. foreign_keys: SQLite проверяет связи между таблицами.
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
-// Создаём таблицы, которых ещё нет
-const schema = readFileSync(new URL('./schema.sql', import.meta.url), 'utf8');
-db.exec(schema);
+// Миграции: файлы migrations/NNN-название.sql выполняются по порядку номеров, каждый один раз.
+// Номер последней выполненной миграции SQLite хранит в user_version.
+// Чтобы изменить базу, добавьте новый файл со следующим номером. Старые файлы не меняйте.
+const migrationsDir = new URL('./migrations/', import.meta.url);
+const doneVersion = db.pragma('user_version', { simple: true });
+
+for (const file of readdirSync(migrationsDir).sort()) {
+  const version = parseInt(file, 10);
+  if (!(version > doneVersion)) continue;
+
+  const sql = readFileSync(new URL(file, migrationsDir), 'utf8');
+  db.transaction(() => {
+    db.exec(sql);
+    db.pragma(`user_version = ${version}`);
+  })();
+}

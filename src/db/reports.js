@@ -37,6 +37,11 @@ export function createReport({ projectId, scenarioId, startedBy }) {
   return result.lastInsertRowid;
 }
 
+// Идёт ли сейчас проверка
+export function isCheckRunning() {
+  return Boolean(db.prepare(`SELECT 1 FROM reports WHERE status = 'running' LIMIT 1`).get());
+}
+
 // Самый старый отчёт в очереди
 export function findNextQueuedReport() {
   return db.prepare(`SELECT * FROM reports WHERE status = 'queued' ORDER BY id LIMIT 1`).get();

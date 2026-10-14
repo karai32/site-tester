@@ -1,56 +1,97 @@
-<%- include('../partials/project-head') %>
+<div class="breadcrumbs"><a href="/projects/<%= project.id %>"><%= project.name %></a> / <span>Архив отчётов</span></div>
 
-<div class="card card-table">
-	<div class="card-body">
-		<div class="page-table-header mb-2">
-			<div class="row align-items-center g-3">
-				<div class="col"><div class="doctor-table-blk"><h3>Архив отчётов</h3></div></div>
-				<div class="col-12 col-md-auto">
-					<div class="top-nav-search float-none ms-0">
-						<form method="get" action="/projects/<%= project.id %>/reports">
-							<input type="text" name="q" class="form-control" placeholder="Сценарий, автор или дата" value="<%= search %>">
-							<button class="btn" type="submit" aria-label="Найти"><i class="feather-search"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
+<div class="page-head">
+	<div>
+		<h1 class="page-title">Архив отчётов</h1>
+		<p class="page-subtitle"><i class="feather-link"></i><%= displayUrl(project.url) %> — <%= totalReports %> <%= plural(totalReports, ['отчёт', 'отчёта', 'отчётов']) %></p>
+	</div>
+</div>
+
+<%# Поиск: остальные фильтры передаются вместе с ним %>
+<form class="search-pill" method="get" action="/projects/<%= project.id %>/reports">
+	<i class="feather-search"></i>
+	<input type="search" name="q" class="form-control" placeholder="Найти отчёт: сценарий, автор или дата" value="<%= search %>">
+	<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
+	<% for (const id of selectedCategories) { %><input type="hidden" name="cat" value="<%= id %>"><% } %>
+	<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+</form>
+
+<div class="filters">
+	<%# Автор %>
+	<div class="dropdown">
+		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+			Автор: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
+		</button>
+		<div class="dropdown-menu">
+			<a class="dropdown-item <%= author ? '' : 'active' %>" href="<%= archiveUrl({ author: '' }) %>">Все</a>
+			<% for (const name of authors) { %>
+				<a class="dropdown-item <%= author === name ? 'active' : '' %>" href="<%= archiveUrl({ author: name }) %>"><%= name %></a>
+			<% } %>
 		</div>
+	</div>
 
-		<% if (pagination.total === 0) { %>
-			<p class="p-3 mb-0 text-muted-2"><%= search ? `По запросу «${search}» ничего не найдено` : 'Проверок ещё не было' %></p>
-		<% } else { %>
-			<div class="table-responsive">
-				<table class="table border-0 custom-table comman-table mb-0">
-					<thead><tr><th>Отчёт</th><th>Окончание проверки</th><th>Результат</th><th></th></tr></thead>
-					<tbody>
-						<% for (const report of pagination.items) { %>
-							<% const status = reportStatus(report); %>
-							<tr>
-								<td>
-									<div class="d-flex align-items-center gap-3">
-										<span class="doctor-box-icon doctor-box-accent doctor-box-sm m-0"><i class="feather-file-text"></i></span>
-										<h2><%= report.scenario_name %> <span class="d-inline text-muted-2">#<%= report.scenario_revision %></span><span>Отчёт #<%= report.id %> · запустил <%= authorName(report.started_by_name) %></span></h2>
-									</div>
-								</td>
-								<td class="text-nowrap"><%= formatDateTime(report.finished_at) %></td>
-								<td><span class="custom-badge status-<%= status.color %>"><%= status.label %></span></td>
-								<td>
-									<div class="d-flex justify-content-end align-items-center gap-2">
-										<a href="/reports/<%= report.id %>" class="btn btn-light btn-rounded">Открыть</a>
-										<% if (report.status === 'done') { %>
-											<div class="add-group"><a href="/reports/<%= report.id %>/download" class="btn btn-primary" aria-label="Скачать"><i class="feather-download"></i></a></div>
-										<% } %>
-									</div>
-								</td>
-							</tr>
-						<% } %>
-					</tbody>
-				</table>
-			</div>
-		<% } %>
+	<%# Категории: сценарий отчёта содержит все отмеченные %>
+	<div class="dropdown">
+		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+			Категории: <%= selectedCategories.length === 0 ? 'Все' : selectedCategories.length %> <i class="feather-chevron-down"></i>
+		</button>
+		<form class="dropdown-menu" method="get" action="/projects/<%= project.id %>/reports">
+			<% for (const category of categories) { %>
+				<label class="custom_check"><%= category.title %>
+					<input type="checkbox" name="cat" value="<%= category.id %>" <%= selectedCategories.includes(category.id) ? 'checked' : '' %>>
+					<span class="checkmark"></span>
+				</label>
+			<% } %>
+			<% if (search) { %><input type="hidden" name="q" value="<%= search %>"><% } %>
+			<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
+			<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+			<div class="filters__apply"><button type="submit" class="btn btn-primary btn-pill btn-pill-sm w-100">Применить</button></div>
+		</form>
+	</div>
 
-		<div class="px-3 pb-3">
-			<%- include('../partials/pagination', { noun: plural(pagination.total, ['отчёта', 'отчётов', 'отчётов']) }) %>
+	<%# Сортировка %>
+	<div class="dropdown filters__sort">
+		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+			Сортировка: <%= sorts[sort].title %> <i class="feather-chevron-down"></i>
+		</button>
+		<div class="dropdown-menu dropdown-menu-end">
+			<% for (const [id, option] of Object.entries(sorts)) { %>
+				<a class="dropdown-item <%= sort === id ? 'active' : '' %>" href="<%= archiveUrl({ sort: id === 'new' ? '' : id }) %>"><%= option.title %></a>
+			<% } %>
 		</div>
 	</div>
 </div>
+
+<section class="panel">
+	<% if (pagination.total === 0) { %>
+		<p class="text-muted-2 mb-0"><%= totalReports === 0 ? 'Проверок ещё не было' : 'По этим условиям отчётов нет' %></p>
+	<% } %>
+	<% for (const report of pagination.items) { %>
+		<div class="list-row">
+			<%# Полная проверка — залитая плитка, частичная — контурная %>
+			<% if (report.scenario_is_full) { %>
+				<span class="icon-box"><i class="feather-shield"></i></span>
+			<% } else { %>
+				<span class="icon-box icon-box-outline"><i class="feather-bar-chart-2"></i></span>
+			<% } %>
+			<div class="list-row__main">
+				<h3 class="list-row__title"><%= report.scenario_name %></h3>
+				<div class="list-row__sub">Автор: <%= authorName(report.started_by_name) %> · отчёт #<%= report.id %></div>
+			</div>
+			<div class="list-row__aside">
+				<% if (report.status === 'done') { %>
+					<span><%= formatDateTime(report.finished_at) %></span>
+				<% } else { %>
+					<% const status = reportStatus(report); %>
+					<span class="custom-badge status-<%= status.color %>"><%= status.label %></span>
+				<% } %>
+				<a href="/reports/<%= report.id %>" class="btn btn-outline-primary btn-pill btn-pill-sm">Открыть</a>
+				<% if (report.status === 'done') { %>
+					<a href="/reports/<%= report.id %>/download" class="btn btn-outline-primary btn-circle" aria-label="Скачать отчёт"><i class="feather-download"></i></a>
+				<% } %>
+			</div>
+		</div>
+	<% } %>
+</section>
+
+<%- include('../partials/pagination', { pageUrl: (page) => archiveUrl({ page }), noun: plural(pagination.total, ['отчёта', 'отчётов', 'отчётов']) }) %>

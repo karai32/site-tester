@@ -46,11 +46,11 @@ async function runTest(test, context) {
       passed: result.passed,
       comment: result.comment || '',
       problems: result.problems || [],
-      pages: result.pages || [context.siteUrl],
+      pages: result.pages || [],
       media: result.media || [],
     };
   } catch (error) {
-    return { passed: false, comment: `Тест не выполнен: ${firstLine(error)}`, problems: [], pages: [context.siteUrl], media: [] };
+    return { passed: false, comment: `Тест не выполнен: ${firstLine(error)}`, problems: [], pages: [], media: [] };
   } finally {
     clearTimeout(timer);
   }

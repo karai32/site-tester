@@ -1,7 +1,8 @@
 // Все тесты сервиса по категориям.
 // Новый тест: создайте файл в папке категории (по образцу соседних) и добавьте его в список ниже.
 // Порядок здесь — порядок запуска тестов и вывода в отчёте.
-// icon — иконка категории из набора Feather (см. раздел «Иконки» в UI-ките).
+// icon — иконка категории из набора Feather (см. раздел «Иконки» в UI-ките),
+// shortTitle — короткое название для плиток сводки на дашборде.
 
 import httpsAndSsl from './availability/https-and-ssl.js';
 import homepageHttpStatus from './availability/homepage-http-status.js';
@@ -71,18 +72,21 @@ export const categories = [
     id: 'availability',
     icon: 'feather-shield',
     title: 'Техническая доступность и безопасность',
+    shortTitle: 'Доступность',
     tests: [httpsAndSsl, homepageHttpStatus, custom404Page, brokenLinks, formsSpamProtection],
   },
   {
     id: 'navigation',
     icon: 'feather-compass',
     title: 'Навигация, шапка и футер',
+    shortTitle: 'Навигация',
     tests: [menuLinks, dropdownSubmenu, mobileMenu, logoHome, footerContent, footerSocialLinks, scrollToTop],
   },
   {
     id: 'search-pagination',
     icon: 'feather-search',
     title: 'Поиск, фильтры, пагинации и языковые сервисы',
+    shortTitle: 'Поиск и фильтры',
     tests: [
       searchResults,
       searchNoResults,
@@ -101,6 +105,7 @@ export const categories = [
     id: 'content',
     icon: 'feather-file-text',
     title: 'Контент и данные',
+    shortTitle: 'Контент',
     tests: [
       doctorsHomepageBlock,
       newsFeedHomepage,
@@ -115,18 +120,21 @@ export const categories = [
     id: 'visual',
     icon: 'feather-monitor',
     title: 'Визуал, адаптивность и кроссбраузерность',
+    shortTitle: 'Визуал',
     tests: [mobileAdaptiveNoScroll, crossBrowser, homepageAdvantagesBlock, brokenImagesSitewide],
   },
   {
     id: 'forms',
     icon: 'feather-check-square',
     title: 'Формы, валидации и согласия',
+    shortTitle: 'Формы',
     tests: [headerBookingForm, headerBookingPhoneNormalization, headerBookingConsentCheckbox],
   },
   {
     id: 'widgets',
     icon: 'feather-message-circle',
     title: 'Виджеты, связь и внешние сервисы',
+    shortTitle: 'Виджеты',
     tests: [
       callbackWidgetOpen,
       callbackWidgetMobileOverlap,
@@ -140,18 +148,21 @@ export const categories = [
     id: 'seo',
     icon: 'feather-bar-chart-2',
     title: 'SEO',
+    shortTitle: 'SEO',
     tests: [titlePresent, descriptionPresent, h1Present, headingHierarchy],
   },
   {
     id: 'seo-infrastructure',
     icon: 'feather-globe',
     title: 'SEO-инфраструктура',
+    shortTitle: 'SEO-инфраструктура',
     tests: [xmlSitemap, openGraph, canonicalUrls, robotsMeta, breadcrumbSchema],
   },
   {
     id: 'antispam',
     icon: 'feather-lock',
     title: 'Защита и антиспам',
+    shortTitle: 'Антиспам',
     tests: [yandexSmartcaptcha],
   },
 ];

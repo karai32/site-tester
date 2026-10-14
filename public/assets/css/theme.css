@@ -1,8 +1,8 @@
 /* =========================================================
    Тема «808 Checker» для компонентов 808 Utilities
    ---------------------------------------------------------
-   Компоненты, размеры, радиусы и шрифт (Poppins) взяты из
-   UI-кита 808 Utilities (Preclinic, Bootstrap 5.3.3).
+   Компоненты, размеры и радиусы взяты из UI-кита 808 Utilities
+   (Preclinic, Bootstrap 5.3.3), шрифт — из макета Figma.
    Цвета заменены палитрой из Figma-макета «808 Checker».
 
    Основной цвет макета — градиент
@@ -86,8 +86,10 @@
   --shadow-header: 0 0 14px rgba(164, 170, 183, 0.25);
 
   /* --- Bootstrap 5.3: переменные темы --- */
-  /* В Poppins нет кириллицы: русские буквы берутся из Montserrat (тоже геометрический) */
-  --font-main: "Poppins", "Montserrat", sans-serif;
+  /* Шрифт макета — Helvetica Neue. Он есть на macOS и iOS, на Windows и Linux его заменяет Arial */
+  --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Логотип «808 CHECKER» в макете набран Outfit Bold */
+  --font-logo: "Outfit", var(--font-main);
   --bs-font-sans-serif: var(--font-main);
   --bs-body-font-family: var(--font-main);
   --bs-body-color: #12182a;

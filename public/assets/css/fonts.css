@@ -1,0 +1,28 @@
+/* Шрифт макета — Helvetica Neue: обычный (400), средний (500) и жирный (700).
+   Файлы woff2 — в public/assets/fonts/helvetica-neue/, в них оставлены латиница,
+   кириллица и нужные знаки (₽, №, стрелки), поэтому каждый весит около 30 КБ.
+   Имя "Helvetica Neue" перекрывает системный шрифт: на всех устройствах текст одинаковый. */
+
+@font-face {
+	font-family: "Helvetica Neue";
+	src: url("../fonts/helvetica-neue/HelveticaNeue-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Helvetica Neue";
+	src: url("../fonts/helvetica-neue/HelveticaNeue-Medium.woff2") format("woff2");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Helvetica Neue";
+	src: url("../fonts/helvetica-neue/HelveticaNeue-Bold.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}

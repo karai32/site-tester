@@ -744,6 +744,7 @@ body {
 	font-weight: 500;
 }
 .test-group__arrow {
+	display: inline-block;
 	margin-left: auto;
 	font-size: 18px;
 	transform: rotate(180deg);
@@ -992,5 +993,323 @@ body {
 	}
 	.pager .pagination {
 		margin-left: 0;
+	}
+}
+
+/* ==========================================================
+   11. Сценарии
+   ========================================================== */
+
+/* Галочка кита рисуется значком Font Awesome, а сервис его не подключает —
+   берём ту же галочку из Feather. Чёрточка — часть тестов категории выбрана */
+.custom_check .checkmark::after {
+	content: "\e92b";
+	font-family: "feather";
+	font-weight: 400;
+	font-size: 12px;
+}
+.custom_check input:indeterminate ~ .checkmark {
+	background-color: var(--primary);
+	border-color: var(--primary);
+}
+.custom_check input:indeterminate ~ .checkmark::after {
+	content: "\e996";
+	display: flex;
+}
+
+/* Переключатель «Активные / Неактивные» — вкладки кита в белой «таблетке» */
+.tabs-pill {
+	display: inline-block;
+	margin-bottom: 24px;
+	padding: 3px;
+	border-radius: 560px;
+	background: var(--paper);
+}
+.tabs-pill .nav-tabs {
+	border: 0;
+	flex-wrap: nowrap;
+}
+.tabs-pill .nav-link {
+	padding: 10px 32px;
+	border: 0;
+	color: var(--muted);
+	font-size: 14px;
+	white-space: nowrap;
+}
+.tabs-pill .nav-link.active {
+	color: var(--paper);
+}
+
+/* Строка сценария: название со статусом и параметры мелким текстом */
+.scenario-row__title a {
+	color: var(--ink);
+}
+.scenario-row__title a:hover {
+	color: var(--primary);
+}
+.scenario-row__title .custom-badge {
+	margin-left: 8px;
+	vertical-align: middle;
+}
+.scenario-row__link {
+	margin-left: 16px;
+	color: var(--muted);
+	font-size: 11px;
+	text-decoration: underline;
+}
+.meta-items {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 18px;
+	color: var(--ink);
+	font-size: 11px;
+}
+.meta-items b {
+	font-weight: 500;
+}
+/* Крупный бейдж с иконкой — статус регулярности */
+.custom-badge-lg {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 16px;
+	font-size: 14px;
+}
+.custom-badge-lg i {
+	margin: 0;
+	font-size: 16px;
+}
+
+/* Категория с тестами: шапка со стрелкой и список под ней */
+.tree-group {
+	border-bottom: 1px solid var(--border);
+}
+.tree-group:last-child {
+	border-bottom: 0;
+}
+.tree-group__head {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	padding: 22px 0;
+	border: 0;
+	background: none;
+	color: var(--ink);
+	text-align: left;
+}
+.tree-group:last-child .tree-group__head.collapsed,
+.tree-group:last-child .tree-group__head:has(.collapsed) {
+	padding-bottom: 0;
+}
+.tree-group__title,
+.tree-group__check {
+	flex-grow: 1;
+	font-size: 16px;
+	font-weight: 500;
+}
+.tree-group__check.custom_check {
+	margin: 0;
+	padding-left: 30px;
+	font-size: 16px;
+	line-height: 20px;
+}
+.tree-group__count {
+	color: var(--muted);
+	font-size: 13px;
+	white-space: nowrap;
+}
+.tree-group__toggle {
+	padding: 4px;
+	border: 0;
+	background: none;
+	color: var(--ink);
+}
+.tree-group__arrow {
+	display: inline-block; /* transform не действует на строчные элементы */
+	font-size: 18px;
+	transform: rotate(180deg);
+	transition: transform 0.2s;
+}
+.tree-group__head.collapsed .tree-group__arrow,
+.tree-group__toggle.collapsed .tree-group__arrow {
+	transform: none;
+}
+/* Тесты — с отступом под иконку категории и линией слева */
+.tree-items {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0 0 22px 27px;
+	padding: 0 0 0 26px;
+	border-left: 1px solid var(--border);
+	list-style: none;
+	font-size: 13px;
+	font-weight: 500;
+}
+.tree-items li {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+.tree-items li i {
+	margin-top: 1px;
+	font-size: 15px;
+}
+.tree-items .custom_check {
+	margin: 0;
+	font-weight: 500;
+}
+/* Строка с галочкой (выборки на странице сценария) */
+.check-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 22px 0;
+	border-bottom: 1px solid var(--border);
+	font-size: 14px;
+	font-weight: 500;
+}
+.check-row:last-child {
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.panel__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-top: 24px;
+}
+.panel__actions + .confirm-box {
+	margin-top: 24px;
+}
+/* Кнопки внизу страницы по центру */
+.actions-bar {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 16px;
+	margin-top: 8px;
+}
+.actions-bar form {
+	margin: 0;
+}
+/* «Деактивировать», «Отменить проверку» — красный текст на мягком красном фоне */
+.btn-soft-danger {
+	border: 0;
+	background: var(--error-bg);
+	color: var(--error);
+}
+.btn-soft-danger:hover {
+	background: var(--error);
+	color: var(--paper);
+}
+
+/* Подсказка вверху формы обновления */
+.info-panel {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	color: var(--muted);
+	font-size: 13px;
+}
+.info-panel i {
+	font-size: 18px;
+}
+.info-panel p {
+	margin: 0;
+}
+.scenario-name-field {
+	max-width: 768px;
+}
+.scenario-name-field .form-control {
+	border-color: var(--muted-bg);
+	background: var(--muted-bg);
+}
+
+/* Шаги создания сценария */
+.stepper {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px 20px;
+	margin-bottom: 24px;
+	padding: 16px 32px;
+	border-radius: 560px;
+	background: var(--paper);
+	box-shadow: var(--shadow-card);
+	color: var(--muted);
+	font-size: 16px;
+	font-weight: 500;
+}
+.stepper__step {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+.stepper__step.is-current {
+	color: var(--ink);
+}
+.stepper__num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: var(--muted-bg);
+	font-size: 14px;
+}
+.stepper__step.is-current .stepper__num {
+	border: 2px solid var(--primary);
+	background: var(--primary-gradient);
+	background-clip: padding-box;
+	color: var(--paper);
+	box-shadow: 0 0 0 2px var(--paper) inset;
+}
+.stepper__line {
+	width: 80px;
+	height: 1px;
+	background: var(--muted-2);
+}
+/* Номер шага в заголовке карточки */
+.step-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	margin-right: 12px;
+	border-radius: 50%;
+	background: var(--primary-gradient);
+	color: var(--paper);
+	font-size: 14px;
+	vertical-align: middle;
+}
+.step-badge-muted {
+	background: var(--muted-bg);
+	color: var(--muted);
+}
+
+@media (max-width: 767.98px) {
+	/* Вкладки шире экрана — прокручиваются внутри «таблетки», а не растягивают страницу */
+	.tabs-pill {
+		display: block;
+		max-width: 100%;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.tabs-pill .nav-link {
+		padding: 8px 14px;
+		font-size: 13px;
+	}
+	.stepper {
+		border-radius: 16px;
+		padding: 16px 20px;
+	}
+	.stepper__line {
+		display: none;
 	}
 }

@@ -27,6 +27,7 @@
 					<div class="list-row__main">
 						<h3 class="scenario-row__title"><%= scenario.name %></h3>
 						<span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span>
+						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="scenario-row__link">Страница сценария</a>
 					</div>
 					<button type="button" class="btn btn-primary btn-pill" data-launch="<%= scenario.id %>" data-launch-name="<%= scenario.name %>">Запустить</button>
 				</div>

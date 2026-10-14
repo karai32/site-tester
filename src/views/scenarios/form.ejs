@@ -1,0 +1,130 @@
+<%#
+	Форма сценария: создание нового (source = null) или новая редакция копией (source — исходный сценарий).
+	form: { name, testIds, pageSets } — что отмечено.
+%>
+<% const action = source ? `/projects/${project.id}/scenarios/${source.id}/copy` : `/projects/${project.id}/scenarios`; %>
+<div class="breadcrumbs">
+	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
+	<a href="/projects/<%= project.id %>/scenarios">Сценарии</a> /
+	<% if (source) { %>
+		<a href="/projects/<%= project.id %>/scenarios/<%= source.id %>"><%= source.name %></a> / <span>Обновление</span>
+	<% } else { %>
+		<span>Новый сценарий</span>
+	<% } %>
+</div>
+
+<div class="page-head">
+	<h1 class="page-title"><%= source ? 'Обновление сценария' : 'Создание сценария' %></h1>
+</div>
+
+<% if (source) { %>
+	<div class="panel info-panel">
+		<i class="feather-info"></i>
+		<p>Предзаполнено из сценария «<%= source.name %>». Все настройки унаследованы из него — измените любой параметр и сохраните как новую редакцию. Исходный сценарий останется без изменений.</p>
+	</div>
+<% } %>
+
+<% if (errors.length > 0) { %>
+	<div class="alert alert-danger" role="alert">
+		<% for (const error of errors) { %><div><%= error %></div><% } %>
+	</div>
+<% } %>
+
+<form method="post" action="<%= action %>" data-scenario-form>
+	<section class="panel">
+		<div class="field mt-0 scenario-name-field">
+			<label for="scenario-name">Название сценария</label>
+			<input id="scenario-name" name="name" class="form-control" value="<%= form.name %>" placeholder="Например, «SEO главных страниц»" required>
+		</div>
+	</section>
+
+	<%# Шаги по ТЗ. Регулярность и уведомления заработают вместе с расписанием и ботом %>
+	<div class="stepper">
+		<span class="stepper__step is-current"><span class="stepper__num">1</span>Область тестирования</span>
+		<span class="stepper__line"></span>
+		<span class="stepper__step"><span class="stepper__num">2</span>Регулярность</span>
+		<span class="stepper__line"></span>
+		<span class="stepper__step"><span class="stepper__num">3</span>Уведомления</span>
+	</div>
+
+	<div class="row g-4">
+		<div class="col-xl-6">
+			<section class="panel">
+				<div class="panel__head">
+					<h2 class="panel__title"><span class="step-badge">1</span> Область тестирования</h2>
+					<span class="panel__meta"><%= categories.length %> <%= plural(categories.length, ['категория', 'категории', 'категорий']) %></span>
+				</div>
+
+				<%# Категория: галочка выбирает все её тесты, стрелка раскрывает список %>
+				<% for (const category of categories) { %>
+					<div class="tree-group" data-picker>
+						<div class="tree-group__head">
+							<span class="icon-box icon-box-sm"><i class="<%= category.icon %>"></i></span>
+							<label class="custom_check tree-group__check"><%= category.title %>
+								<input type="checkbox" data-picker-all>
+								<span class="checkmark"></span>
+							</label>
+							<span class="tree-group__count" data-picker-count></span>
+							<button type="button" class="tree-group__toggle collapsed" data-bs-toggle="collapse" data-bs-target="#pick-<%= category.id %>" aria-label="Показать тесты"><i class="feather-chevron-down tree-group__arrow"></i></button>
+						</div>
+						<div class="collapse" id="pick-<%= category.id %>">
+							<div class="tree-items">
+								<% for (const test of category.tests) { %>
+									<label class="custom_check"><%= test.title %>
+										<input type="checkbox" name="tests" value="<%= test.id %>" <%= form.testIds.includes(test.id) ? 'checked' : '' %>>
+										<span class="checkmark"></span>
+									</label>
+								<% } %>
+							</div>
+						</div>
+					</div>
+				<% } %>
+
+				<%# Выборки страниц %>
+				<div class="tree-group" data-picker>
+					<div class="tree-group__head">
+						<span class="icon-box icon-box-sm icon-box-outline"><i class="feather-clock"></i></span>
+						<label class="custom_check tree-group__check">Выборки тестирования
+							<input type="checkbox" data-picker-all>
+							<span class="checkmark"></span>
+						</label>
+						<span class="tree-group__count" data-picker-count></span>
+						<button type="button" class="tree-group__toggle" data-bs-toggle="collapse" data-bs-target="#pick-page-sets" aria-label="Показать выборки"><i class="feather-chevron-down tree-group__arrow"></i></button>
+					</div>
+					<div class="collapse show" id="pick-page-sets">
+						<div class="tree-items">
+							<% for (const set of pageSets) { %>
+								<label class="custom_check"><%= set.title %>
+									<input type="checkbox" name="page_sets" value="<%= set.id %>" <%= form.pageSets.includes(set.id) ? 'checked' : '' %>>
+									<span class="checkmark"></span>
+								</label>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<div class="col-xl-6">
+			<section class="panel">
+				<div class="panel__head">
+					<h2 class="panel__title"><span class="step-badge step-badge-muted">2</span> Регулярность</h2>
+				</div>
+				<p class="panel__empty">Сценарий будет запускаться вручную. Расписание (каждый день, по будням, раз в N дней и т. д.) появится вместе с регулярными проверками.</p>
+			</section>
+			<section class="panel">
+				<div class="panel__head">
+					<h2 class="panel__title"><span class="step-badge step-badge-muted">3</span> Уведомления</h2>
+				</div>
+				<p class="panel__empty">Уведомления в Telegram и на почту появятся вместе с ботом.</p>
+			</section>
+		</div>
+	</div>
+
+	<div class="actions-bar">
+		<button type="submit" class="btn btn-primary btn-pill"><%= source ? 'Сохранить' : 'Создать сценарий' %></button>
+		<% if (source) { %>
+			<a href="/projects/<%= project.id %>/scenarios/<%= source.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
+		<% } %>
+	</div>
+</form>

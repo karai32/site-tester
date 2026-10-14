@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
-import { createReport, findReportWithNames, getReportResults } from '../db/reports.js';
+import { cancelReport, createReport, findReportWithNames, getReportResults } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
 import { groupByCategory } from '../report-summary.js';
 
@@ -35,9 +35,19 @@ export default async function reportRoutes(app) {
     const project = findProjectById(request.params.id);
     const scenario = findScenarioById(request.body?.scenario_id);
     if (!project || !scenario || scenario.project_id !== project.id) return reply.callNotFound();
+    // Выключенный сценарий не запускается: сначала его нужно включить на странице сценария
+    if (!scenario.is_active) return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
 
     const reportId = createReport({ projectId: project.id, scenarioId: scenario.id, startedBy: reply.locals.user.id });
     return reply.redirect(`/reports/${reportId}`);
+  });
+
+  // Отмена проверки: из очереди убирается сразу, идущая останавливается перед следующим тестом
+  app.post('/reports/:id/cancel', async (request, reply) => {
+    const data = loadReport(request.params.id);
+    if (!data) return reply.callNotFound();
+    cancelReport(data.report.id);
+    return reply.redirect(`/reports/${data.report.id}`);
   });
 
   // Страница отчёта

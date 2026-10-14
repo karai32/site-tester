@@ -19,6 +19,11 @@
 	<% if (report.status === 'done') { %>
 		<a href="/reports/<%= report.id %>/download" class="btn btn-primary btn-pill btn-pill-sm"><i class="feather-download"></i> Сохранить</a>
 	<% } %>
+	<% if (report.status === 'queued' || report.status === 'running') { %>
+		<form method="post" action="/reports/<%= report.id %>/cancel" data-confirm="Отменить проверку? Уже выполненные тесты останутся в отчёте.">
+			<button type="submit" class="btn btn-pill btn-pill-sm btn-soft-danger">Отменить проверку</button>
+		</form>
+	<% } %>
 </div>
 
 <%# Пока проверка идёт, app.js обновляет страницу каждые 5 секунд %>
@@ -45,6 +50,10 @@
 
 <% if (report.status === 'error') { %>
 	<div class="alert alert-danger" role="alert"><strong>Проверка не выполнена.</strong> <%= report.error %></div>
+<% } %>
+
+<% if (report.status === 'cancelled') { %>
+	<div class="alert alert-secondary" role="alert"><strong>Проверка отменена</strong> в <%= formatDateTime(report.finished_at) %>. Выполнено тестов: <%= report.tests_done %> из <%= report.tests_total || '?' %>.</div>
 <% } %>
 
 <% if (report.status === 'done') { %>

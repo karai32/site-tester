@@ -29,3 +29,14 @@ function pageNumbers(page, pagesCount) {
   numbers.push(pagesCount);
   return numbers;
 }
+
+// Адрес списка с параметрами фильтров: listUrl('/projects/1/reports', { q: 'аудит', cat: ['seo'], page: 2 })
+// Пустые значения в адрес не попадают.
+export function listUrl(path, params) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    for (const item of [value].flat()) if (item) query.append(key, item);
+  }
+  const text = query.toString();
+  return text ? `${path}?${text}` : path;
+}

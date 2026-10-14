@@ -1,0 +1,95 @@
+<div class="breadcrumbs"><a href="/projects">Проекты</a> / <a href="/projects/<%= project.id %>"><%= project.name %></a> / <span>Сценарии</span></div>
+
+<div class="page-head">
+	<div>
+		<h1 class="page-title">Сценарии</h1>
+		<p class="page-subtitle"><i class="feather-link"></i><a href="<%= project.url %>" target="_blank" rel="noopener"><%= displayUrl(project.url) %></a></p>
+	</div>
+	<a href="/projects/<%= project.id %>/scenarios/new" class="btn btn-primary btn-pill"><i class="feather-plus"></i> Новый сценарий</a>
+</div>
+
+<%# Переключатель «Активные / Неактивные» — вкладки-«таблетки» кита %>
+<div class="tabs-pill">
+	<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
+		<li class="nav-item"><a class="nav-link <%= showInactive ? '' : 'active' %>" href="<%= scenariosUrl({ status: '', page: '' }) %>">Активные сценарии · <%= activeCount %></a></li>
+		<li class="nav-item"><a class="nav-link <%= showInactive ? 'active' : '' %>" href="<%= scenariosUrl({ status: 'inactive', page: '' }) %>">Неактивные сценарии · <%= inactiveCount %></a></li>
+	</ul>
+</div>
+
+<div class="filters">
+	<%# Автор %>
+	<div class="dropdown">
+		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+			Автор: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
+		</button>
+		<div class="dropdown-menu">
+			<a class="dropdown-item <%= author ? '' : 'active' %>" href="<%= scenariosUrl({ author: '' }) %>">Все</a>
+			<% for (const name of authors) { %>
+				<a class="dropdown-item <%= author === name ? 'active' : '' %>" href="<%= scenariosUrl({ author: name }) %>"><%= name %></a>
+			<% } %>
+		</div>
+	</div>
+
+	<%# Категории: сценарий содержит все отмеченные %>
+	<div class="dropdown">
+		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+			Категории: <%= selectedCategories.length === 0 ? 'Все' : selectedCategories.length %> <i class="feather-chevron-down"></i>
+		</button>
+		<form class="dropdown-menu" method="get" action="/projects/<%= project.id %>/scenarios">
+			<% for (const category of categories) { %>
+				<label class="custom_check"><%= category.title %>
+					<input type="checkbox" name="cat" value="<%= category.id %>" <%= selectedCategories.includes(category.id) ? 'checked' : '' %>>
+					<span class="checkmark"></span>
+				</label>
+			<% } %>
+			<% if (showInactive) { %><input type="hidden" name="status" value="inactive"><% } %>
+			<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
+			<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+			<div class="filters__apply"><button type="submit" class="btn btn-primary btn-pill btn-pill-sm w-100">Применить</button></div>
+		</form>
+	</div>
+
+	<%# Сортировка %>
+	<div class="dropdown filters__sort">
+		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+			Сортировка: <%= sorts[sort].title %> <i class="feather-chevron-down"></i>
+		</button>
+		<div class="dropdown-menu dropdown-menu-end">
+			<% for (const [id, option] of Object.entries(sorts)) { %>
+				<a class="dropdown-item <%= sort === id ? 'active' : '' %>" href="<%= scenariosUrl({ sort: id === 'new' ? '' : id }) %>"><%= option.title %></a>
+			<% } %>
+		</div>
+	</div>
+</div>
+
+<section class="panel">
+	<% if (pagination.total === 0) { %>
+		<p class="text-muted-2 mb-0"><%= showInactive ? 'Неактивных сценариев нет' : 'По этим условиям сценариев нет' %></p>
+	<% } %>
+	<% for (const scenario of pagination.items) { %>
+		<div class="list-row">
+			<div class="list-row__main">
+				<h3 class="scenario-row__title">
+					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>"><%= scenario.name %></a>
+					<span class="custom-badge status-<%= scenario.is_active ? 'green' : 'grey' %>"><%= scenario.is_active ? 'Активный' : 'Неактивный' %></span>
+				</h3>
+				<div class="meta-items">
+					<span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span>Автор: <%= authorName(scenario.author_name) %></span>
+					<span>Создан: <b><%= formatDate(scenario.created_at) %></b></span>
+					<span>Категорий: <b><%= scenario.categoryIds.length %></b></span>
+					<span>Тестов: <b><%= scenario.testsCount %>/<%= totalTests %></b></span>
+					<%# Страниц: проверено последней проверкой / всего на сайте (в старых отчётах общего числа нет) %>
+					<% const last = scenario.lastReport; %>
+					<span>Страниц: <b><%= !last ? '—' : last.site_pages_count ? `${last.pages_count}/${last.site_pages_count}` : last.pages_count %></b></span>
+				</div>
+			</div>
+			<div class="list-row__aside">
+				<%# Регулярность появится вместе с расписанием: пока все сценарии запускаются вручную %>
+				<span class="custom-badge custom-badge-lg status-grey"><i class="feather-info"></i>Не регулярно</span>
+				<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-circle" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a>
+			</div>
+		</div>
+	<% } %>
+</section>
+
+<%- include('../partials/pagination', { pageUrl: (page) => scenariosUrl({ page }), noun: plural(pagination.total, ['сценария', 'сценариев', 'сценариев']) }) %>

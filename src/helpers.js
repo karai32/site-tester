@@ -101,6 +101,7 @@ export function reportStatus(report) {
   if (report.status === 'queued') return { label: 'В очереди', color: 'grey' };
   if (report.status === 'running') return { label: 'Выполняется', color: 'blue' };
   if (report.status === 'error') return { label: 'Ошибка', color: 'red' };
+  if (report.status === 'cancelled') return { label: 'Отменена', color: 'grey' };
   const percent = percentOf(report.tests_passed, report.tests_total);
   return { label: `${report.tests_passed}/${report.tests_total} · ${percent}%`, color: percentColor(percent) };
 }

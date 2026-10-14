@@ -16,3 +16,11 @@ export function createUser({ login, name, email, passwordHash }) {
     .run(login, name, email || null, passwordHash);
   return result.lastInsertRowid;
 }
+
+// Новый пароль. Все сессии пользователя закрываются: войти можно только с новым паролем.
+export function updatePassword(userId, passwordHash) {
+  db.transaction(() => {
+    db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(passwordHash, userId);
+    db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
+  })();
+}

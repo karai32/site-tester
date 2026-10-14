@@ -4,21 +4,20 @@
 	<%- include('../partials/head') %>
 </head>
 <body>
-	<script>
-		// Свёрнутое меню включаем до отрисовки страницы, чтобы оно не мигало
-		try { if (localStorage.getItem('mini-sidebar') === '1') document.body.classList.add('mini-sidebar'); } catch (error) {}
-	</script>
-	<div class="main-wrapper">
-		<%- include('../partials/header') %>
-		<%- include('../partials/sidebar') %>
-
-		<div class="page-wrapper">
-			<div class="content">
-				<%- body %>
-			</div>
+	<div class="app">
+		<%# На телефоне меню прячется, вместо него — полоса с логотипом и кнопкой меню %>
+		<div class="app-topbar">
+			<a href="/" class="app-logo"><img src="/assets/img/logo-mark-light.svg" width="35" height="35" alt=""><span>808 Checker</span></a>
+			<button type="button" class="app-topbar__menu" data-mobile-open aria-label="Меню"><img src="/assets/img/bar-icon-light.svg" width="18" height="15" alt=""></button>
 		</div>
 
-		<div class="sidebar-overlay" data-mobile-close></div>
+		<%- include('../partials/sidebar') %>
+
+		<main class="app-main">
+			<%- body %>
+		</main>
+
+		<div class="app-overlay" data-mobile-close></div>
 	</div>
 
 	<script src="/assets/js/jquery-3.7.1.min.js"></script>

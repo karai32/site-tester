@@ -1,32 +1,21 @@
-/* Поведение интерфейса: меню, пароль, запуск проверки и страница отчёта.
-   Меню и показ пароля повторяют assets/js/app.js из 808 Utilities. */
+/* Поведение интерфейса: меню, вход, запуск проверки и страница отчёта.
+   Показ пароля повторяет assets/js/app.js из 808 Utilities. */
 $(function () {
 	'use strict';
 
-	// Подменю бокового меню: раскрыть / свернуть
-	$(document).on('click', '.sidebar-menu .submenu > a', function (event) {
-		event.preventDefault();
-		$(this).toggleClass('subdrop');
-		$(this).next('ul').stop(true, true).slideToggle(250);
+	// Подменю «Выбранные проекты»: раскрыть / свернуть
+	$(document).on('click', '[data-submenu-toggle]', function () {
+		var open = !$(this).hasClass('open');
+		$(this).toggleClass('open', open).attr('aria-expanded', open);
+		$(this).next('ul').prop('hidden', !open);
 	});
 
-	// Свернуть меню до узкой полосы (на компьютере). Выбор запоминается в браузере,
-	// а включается при загрузке в layouts/app.ejs.
-	$(document).on('click', '[data-toggle-mini]', function (event) {
-		event.preventDefault();
-		$('body').toggleClass('mini-sidebar');
-		try {
-			localStorage.setItem('mini-sidebar', $('body').hasClass('mini-sidebar') ? '1' : '0');
-		} catch (error) {}
-	});
-
-	// Мобильное меню: открыть кнопкой, закрыть по затемнению
-	$(document).on('click', '[data-mobile-open]', function (event) {
-		event.preventDefault();
-		$('.main-wrapper').toggleClass('slide-nav');
+	// Меню на телефоне: открыть кнопкой, закрыть по затемнению
+	$(document).on('click', '[data-mobile-open]', function () {
+		$('.app').addClass('menu-open');
 	});
 	$(document).on('click', '[data-mobile-close]', function () {
-		$('.main-wrapper').removeClass('slide-nav');
+		$('.app').removeClass('menu-open');
 	});
 
 	// Показать / скрыть пароль
@@ -37,12 +26,27 @@ $(function () {
 		$(this).toggleClass('feather-eye-off', !show).toggleClass('feather-eye', show);
 	});
 
-	// Окно запуска проверки: подставляем сценарий из нажатой кнопки «Запустить»
-	document.addEventListener('show.bs.modal', function (event) {
-		if (event.target.id !== 'launch-modal' || !event.relatedTarget) return;
-		var button = event.relatedTarget;
-		$(event.target).find('[name="scenario_id"]').val(button.dataset.scenarioId);
-		$(event.target).find('[data-launch-scenario-name]').text(button.dataset.scenarioName);
+	// Вход: кнопка «Войти» серая, пока логин или пароль пустые
+	$('[data-login-form]').each(function () {
+		var $form = $(this);
+		var update = function () {
+			var filled = $form.find('#login').val().trim() !== '' && $form.find('#password').val() !== '';
+			$form.find('[type="submit"]').prop('disabled', !filled);
+		};
+		$form.on('input', update);
+		update();
+	});
+
+	// Запуск проверки: кнопка «Запустить» показывает блок подтверждения со сценарием
+	$(document).on('click', '[data-launch]', function () {
+		var $confirm = $('[data-launch-confirm]');
+		$confirm.find('[name="scenario_id"]').val($(this).data('launch'));
+		$confirm.find('[data-launch-confirm-name]').text($(this).data('launch-name'));
+		$confirm.prop('hidden', false);
+		$confirm[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+	});
+	$(document).on('click', '[data-launch-cancel]', function () {
+		$('[data-launch-confirm]').prop('hidden', true);
 	});
 
 	// Пока проверка идёт, страница отчёта обновляется сама (data-auto-refresh — через сколько секунд)
@@ -56,18 +60,28 @@ $(function () {
 	// «Показать ещё» в списке ошибок теста
 	$(document).on('click', '[data-show-more]', function () {
 		$(this).closest('.report-test').find('[data-more-item]').removeClass('d-none');
-		$(this).parent().remove();
+		$(this).remove();
 	});
 
-	// Скриншот крупно в модальном окне
-	$(document).on('click', '[data-media-preview]', function () {
+	// Скриншот или видео крупно в модальном окне
+	$(document).on('click', '[data-media]', function () {
 		var $modal = $('#media-modal');
-		$modal.find('[data-media-modal-image]').attr('src', $(this).data('media-preview'));
+		var src = $(this).data('media');
+		var $body = $modal.find('[data-media-modal-body]').empty();
+		if ($(this).data('media-type') === 'video') {
+			$('<video controls autoplay class="media-modal-video">').attr('src', src).appendTo($body);
+		} else {
+			$('<img alt="" class="media-modal-image">').attr('src', src).appendTo($body);
+		}
 		$modal.find('[data-media-modal-caption]').text($(this).data('media-caption'));
 		bootstrap.Modal.getOrCreateInstance($modal[0]).show();
 	});
+	// Закрыли окно — останавливаем видео
+	$(document).on('hidden.bs.modal', '#media-modal', function () {
+		$(this).find('[data-media-modal-body]').empty();
+	});
 
-	// Поиск по отчёту: прячем тесты без совпадений и пустые категории
+	// Поиск по отчёту: прячем тесты без совпадений и пустые категории, найденное раскрываем
 	$(document).on('input', '[data-report-search]', function () {
 		var query = $(this).val().trim().toLowerCase();
 		var found = 0;
@@ -80,6 +94,9 @@ $(function () {
 			var visible = $tests.not('.d-none').length;
 			found += visible;
 			$(this).toggleClass('d-none', visible === 0);
+			if (query && visible > 0) {
+				bootstrap.Collapse.getOrCreateInstance($(this).find('.collapse')[0], { toggle: false }).show();
+			}
 		});
 		$('[data-report-search-empty]').toggleClass('d-none', found > 0);
 	});

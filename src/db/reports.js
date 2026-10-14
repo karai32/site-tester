@@ -6,11 +6,13 @@ export function findReportById(id) {
   return db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
 }
 
-// Отчёты вместе с названием сценария и именем того, кто запустил проверку
+// Отчёты вместе со сценарием и именем того, кто запустил проверку
 const reportsWithNames = `
   SELECT reports.*,
          scenarios.name     AS scenario_name,
          scenarios.revision AS scenario_revision,
+         scenarios.is_full  AS scenario_is_full,
+         scenarios.test_ids AS scenario_test_ids,
          users.name         AS started_by_name
   FROM reports
   JOIN scenarios ON scenarios.id = reports.scenario_id
@@ -28,6 +30,15 @@ export function getProjectReports(projectId) {
 
 export function getRecentReports(projectId, limit) {
   return db.prepare(`${reportsWithNames} WHERE reports.project_id = ? ORDER BY reports.id DESC LIMIT ?`).all(projectId, limit);
+}
+
+// Последний готовый отчёт проекта: полной проверки (isFull = true) или частичной
+export function findLatestDoneReport(projectId, isFull) {
+  return db.prepare(`
+    ${reportsWithNames}
+    WHERE reports.project_id = ? AND reports.status = 'done' AND scenarios.is_full = ?
+    ORDER BY reports.id DESC LIMIT 1
+  `).get(projectId, isFull ? 1 : 0);
 }
 
 // Ставит проверку в очередь. Возвращает id отчёта.

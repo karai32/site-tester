@@ -5,31 +5,17 @@ import { MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import { createReport, findReportWithNames, getReportResults } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
-import { categories as testCategories } from '../tests/index.js';
+import { groupByCategory } from '../report-summary.js';
 
 // Отчёт, проект и результаты, сгруппированные по категориям в порядке запуска
 function loadReport(reportId) {
   const report = findReportWithNames(reportId);
   if (!report) return null;
-
-  const groups = new Map();
-  for (const result of getReportResults(report.id)) {
-    if (!groups.has(result.category_id)) {
-      const category = testCategories.find((item) => item.id === result.category_id);
-      groups.set(result.category_id, {
-        id: result.category_id,
-        title: result.category_title,
-        icon: category?.icon || 'feather-folder',
-        results: [],
-        passedCount: 0,
-      });
-    }
-    const group = groups.get(result.category_id);
-    group.results.push(result);
-    if (result.passed) group.passedCount += 1;
-  }
-
-  return { report, project: findProjectById(report.project_id), categories: [...groups.values()] };
+  return {
+    report,
+    project: findProjectById(report.project_id),
+    categories: groupByCategory(getReportResults(report.id)),
+  };
 }
 
 // Файл из папки media как data:-адрес, чтобы скачанный отчёт открывался без сервера

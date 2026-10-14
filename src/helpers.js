@@ -54,6 +54,13 @@ export function formatDateTime(utcText) {
   return `${p.hour}:${p.minute}:${p.second} ${p.day}.${p.month}.${p.year}`;
 }
 
+// "13.10.2026, 21:04" — для сводок на дашборде (формат макета)
+export function formatDateShort(utcText) {
+  if (!utcText) return '—';
+  const p = dateParts(utcText);
+  return `${p.day}.${p.month}.${p.year}, ${p.hour}:${p.minute}`;
+}
+
 // "13.10.2026"
 export function formatDate(utcText) {
   if (!utcText) return '—';

@@ -1,25 +1,56 @@
-<div class="page-heading">
-	<div class="page-heading-main">
-		<div>
-			<h1>Профиль</h1>
-			<p>Данные аккаунта</p>
-		</div>
+<div class="page-head">
+	<div>
+		<h1 class="page-title">Страница профиля</h1>
+		<p class="page-subtitle">Данные аккаунта и доступные проекты</p>
 	</div>
 </div>
 
-<div class="doctor-profile-head profile-head-row mb-4">
-	<div class="profile-user-box">
-		<div class="profile-user-img"><span class="avatar avatar-xl"><%= initials(user.name) %></span></div>
-		<div class="names-profiles"><h4><%= user.name %></h4><h5><%= user.email || 'Почта не указана' %></h5></div>
+<section class="panel profile-head">
+	<span class="avatar"><%= initials(user.name) %></span>
+	<div>
+		<h2 class="profile-head__name"><%= user.login %></h2>
+		<p class="profile-head__email"><%= user.email || 'Почта не указана' %></p>
 	</div>
-</div>
+</section>
 
-<div class="card-box">
-	<div class="about-me-list">
-		<ul class="list-space">
-			<li><h4>Логин</h4><span><%= user.login %></span></li>
-			<li><h4>Почта</h4><span><%= user.email || '—' %></span></li>
-			<li><h4>Telegram ID</h4><span><%= user.telegram_id || 'Не привязан' %></span></li>
-		</ul>
+<div class="row g-4">
+	<div class="col-xl-6">
+		<section class="panel">
+			<h2 class="panel__title">Данные аккаунта</h2>
+			<div class="field">
+				<label for="profile-name">Имя</label>
+				<input id="profile-name" class="form-control" value="<%= user.name %>" readonly>
+			</div>
+			<div class="field">
+				<label for="profile-login">Логин</label>
+				<input id="profile-login" class="form-control" value="<%= user.login %>" readonly>
+			</div>
+			<div class="field">
+				<label for="profile-email">Почта</label>
+				<input id="profile-email" class="form-control <%= user.email ? '' : 'is-empty' %>" value="<%= user.email || 'Не указана' %>" readonly>
+			</div>
+			<div class="field">
+				<label for="profile-telegram">Telegram ID</label>
+				<input id="profile-telegram" class="form-control <%= user.telegram_id ? '' : 'is-empty' %>" value="<%= user.telegram_id || 'Не привязан' %>" readonly>
+				<p class="field__hint">Чтобы получать уведомления в Telegram, привяжите свой ID в профиле — это появится вместе с уведомлениями</p>
+			</div>
+		</section>
+	</div>
+
+	<div class="col-xl-6">
+		<section class="panel">
+			<div class="panel__head">
+				<h2 class="panel__title">Доступные проекты</h2>
+			</div>
+			<% if (sidebarProjects.length === 0) { %>
+				<p class="panel__empty">Проектов пока нет</p>
+			<% } %>
+			<% for (const item of sidebarProjects) { %>
+				<a class="project-row" href="/projects/<%= item.id %>">
+					<span class="project-logo"><%= initials(item.name) %></span>
+					<span><%= item.name %></span>
+				</a>
+			<% } %>
+		</section>
 	</div>
 </div>

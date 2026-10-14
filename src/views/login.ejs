@@ -1,11 +1,11 @@
 <div class="login-wrapper login-center">
 	<div class="loginbox">
 		<div class="login-right">
-			<div class="text-center mb-4"><img src="/assets/img/logo-mark.svg" width="44" height="44" alt="808 Checker"></div>
 			<h2>Вход в аккаунт</h2>
 			<p class="account-subtitle">Введите логин и пароль для доступа к панели</p>
 
-			<form method="post" action="/login">
+			<%# data-login-form: app.js делает кнопку «Войти» серой, пока логин или пароль не заполнены %>
+			<form method="post" action="/login" data-login-form>
 				<div class="input-block">
 					<label for="login">Логин</label>
 					<input class="form-control" id="login" name="login" type="text" placeholder="Введите логин" value="<%= login %>" autocomplete="username" required <%= error ? '' : 'autofocus' %>>

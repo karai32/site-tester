@@ -1,6 +1,13 @@
-<%- include('../partials/project-head') %>
+<div class="breadcrumbs"><a href="/projects">Проекты</a> / <a href="/projects/<%= project.id %>"><%= project.name %></a> / <span>Сценарии</span></div>
 
-<div class="card-box">
-	<h4 class="mb-1">Сценарии</h4>
-	<p class="mb-0 text-muted-2">тест</p>
+<div class="page-head">
+	<div>
+		<h1 class="page-title">Сценарии</h1>
+		<p class="page-subtitle"><i class="feather-link"></i><a href="<%= project.url %>" target="_blank" rel="noopener"><%= displayUrl(project.url) %></a></p>
+	</div>
 </div>
+
+<section class="panel">
+	<h2 class="panel__title">Сценарии</h2>
+	<p class="panel__empty">тест</p>
+</section>

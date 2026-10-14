@@ -14,20 +14,27 @@ export default {
 
     const link = page.locator(selectors.telegramLink).first();
     if (await link.count() === 0) {
-      return { passed: false, comment: `На странице не найдена кнопка Telegram (${selectors.telegramLink}).` };
+      return {
+        passed: false,
+        comment: `На странице не найдена кнопка Telegram (${selectors.telegramLink}).`,
+      };
     }
 
     const href = await link.getAttribute('href');
     if (!href || !href.includes(expectedUsername)) {
-      return { passed: false, comment: `Ссылка Telegram (${href || 'пусто'}) не содержит ожидаемый username ${expectedUsername}.` };
+      return {
+        passed: false,
+        comment: `Ссылка Telegram (${href || 'пусто'}) не содержит ожидаемый username ${expectedUsername}.`,
+      };
     }
 
     const response = await page.request.get(href, { failOnStatusCode: false, timeout: 20_000 });
     const status = response.status();
     await response.dispose();
 
-    return status >= 200 && status < 400
-      ? { passed: true, comment: `Кнопка Telegram ведёт на ${href}, ссылка открывается корректно.` }
-      : { passed: false, comment: `Ссылка Telegram (${href}) вернула HTTP ${status}.` };
+    if (status >= 200 && status < 400) {
+      return { passed: true, comment: `Кнопка Telegram ведёт на ${href}, ссылка открывается корректно.` };
+    }
+    return { passed: false, comment: `Ссылка Telegram (${href}) вернула HTTP ${status}.` };
   },
 };

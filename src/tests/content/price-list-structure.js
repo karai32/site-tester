@@ -179,10 +179,21 @@ export default {
     const summary = `страниц — ${pageSummaries.length} (${pageSummaries.join(', ')}), категорий — ${tally.categoryCount}, позиций — ${tally.itemCount}`;
 
     if (problems.length > 0) {
-      return { passed: false, comment: `Проверено: ${summary}. Найдено проблем: ${problems.length}.`, problems, media, pages };
+      return {
+        passed: false,
+        comment: `Проверено: ${summary}. Найдено проблем: ${problems.length}.`,
+        problems,
+        media,
+        pages,
+      };
     }
 
     const onRequestNote = tally.onRequestCount > 0 ? `, из них ${tally.onRequestCount} «по запросу»` : '';
-    return { passed: true, comment: `Прайс структурирован по категориям (${summary}). У всех позиций есть название и корректная цена в рублях${onRequestNote}.`, media, pages };
+    return {
+      passed: true,
+      comment: `Прайс структурирован по категориям (${summary}). У всех позиций есть название и корректная цена в рублях${onRequestNote}.`,
+      media,
+      pages,
+    };
   },
 };

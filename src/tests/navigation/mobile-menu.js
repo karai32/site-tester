@@ -26,16 +26,27 @@ export default {
     await burger.click();
     await page.waitForTimeout(400);
     if (!(await isScrollLocked(page))) {
-      return { passed: false, comment: 'После клика по кнопке меню скролл страницы не заблокировался (класс no-scroll не появился на body).' };
+      return {
+        passed: false,
+        comment: 'После клика по кнопке меню скролл страницы не заблокировался (класс no-scroll не появился на body).',
+      };
     }
     const media = [await takeScreenshot(page)];
 
     await burger.click();
     await page.waitForTimeout(400);
     if (await isScrollLocked(page)) {
-      return { passed: false, comment: 'Меню открылось корректно, но повторный клик по кнопке не закрыл его (класс no-scroll не снялся).', media };
+      return {
+        passed: false,
+        comment: 'Меню открылось корректно, но повторный клик по кнопке не закрыл его (класс no-scroll не снялся).',
+        media,
+      };
     }
 
-    return { passed: true, comment: 'Меню открывается по клику (скролл блокируется) и закрывается повторным кликом (скролл разблокируется).', media };
+    return {
+      passed: true,
+      comment: 'Меню открывается по клику (скролл блокируется) и закрывается повторным кликом (скролл разблокируется).',
+      media,
+    };
   },
 };

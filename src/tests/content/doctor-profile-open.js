@@ -28,7 +28,10 @@ export default {
 
     const cardLink = page.locator(selectors.cardNameLink).first();
     if (await cardLink.count() === 0) {
-      return { passed: false, comment: 'На главной странице не найдено ни одной карточки врача с именем-ссылкой.' };
+      return {
+        passed: false,
+        comment: 'На главной странице не найдено ни одной карточки врача с именем-ссылкой.',
+      };
     }
 
     const href = await cardLink.getAttribute('href');
@@ -48,8 +51,14 @@ export default {
       problems.push('кнопка записи на приём не видна');
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Страница врача (${href}) открылась из карточки, содержит должность, описание, стоимость приёма и кнопку записи.`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Страница врача (${href}) открылась из карточки, содержит должность, описание, стоимость приёма и кнопку записи.`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

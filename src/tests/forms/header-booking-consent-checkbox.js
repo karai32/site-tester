@@ -125,8 +125,20 @@ export default {
     }
 
     const summary = `Проверено ${checkedForms} уникальных форм (по data-wpcf7-id) на ${formsByPage.size} страниц(ах).`;
-    return problems.length === 0
-      ? { passed: true, comment: `${summary} Везде чекбокс согласия присутствует, снят по умолчанию, ссылка на политику ПДн рабочая.`, media, pages: [...formsByPage.keys()] }
-      : { passed: false, comment: `${summary} Найдено проблем: ${problems.length}.`, problems, media, pages: [...formsByPage.keys()] };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `${summary} Везде чекбокс согласия присутствует, снят по умолчанию, ссылка на политику ПДн рабочая.`,
+        media,
+        pages: [...formsByPage.keys()],
+      };
+    }
+    return {
+      passed: false,
+      comment: `${summary} Найдено проблем: ${problems.length}.`,
+      problems,
+      media,
+      pages: [...formsByPage.keys()],
+    };
   },
 };

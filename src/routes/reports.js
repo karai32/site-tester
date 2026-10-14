@@ -33,7 +33,8 @@ export default async function reportRoutes(app) {
   // Запуск проверки (форма в дашборде проекта): отчёт встаёт в очередь
   app.post('/projects/:id/checks', async (request, reply) => {
     const project = findProjectById(request.params.id);
-    const scenario = findScenarioById(request.body?.scenario_id);
+    const form = request.body || {};
+    const scenario = findScenarioById(form.scenario_id);
     if (!project || !scenario || scenario.project_id !== project.id) return reply.callNotFound();
     // Выключенный сценарий не запускается: сначала его нужно включить на странице сценария
     if (!scenario.is_active) return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);

@@ -11,9 +11,7 @@ export function findReportById(id) {
 const reportsWithNames = `
   SELECT reports.*,
          scenarios.name     AS scenario_name,
-         scenarios.revision AS scenario_revision,
          scenarios.is_full  AS scenario_is_full,
-         scenarios.test_ids AS scenario_test_ids,
          users.name         AS started_by_name
   FROM reports
   JOIN scenarios ON scenarios.id = reports.scenario_id
@@ -88,7 +86,8 @@ export function cancelReport(id) {
 }
 
 export function isReportCancelled(id) {
-  return db.prepare('SELECT status FROM reports WHERE id = ?').get(id)?.status === 'cancelled';
+  const report = db.prepare('SELECT status FROM reports WHERE id = ?').get(id);
+  return Boolean(report) && report.status === 'cancelled';
 }
 
 // После перезапуска сервера проверки, которые шли, уже не продолжатся
@@ -125,10 +124,12 @@ export function saveTestResult(reportId, result) {
 }
 
 export function getReportResults(reportId) {
-  return db.prepare('SELECT * FROM report_results WHERE report_id = ? ORDER BY id').all(reportId).map((row) => ({
-    ...row,
-    problems: JSON.parse(row.problems),
-    pages: JSON.parse(row.pages),
-    media: JSON.parse(row.media),
-  }));
+  const rows = db.prepare('SELECT * FROM report_results WHERE report_id = ? ORDER BY id').all(reportId);
+  // Списки хранятся в базе как JSON-текст — превращаем их обратно в массивы
+  for (const row of rows) {
+    row.problems = JSON.parse(row.problems);
+    row.pages = JSON.parse(row.pages);
+    row.media = JSON.parse(row.media);
+  }
+  return rows;
 }

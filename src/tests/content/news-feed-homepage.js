@@ -30,7 +30,10 @@ export default {
     const dateTexts = await page.locator(selectors.newsDate).evaluateAll((els) => els.map((el) => el.textContent.trim()));
     const dates = dateTexts.map(parseRuDate);
     if (dates.some((value) => value === null)) {
-      return { passed: false, comment: `Не удалось распознать одну из дат новостей: ${JSON.stringify(dateTexts)}.` };
+      return {
+        passed: false,
+        comment: `Не удалось распознать одну из дат новостей: ${JSON.stringify(dateTexts)}.`,
+      };
     }
 
     const isSortedDescending = dates.every((value, index) => index === 0 || dates[index - 1] >= value);
@@ -48,8 +51,19 @@ export default {
     const media = [await takeScreenshot(page)];
     const pages = [siteUrl, firstLink];
 
-    return articleTextLength >= 200
-      ? { passed: true, comment: `Новости отсортированы по дате (свежие сверху: ${dateTexts.join(', ')}), клик открывает полный текст новости.`, media, pages }
-      : { passed: false, comment: `Клик по новости открыл страницу ${firstLink}, но текста слишком мало (${articleTextLength} символов).`, media, pages };
+    if (articleTextLength >= 200) {
+      return {
+        passed: true,
+        comment: `Новости отсортированы по дате (свежие сверху: ${dateTexts.join(', ')}), клик открывает полный текст новости.`,
+        media,
+        pages,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Клик по новости открыл страницу ${firstLink}, но текста слишком мало (${articleTextLength} символов).`,
+      media,
+      pages,
+    };
   },
 };

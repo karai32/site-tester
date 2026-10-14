@@ -3,29 +3,30 @@ import { categories as testCategories } from './tests/index.js';
 
 // [{ id, title, shortTitle, icon, results, passedCount }] в порядке запуска тестов
 export function groupByCategory(results) {
-  const groups = new Map();
+  const groups = [];
+
   for (const result of results) {
-    if (!groups.has(result.category_id)) {
+    let group = groups.find((item) => item.id === result.category_id);
+
+    // Первый тест категории — заводим для неё группу
+    if (!group) {
+      // Иконку и короткое название берём из списка тестов. Если категорию с тех пор
+      // переименовали или удалили, остаётся название, сохранённое в отчёте.
       const category = testCategories.find((item) => item.id === result.category_id);
-      groups.set(result.category_id, {
+      group = {
         id: result.category_id,
         title: result.category_title,
-        shortTitle: category?.shortTitle || result.category_title,
-        icon: category?.icon || 'feather-folder',
+        shortTitle: category ? category.shortTitle : result.category_title,
+        icon: category ? category.icon : 'feather-folder',
         results: [],
         passedCount: 0,
-      });
+      };
+      groups.push(group);
     }
-    const group = groups.get(result.category_id);
+
     group.results.push(result);
     if (result.passed) group.passedCount += 1;
   }
-  return [...groups.values()];
-}
 
-// id категорий, которые входят в сценарий (полный сценарий — все)
-export function scenarioCategoryIds(scenario) {
-  return testCategories
-    .filter((category) => scenario.is_full || category.tests.some((test) => scenario.test_ids.includes(test.id)))
-    .map((category) => category.id);
+  return groups;
 }

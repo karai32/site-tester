@@ -23,9 +23,13 @@ async function checkButton(page) {
   await page.waitForTimeout(2_500);
   const scrollY = await page.evaluate(() => window.scrollY);
 
-  return scrollY < 50
-    ? { passed: true, comment: `Кнопка «наверх» вернула страницу к началу (scrollY=${scrollY}).` }
-    : { passed: false, comment: `После клика по кнопке «наверх» страница не вернулась к началу (scrollY=${scrollY}).` };
+  if (scrollY < 50) {
+    return { passed: true, comment: `Кнопка «наверх» вернула страницу к началу (scrollY=${scrollY}).` };
+  }
+  return {
+    passed: false,
+    comment: `После клика по кнопке «наверх» страница не вернулась к началу (scrollY=${scrollY}).`,
+  };
 }
 
 export default {

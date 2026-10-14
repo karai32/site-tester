@@ -26,8 +26,13 @@ export default {
     const { width, height } = await chatWidget.evaluate((el) => el.getBoundingClientRect());
     const media = [await takeScreenshot(page)];
 
-    return width > 0 && height > 0
-      ? { passed: true, comment: `Виджет чата загрузился, размер ${width}×${height}.`, media }
-      : { passed: false, comment: `Виджет чата не отображается за ${(maxWaitMs * 2) / 1000} сек после загрузки: размер ${width}×${height}.`, media };
+    if (width > 0 && height > 0) {
+      return { passed: true, comment: `Виджет чата загрузился, размер ${width}×${height}.`, media };
+    }
+    return {
+      passed: false,
+      comment: `Виджет чата не отображается за ${(maxWaitMs * 2) / 1000} сек после загрузки: размер ${width}×${height}.`,
+      media,
+    };
   },
 };

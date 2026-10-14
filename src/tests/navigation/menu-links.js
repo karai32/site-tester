@@ -52,8 +52,12 @@ export default {
       else if (status < 200 || status >= 400) problems.push(`«${title}»: HTTP ${status}`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${rawLinks.length} пунктов меню, ${uniqueLinks.size} уникальных страниц.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${rawLinks.length} пунктов меню, ${uniqueLinks.size} уникальных страниц.`,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
   },
 };

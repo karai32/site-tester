@@ -36,8 +36,19 @@ export default {
     const hasQueryHeading = bodyText.toUpperCase().includes(query.toUpperCase());
     const isNarrowed = itemsAfter > 0 && itemsAfter < itemsBefore;
 
-    return isNarrowed && hasQueryHeading
-      ? { passed: true, comment: `Фильтр по прайсу по запросу «${query}» сузил список с ${itemsBefore} до ${itemsAfter} позиций.`, media, pages }
-      : { passed: false, comment: `После поиска по запросу «${query}» список не сузился ожидаемым образом (было ${itemsBefore} позиций, стало ${itemsAfter}).`, media, pages };
+    if (isNarrowed && hasQueryHeading) {
+      return {
+        passed: true,
+        comment: `Фильтр по прайсу по запросу «${query}» сузил список с ${itemsBefore} до ${itemsAfter} позиций.`,
+        media,
+        pages,
+      };
+    }
+    return {
+      passed: false,
+      comment: `После поиска по запросу «${query}» список не сузился ожидаемым образом (было ${itemsBefore} позиций, стало ${itemsAfter}).`,
+      media,
+      pages,
+    };
   },
 };

@@ -16,8 +16,10 @@ const migrationsDir = new URL('./migrations/', import.meta.url);
 const doneVersion = db.pragma('user_version', { simple: true });
 
 for (const file of readdirSync(migrationsDir).sort()) {
-  const version = parseInt(file, 10);
-  if (!(version > doneVersion)) continue;
+  if (!file.endsWith('.sql')) continue;
+
+  const version = parseInt(file, 10); // '003-scenario-revisions.sql' → 3
+  if (version <= doneVersion) continue; // эта миграция уже выполнена
 
   const sql = readFileSync(new URL(file, migrationsDir), 'utf8');
   db.transaction(() => {

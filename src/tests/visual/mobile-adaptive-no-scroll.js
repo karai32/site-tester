@@ -55,8 +55,14 @@ export default {
     }
 
     const pages = pagesToCheck.map(({ path }) => new URL(path, siteUrl).href);
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pagesToCheck.length} страниц на ${viewports.length} разрешениях (${viewports.map((v) => v.label).join(', ')}), горизонтального скролла нет.`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pagesToCheck.length} страниц на ${viewports.length} разрешениях (${viewports.map((v) => v.label).join(', ')}), горизонтального скролла нет.`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

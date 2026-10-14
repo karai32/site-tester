@@ -20,8 +20,16 @@ export default {
       if (!hasBreadcrumbSchema(getHtml(pageUrl))) problems.push(`${pageUrl}: микроразметка BreadcrumbList не найдена`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${innerPages.length} HTML-страниц сайта (без учёта главной), BreadcrumbList есть везде.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${innerPages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${innerPages.length} HTML-страниц сайта (без учёта главной), BreadcrumbList есть везде.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${innerPages.length} страниц.`,
+      problems,
+    };
   },
 };

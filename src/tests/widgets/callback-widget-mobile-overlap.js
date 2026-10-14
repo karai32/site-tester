@@ -42,8 +42,13 @@ export default {
       if (box && boxesOverlap(widgetBox, box)) problems.push(`виджет перекрывает «${label}» (${selector})`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: 'Виджет обратного звонка не перекрывает проверенные CTA-элементы на мобильном экране.', media }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: 'Виджет обратного звонка не перекрывает проверенные CTA-элементы на мобильном экране.',
+        media,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
   },
 };

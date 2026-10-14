@@ -27,8 +27,16 @@ export default {
       problems.push(`${link.url}: ${reason} (${formatSources(link.foundOn)})`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${checkedCount} внутренних ссылок (страниц и файлов), битых ссылок не найдено.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${checkedCount} ссылок.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${checkedCount} внутренних ссылок (страниц и файлов), битых ссылок не найдено.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${checkedCount} ссылок.`,
+      problems,
+    };
   },
 };

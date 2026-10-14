@@ -22,7 +22,12 @@ export default {
     const hrefsBefore = new Set(await page.locator(selectors.newsLink).evaluateAll((els) => els.map((el) => el.href)));
 
     if (await page.locator(selectors.showMore).count() === 0) {
-      return { passed: false, comment: `На странице новостей не найдена кнопка «Показать еще» (${selectors.showMore}), выведено ${countBefore} новостей.`, media: [await takeScreenshot(page)], pages: [newsUrl] };
+      return {
+        passed: false,
+        comment: `На странице новостей не найдена кнопка «Показать еще» (${selectors.showMore}), выведено ${countBefore} новостей.`,
+        media: [await takeScreenshot(page)],
+        pages: [newsUrl],
+      };
     }
 
     // Ошибки скриптов слушаем только с этого момента, чтобы не приписать кнопке
@@ -49,19 +54,44 @@ export default {
     const pages = [newsUrl];
 
     if (!loadMoreResponse) {
-      return { passed: false, comment: 'После клика «Показать еще» запрос на подгрузку новостей не отправился или не получил ответа за 15 секунд.', media, pages };
+      return {
+        passed: false,
+        comment: 'После клика «Показать еще» запрос на подгрузку новостей не отправился или не получил ответа за 15 секунд.',
+        media,
+        pages,
+      };
     }
     if (!loadMoreResponse.ok()) {
-      return { passed: false, comment: `Запрос подгрузки новостей вернул ошибку HTTP ${loadMoreResponse.status()}.`, media, pages };
+      return {
+        passed: false,
+        comment: `Запрос подгрузки новостей вернул ошибку HTTP ${loadMoreResponse.status()}.`,
+        media,
+        pages,
+      };
     }
     if (scriptErrors.length > 0) {
-      return { passed: false, comment: `Кнопка «Показать еще» вызывает ошибку скрипта: ${scriptErrors[0]}`, media, pages };
+      return {
+        passed: false,
+        comment: `Кнопка «Показать еще» вызывает ошибку скрипта: ${scriptErrors[0]}`,
+        media,
+        pages,
+      };
     }
     if (countAfter <= countBefore) {
-      return { passed: false, comment: `После клика «Показать еще» список новостей не пополнился (было ${countBefore}, стало ${countAfter}).`, media, pages };
+      return {
+        passed: false,
+        comment: `После клика «Показать еще» список новостей не пополнился (было ${countBefore}, стало ${countAfter}).`,
+        media,
+        pages,
+      };
     }
     if (newHrefs.length === 0) {
-      return { passed: false, comment: `После клика «Показать еще» добавились только повторы уже показанных новостей (было ${countBefore}, стало ${countAfter}).`, media, pages };
+      return {
+        passed: false,
+        comment: `После клика «Показать еще» добавились только повторы уже показанных новостей (было ${countBefore}, стало ${countAfter}).`,
+        media,
+        pages,
+      };
     }
 
     // Открываем первую подгруженную новость
@@ -70,7 +100,12 @@ export default {
     const articleResponse = await page.goto(articleUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     const articleStatus = articleResponse?.status() ?? 0;
     if (articleStatus < 200 || articleStatus >= 400) {
-      return { passed: false, comment: `Подгруженная новость ${articleUrl} открывается с ошибкой HTTP ${articleStatus}.`, media, pages };
+      return {
+        passed: false,
+        comment: `Подгруженная новость ${articleUrl} открывается с ошибкой HTTP ${articleStatus}.`,
+        media,
+        pages,
+      };
     }
 
     const articleTitle = (await page.locator(selectors.articleTitle).first().textContent().catch(() => '') ?? '').trim();
@@ -79,7 +114,12 @@ export default {
 
     if (!articleTitle || articleTextLength < 200) {
       const reason = articleTitle ? `содержит слишком мало текста (${articleTextLength} символов)` : 'на ней нет заголовка H1';
-      return { passed: false, comment: `Подгруженная новость ${articleUrl} открылась, но ${reason}.`, media, pages };
+      return {
+        passed: false,
+        comment: `Подгруженная новость ${articleUrl} открылась, но ${reason}.`,
+        media,
+        pages,
+      };
     }
 
     return {

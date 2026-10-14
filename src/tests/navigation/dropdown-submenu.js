@@ -39,8 +39,12 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${dropdownCount} выпадающих подменю, все раскрываются и закрываются корректно.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${dropdownCount} выпадающих подменю, все раскрываются и закрываются корректно.`,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
   },
 };

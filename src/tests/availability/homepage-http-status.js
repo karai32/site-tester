@@ -8,8 +8,9 @@ export default {
     const response = await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     const status = response.status();
 
-    return status >= 200 && status < 400
-      ? { passed: true, comment: `Главная страница загружена. HTTP-статус: ${status}.` }
-      : { passed: false, comment: `Главная страница вернула HTTP-статус ${status}.` };
+    if (status >= 200 && status < 400) {
+      return { passed: true, comment: `Главная страница загружена. HTTP-статус: ${status}.` };
+    }
+    return { passed: false, comment: `Главная страница вернула HTTP-статус ${status}.` };
   },
 };

@@ -56,7 +56,7 @@
 		</button>
 		<div class="dropdown-menu dropdown-menu-end">
 			<% for (const [id, option] of Object.entries(sorts)) { %>
-				<a class="dropdown-item <%= sort === id ? 'active' : '' %>" href="<%= scenariosUrl({ sort: id === 'new' ? '' : id }) %>"><%= option.title %></a>
+				<a class="dropdown-item <%= sort === id ? 'active' : '' %>" href="<%= scenariosUrl({ sort: id }) %>"><%= option.title %></a>
 			<% } %>
 		</div>
 	</div>
@@ -78,9 +78,7 @@
 					<span>Создан: <b><%= formatDate(scenario.created_at) %></b></span>
 					<span>Категорий: <b><%= scenario.categoryIds.length %></b></span>
 					<span>Тестов: <b><%= scenario.testsCount %>/<%= totalTests %></b></span>
-					<%# Страниц: проверено последней проверкой / всего на сайте (в старых отчётах общего числа нет) %>
-					<% const last = scenario.lastReport; %>
-					<span>Страниц: <b><%= !last ? '—' : last.site_pages_count ? `${last.pages_count}/${last.site_pages_count}` : last.pages_count %></b></span>
+					<span>Страниц: <b><%= scenario.pagesText %></b></span>
 				</div>
 			</div>
 			<div class="list-row__aside">

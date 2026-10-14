@@ -56,8 +56,14 @@ export default {
     }
 
     const pages = pagesToCheck.map(({ path }) => new URL(path, siteUrl).href);
-    return problems.length === 0
-      ? { passed: true, comment: `Форма записи в шапке открывается корректно на ${pagesToCheck.length} типах страниц (${pagesToCheck.map((p) => p.label).join(', ')}).`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Форма записи в шапке открывается корректно на ${pagesToCheck.length} типах страниц (${pagesToCheck.map((p) => p.label).join(', ')}).`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

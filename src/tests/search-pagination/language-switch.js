@@ -33,9 +33,17 @@ export default {
     media.push({ data: await takeScreenshot(page, { fullPage: true }), caption: 'После переключения' });
 
     if (langAfter === langBefore && urlAfter === urlBefore) {
-      return { passed: false, comment: `Клик по переключателю языка ничего не меняет: URL остался ${urlAfter}, html[lang] остался «${langAfter}». Переключатель нефункционален.`, media };
+      return {
+        passed: false,
+        comment: `Клик по переключателю языка ничего не меняет: URL остался ${urlAfter}, html[lang] остался «${langAfter}». Переключатель нефункционален.`,
+        media,
+      };
     }
 
-    return { passed: true, comment: `После переключения языка: URL — ${urlAfter}, html[lang] — «${langAfter}».`, media };
+    return {
+      passed: true,
+      comment: `После переключения языка: URL — ${urlAfter}, html[lang] — «${langAfter}».`,
+      media,
+    };
   },
 };

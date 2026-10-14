@@ -25,8 +25,16 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Логотип ведёт на главную на всех ${pages.length} проверенных страницах.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Логотип ведёт на главную на всех ${pages.length} проверенных страницах.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`,
+      problems,
+    };
   },
 };

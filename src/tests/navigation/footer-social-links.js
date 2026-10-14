@@ -41,8 +41,12 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${links.length} ссылок на соцсети/мессенджеры, все рабочие.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${links.length} ссылок на соцсети/мессенджеры, все рабочие.`,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
   },
 };

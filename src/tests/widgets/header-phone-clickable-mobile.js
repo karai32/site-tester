@@ -20,7 +20,10 @@ export default {
 
     const phoneLink = page.locator(selectors.phoneLink).first();
     if (await phoneLink.count() === 0) {
-      return { passed: false, comment: `В мобильном меню не найден номер телефона (${selectors.phoneLink}).` };
+      return {
+        passed: false,
+        comment: `В мобильном меню не найден номер телефона (${selectors.phoneLink}).`,
+      };
     }
 
     await phoneLink.scrollIntoViewIfNeeded();
@@ -32,8 +35,13 @@ export default {
     if (!href || !href.startsWith('tel:')) problems.push(`href не является ссылкой tel: (${href || 'пусто'})`);
     if (!(await phoneLink.isVisible())) problems.push('номер телефона не виден в открытом мобильном меню');
 
-    return problems.length === 0
-      ? { passed: true, comment: `Номер «${text}» в мобильном меню кликабелен, ведёт на ${href}.`, media }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Номер «${text}» в мобильном меню кликабелен, ведёт на ${href}.`,
+        media,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
   },
 };

@@ -53,6 +53,7 @@ body {
 .app-menu {
 	margin-top: 44px;
 	overflow-y: auto;
+	overflow-x: hidden; /* стрелка подменю, пока крутится, чуть вылезает вбок — без этого мелькает прокрутка */
 }
 .app-menu ul {
 	list-style: none;

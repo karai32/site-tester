@@ -86,10 +86,8 @@
   --shadow-header: 0 0 14px rgba(164, 170, 183, 0.25);
 
   /* --- Bootstrap 5.3: переменные темы --- */
-  /* Шрифт макета — Helvetica Neue (платный, Monotype). Если он установлен в системе (macOS, iOS),
-     берётся он. Иначе — Inter: самый близкий к нему бесплатный шрифт с кириллицей (подключён в head.ejs).
-     Просто «Helvetica» не указываем: на Linux под этим именем подставляется непохожий шрифт */
-  --font-main: "Helvetica Neue", "Inter", Arial, sans-serif;
+  /* Шрифт макета — Helvetica Neue, файлы подключены в fonts.css */
+  --font-main: "Helvetica Neue", Arial, sans-serif;
   /* Логотип «808 CHECKER» в макете набран Outfit Bold */
   --font-logo: "Outfit", var(--font-main);
   --bs-font-sans-serif: var(--font-main);

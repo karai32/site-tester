@@ -3,28 +3,18 @@ import { findProjectById } from '../db/projects.js';
 import { getProjectReports } from '../db/reports.js';
 import { createScenario, findScenarioById, getProjectScenarios, nextRevision, setScenarioActive } from '../db/scenarios.js';
 import { authorName } from '../helpers.js';
-import { listUrl, paginate, toList, uniqueSorted } from '../lists.js';
+import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
 import {
   allTests,
-  scenarioCategories,
   scenarioCategoryIds,
   scenarioPageSetIds,
-  scenarioPageSets,
+  scenarioSummary,
   scenarioTestIds,
 } from '../scenario-info.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const SCENARIOS_PER_PAGE = 10;
-
-// Варианты сортировки списка: название и правило сравнения двух сценариев
-const SORTS = {
-  new: { title: 'По дате: сначала новые', compare: (a, b) => b.id - a.id },
-  old: { title: 'По дате: сначала старые', compare: (a, b) => a.id - b.id },
-  tests: { title: 'По числу тестов', compare: (a, b) => b.testsCount - a.testsCount },
-  categories: { title: 'По числу категорий', compare: (a, b) => b.categoryIds.length - a.categoryIds.length },
-  pages: { title: 'По числу страниц', compare: (a, b) => b.pagesChecked - a.pagesChecked },
-};
 
 // Данные формы сценария. Возвращает { form, errors }: что выбрано и что не так.
 function readScenarioForm(body) {
@@ -86,8 +76,7 @@ export default async function scenarioRoutes(app) {
     const showInactive = request.query.status === 'inactive';
     const author = String(request.query.author || '');
     const selectedCategories = toList(request.query.cat);
-    let sort = request.query.sort;
-    if (!SORTS[sort]) sort = 'new';
+    const sort = sortFromQuery(request.query.sort);
 
     // Последний готовый отчёт каждого сценария — сколько страниц проверено.
     // Отчёты идут от новых к старым, поэтому первый найденный — самый свежий.
@@ -105,19 +94,21 @@ export default async function scenarioRoutes(app) {
 
       // «Страниц: 28/1228» — проверено последней проверкой из всех найденных на сайте.
       // В старых отчётах (до миграции 003) общего числа нет — тогда просто «28».
-      let pagesChecked = 0;
+      let pagesCount = 0;
       let pagesText = '—';
       if (lastReport) {
-        pagesChecked = lastReport.pages_count;
+        pagesCount = lastReport.pages_count;
         pagesText = String(lastReport.pages_count);
         if (lastReport.site_pages_count) pagesText += `/${lastReport.site_pages_count}`;
       }
 
+      const categoryIds = scenarioCategoryIds(scenario);
       allScenarios.push({
         ...scenario,
-        categoryIds: scenarioCategoryIds(scenario),
+        categoryIds,
+        categoriesCount: categoryIds.length,
         testsCount: scenarioTestIds(scenario).length,
-        pagesChecked,
+        pagesCount,
         pagesText,
       });
     }
@@ -200,8 +191,7 @@ export default async function scenarioRoutes(app) {
       title: `${data.scenario.name} — ${data.project.name}`,
       project: data.project,
       scenario: data.scenario,
-      categories: scenarioCategories(data.scenario),
-      pageSets: scenarioPageSets(data.scenario),
+      summary: scenarioSummary(data.scenario),
     }, { layout: 'layouts/app.ejs' });
   });
 

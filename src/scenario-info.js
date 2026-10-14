@@ -48,3 +48,17 @@ export function scenarioPageSets(scenario) {
   const ids = scenarioPageSetIds(scenario);
   return PAGE_SETS.filter((set) => ids.includes(set.id));
 }
+
+// Всё о составе сценария одним объектом — для страницы сценария и окна запуска:
+// { categories: [{ title, icon, tests }], pageSets: [{ id, title }], pageSetsText, testsCount }
+export function scenarioSummary(scenario) {
+  const pageSets = scenarioPageSets(scenario);
+  const pageSetTitles = pageSets.map((set) => set.title);
+
+  return {
+    categories: scenarioCategories(scenario),
+    pageSets,
+    pageSetsText: pageSetTitles.join(', '), // «Верхнеуровневые страницы, Все страницы сайта»
+    testsCount: scenarioTestIds(scenario).length,
+  };
+}

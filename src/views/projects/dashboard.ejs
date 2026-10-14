@@ -29,23 +29,18 @@
 						<span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span>
 						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="scenario-row__link">Страница сценария</a>
 					</div>
-					<button type="button" class="btn btn-primary btn-pill" data-launch="<%= scenario.id %>" data-launch-name="<%= scenario.name %>">Запустить</button>
+					<button type="button" class="btn btn-primary btn-pill" data-bs-toggle="modal" data-bs-target="#launch-<%= scenario.id %>">Запустить</button>
 				</div>
 			<% } %>
 
 			<a href="/projects/<%= project.id %>/scenarios" class="btn btn-outline-primary btn-pill w-100 panel__footer">Смотреть все сценарии</a>
 
-			<%# Подтверждение запуска. Появляется по кнопке «Запустить», сценарий подставляет app.js %>
-			<form class="confirm-box" method="post" action="/projects/<%= project.id %>/checks" data-launch-confirm hidden>
-				<input type="hidden" name="scenario_id" value="">
-				<h3 class="confirm-box__title">Запустить сценарий «<span data-launch-confirm-name></span>»?</h3>
-				<p class="confirm-box__text">Проверка встанет в очередь. Результаты появятся в архиве отчётов после завершения.</p>
-				<div class="confirm-box__actions">
-					<button type="submit" class="btn btn-primary btn-pill btn-pill-sm">Запустить</button>
-					<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-launch-cancel>Отменить</button>
-				</div>
-			</form>
 		</section>
+
+		<%# Окна подтверждения запуска — по одному на сценарий %>
+		<% for (const scenario of scenarios) { %>
+			<%- include('../partials/launch-modal', { scenario, summary: scenario.summary }) %>
+		<% } %>
 
 		<%# Сводка по последней полной проверке %>
 		<section class="panel">
@@ -57,7 +52,7 @@
 			<% } else { %>
 				<div class="info-row"><span class="info-row__label">Дата проведения</span><span class="info-row__value"><%= formatDateShort(lastFull.finished_at) %></span></div>
 				<div class="info-row"><span class="info-row__label">Проверено страниц</span><span class="info-row__value"><%= lastFull.pages_count %></span></div>
-				<div class="info-row"><span class="info-row__label">Успешных проверок</span><span class="info-row__value"><%= lastFull.tests_passed %>/<%= lastFull.tests_total %></span></div>
+				<div class="info-row"><span class="info-row__label">Успешных проверок</span><span class="info-row__value"><%= lastFull.tests_passed %>/<%= lastFull.tests_total %> · <%= percentOf(lastFull.tests_passed, lastFull.tests_total) %>%</span></div>
 				<div class="stat-tiles">
 					<% for (const category of lastFullCategories) { %>
 						<div class="stat-tile" title="<%= category.title %>">
@@ -83,7 +78,7 @@
 				<div class="info-row"><span class="info-row__label">Сценарий</span><span class="info-row__value"><%= lastPartial.scenario_name %></span></div>
 				<div class="info-row"><span class="info-row__label">Дата проведения</span><span class="info-row__value"><%= formatDateShort(lastPartial.finished_at) %></span></div>
 				<div class="info-row"><span class="info-row__label">Проверено страниц</span><span class="info-row__value"><%= lastPartial.pages_count %></span></div>
-				<div class="info-row"><span class="info-row__label">Успешных проверок</span><span class="info-row__value"><%= lastPartial.tests_passed %>/<%= lastPartial.tests_total %></span></div>
+				<div class="info-row"><span class="info-row__label">Успешных проверок</span><span class="info-row__value"><%= lastPartial.tests_passed %>/<%= lastPartial.tests_total %> · <%= percentOf(lastPartial.tests_passed, lastPartial.tests_total) %>%</span></div>
 				<a href="/reports/<%= lastPartial.id %>" class="btn btn-outline-primary btn-pill w-100 panel__footer">Открыть отчёт</a>
 			<% } %>
 		</section>

@@ -78,3 +78,23 @@ export function uniqueSorted(values) {
   }
   return result.sort();
 }
+
+// Сортировка списков по ТЗ: по дате, числу тестов, категорий и страниц — в обе стороны.
+// Элементы списка (отчёты, сценарии) должны иметь поля id, testsCount, categoriesCount, pagesCount.
+// compare(a, b) < 0 — a идёт раньше b.
+export const SORTS = {
+  new: { title: 'По дате: сначала новые', compare: (a, b) => b.id - a.id },
+  old: { title: 'По дате: сначала старые', compare: (a, b) => a.id - b.id },
+  'tests-desc': { title: 'По числу тестов: больше', compare: (a, b) => b.testsCount - a.testsCount },
+  'tests-asc': { title: 'По числу тестов: меньше', compare: (a, b) => a.testsCount - b.testsCount },
+  'categories-desc': { title: 'По числу категорий: больше', compare: (a, b) => b.categoriesCount - a.categoriesCount },
+  'categories-asc': { title: 'По числу категорий: меньше', compare: (a, b) => a.categoriesCount - b.categoriesCount },
+  'pages-desc': { title: 'По числу страниц: больше', compare: (a, b) => b.pagesCount - a.pagesCount },
+  'pages-asc': { title: 'По числу страниц: меньше', compare: (a, b) => a.pagesCount - b.pagesCount },
+};
+
+// Вариант сортировки из адреса; неизвестный — «сначала новые»
+export function sortFromQuery(value) {
+  if (SORTS[value]) return value;
+  return 'new';
+}

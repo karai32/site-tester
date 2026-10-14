@@ -1,4 +1,4 @@
-/* Поведение интерфейса: меню, вход, запуск проверки и страница отчёта.
+/* Поведение интерфейса: меню, вход, форма сценария и страница отчёта.
    Показ пароля повторяет assets/js/app.js из 808 Utilities. */
 $(function () {
 	'use strict';
@@ -35,18 +35,6 @@ $(function () {
 		};
 		$form.on('input', update);
 		update();
-	});
-
-	// Запуск проверки: кнопка «Запустить» показывает блок подтверждения со сценарием
-	$(document).on('click', '[data-launch]', function () {
-		var $confirm = $('[data-launch-confirm]');
-		$confirm.find('[name="scenario_id"]').val($(this).data('launch'));
-		$confirm.find('[data-launch-confirm-name]').text($(this).data('launch-name'));
-		$confirm.prop('hidden', false);
-		$confirm[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-	});
-	$(document).on('click', '[data-launch-cancel]', function () {
-		$('[data-launch-confirm]').prop('hidden', true);
 	});
 
 	// Форма сценария: галочка категории выбирает все её тесты.

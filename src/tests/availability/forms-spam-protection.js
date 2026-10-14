@@ -52,8 +52,9 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${formCount} форм(ы), у всех активна капча SmartCaptcha.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
+    if (problems.length === 0) {
+      return { passed: true, comment: `Проверено ${formCount} форм(ы), у всех активна капча SmartCaptcha.` };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
   },
 };

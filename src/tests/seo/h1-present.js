@@ -9,8 +9,16 @@ export default {
       if (!/<h1\b/i.test(getHtml(pageUrl))) problems.push(`${pageUrl}: H1 отсутствует`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} HTML-страниц сайта, H1 присутствует на всех.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} HTML-страниц сайта, H1 присутствует на всех.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`,
+      problems,
+    };
   },
 };

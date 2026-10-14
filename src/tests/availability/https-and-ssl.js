@@ -22,6 +22,9 @@ export default {
 
     const security = await response.securityDetails();
     const protocol = security?.protocol ? ` Протокол: ${security.protocol}.` : '';
-    return { passed: true, comment: `Сайт открыт по HTTPS. Chromium принял SSL-сертификат без предупреждений.${protocol}` };
+    return {
+      passed: true,
+      comment: `Сайт открыт по HTTPS. Chromium принял SSL-сертификат без предупреждений.${protocol}`,
+    };
   },
 };

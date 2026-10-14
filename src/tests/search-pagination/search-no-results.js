@@ -17,8 +17,19 @@ export default {
     const media = [await takeScreenshot(page)];
     const pages = [searchUrl];
 
-    return /ничего не найдено/i.test(bodyText)
-      ? { passed: true, comment: 'По бессмысленному запросу корректно показывается сообщение «Ничего не найдено».', media, pages }
-      : { passed: false, comment: `На странице ${searchUrl} нет ожидаемого сообщения «Ничего не найдено».`, media, pages };
+    if (/ничего не найдено/i.test(bodyText)) {
+      return {
+        passed: true,
+        comment: 'По бессмысленному запросу корректно показывается сообщение «Ничего не найдено».',
+        media,
+        pages,
+      };
+    }
+    return {
+      passed: false,
+      comment: `На странице ${searchUrl} нет ожидаемого сообщения «Ничего не найдено».`,
+      media,
+      pages,
+    };
   },
 };

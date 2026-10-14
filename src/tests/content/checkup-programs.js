@@ -19,7 +19,11 @@ export default {
 
     const hrefs = await page.locator(selectors.programLink).evaluateAll((links) => [...new Set(links.map((link) => link.getAttribute('href')))]);
     if (hrefs.length === 0) {
-      return { passed: false, comment: `На странице ${checkupsUrl} не найдено ни одной чек-ап программы.`, pages };
+      return {
+        passed: false,
+        comment: `На странице ${checkupsUrl} не найдено ни одной чек-ап программы.`,
+        pages,
+      };
     }
 
     const problems = [];
@@ -48,8 +52,14 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${sample.length} из ${hrefs.length} чек-ап программ, у каждой есть описание состава и цена.`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${sample.length} из ${hrefs.length} чек-ап программ, у каждой есть описание состава и цена.`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

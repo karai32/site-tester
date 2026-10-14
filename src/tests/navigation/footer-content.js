@@ -70,8 +70,12 @@ export default {
       else if (status < 200 || status >= 400) problems.push(`документ политики ПДн вернул HTTP ${status}`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: 'Телефон, email, адрес, реквизиты и ссылка на политику ПДн соответствуют заданным значениям.' }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: 'Телефон, email, адрес, реквизиты и ссылка на политику ПДн соответствуют заданным значениям.',
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems };
   },
 };

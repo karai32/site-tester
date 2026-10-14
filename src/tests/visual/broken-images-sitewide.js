@@ -48,8 +48,16 @@ export default {
       problems.push(`${imageUrl}: ${error || `HTTP ${status}`} (${formatSources(imagePages.get(imageUrl))})`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} страниц и ${imagePages.size} уникальных изображений, битых не найдено.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц и ${imagePages.size} изображений.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} страниц и ${imagePages.size} уникальных изображений, битых не найдено.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц и ${imagePages.size} изображений.`,
+      problems,
+    };
   },
 };

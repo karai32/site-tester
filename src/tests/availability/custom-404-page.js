@@ -16,13 +16,23 @@ export default {
     const pages = [target];
 
     if (status !== 404) {
-      return { passed: false, comment: `Страница ${testPath} вернула HTTP ${status}, ожидался 404.`, pages, media };
+      return {
+        passed: false,
+        comment: `Страница ${testPath} вернула HTTP ${status}, ожидался 404.`,
+        pages,
+        media,
+      };
     }
 
     const main = page.locator('main');
     const mainText = (await main.innerText().catch(() => '')).trim();
     if (!mainText) {
-      return { passed: false, comment: 'HTTP-статус 404 корректный, но блок <main> на странице пуст — кастомное содержимое 404-страницы не выведено.', pages, media };
+      return {
+        passed: false,
+        comment: 'HTTP-статус 404 корректный, но блок <main> на странице пуст — кастомное содержимое 404-страницы не выведено.',
+        pages,
+        media,
+      };
     }
 
     const home = new URL('/', siteUrl).href;
@@ -30,9 +40,19 @@ export default {
     const hasHomeLink = hrefs.some((href) => URL.canParse(href, siteUrl) && new URL(href, siteUrl).href === home);
 
     if (!hasHomeLink) {
-      return { passed: false, comment: 'HTTP-статус 404 корректный, содержимое есть, но на странице нет ссылки для перехода на главную.', pages, media };
+      return {
+        passed: false,
+        comment: 'HTTP-статус 404 корректный, содержимое есть, но на странице нет ссылки для перехода на главную.',
+        pages,
+        media,
+      };
     }
 
-    return { passed: true, comment: `Страница ${testPath} корректно отдаёт HTTP 404 и содержит ссылку на главную.`, pages, media };
+    return {
+      passed: true,
+      comment: `Страница ${testPath} корректно отдаёт HTTP 404 и содержит ссылку на главную.`,
+      pages,
+      media,
+    };
   },
 };

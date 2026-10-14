@@ -12,8 +12,9 @@ export default async function authRoutes(app) {
 
   // Форма входа отправлена
   app.post('/login', async (request, reply) => {
-    const login = String(request.body?.login || '').trim();
-    const password = String(request.body?.password || '');
+    const form = request.body || {};
+    const login = String(form.login || '').trim();
+    const password = String(form.password || '');
 
     const user = findUserByLogin(login);
     if (!user || !checkPassword(password, user.password_hash)) {

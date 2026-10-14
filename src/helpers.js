@@ -1,24 +1,30 @@
 // Небольшие функции для шаблонов. Вызываются в шаблоне так: <%= initials(user.name) %>
 
-// "Артем Тепляков" → "АТ", "Hadassah" → "H"
+// Слова строки без лишних пробелов: "  Артем  Тепляков " → ["Артем", "Тепляков"]
+function words(text) {
+  return text.split(' ').filter((word) => word !== '');
+}
+
+// Первые буквы первых двух слов: "Артем Тепляков" → "АТ", "Hadassah" → "H"
 export function initials(name) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0].toUpperCase())
-    .join('');
+  const [first, second] = words(name);
+  let result = first ? first[0] : '';
+  if (second) result += second[0];
+  return result.toUpperCase();
 }
 
 // "Артем Тепляков" → "Артем Т."
 export function shortName(name) {
-  const [first, last] = name.split(/\s+/);
-  return last ? `${first} ${last[0]}.` : first;
+  const [first, last] = words(name);
+  if (!last) return first;
+  return `${first} ${last[0]}.`;
 }
 
 // "https://hadassah.moscow/" → "hadassah.moscow"
 export function displayUrl(url) {
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const withoutProtocol = url.replace('https://', '').replace('http://', '');
+  if (withoutProtocol.endsWith('/')) return withoutProtocol.slice(0, -1);
+  return withoutProtocol;
 }
 
 // Слово в нужной форме: plural(5, ['тест', 'теста', 'тестов']) → "тестов"
@@ -36,15 +42,29 @@ export function plural(count, [one, few, many]) {
 
 const TIME_ZONE = 'Europe/Moscow';
 
+// '2026-10-13 18:04:22' (UTC) → объект Date
+function parseUtc(utcText) {
+  return new Date(utcText.replace(' ', 'T') + 'Z');
+}
+
+// Части даты по Москве: { day: '13', month: '10', year: '2026', hour: '21', minute: '04', second: '22' }
 function dateParts(utcText) {
-  const date = new Date(`${utcText.replace(' ', 'T')}Z`);
-  const parts = new Intl.DateTimeFormat('ru-RU', {
+  const format = new Intl.DateTimeFormat('ru-RU', {
     timeZone: TIME_ZONE,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
     hourCycle: 'h23',
-  }).formatToParts(date);
-  return Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  });
+
+  const parts = {};
+  for (const part of format.formatToParts(parseUtc(utcText))) {
+    parts[part.type] = part.value;
+  }
+  return parts;
 }
 
 // "21:04:22 13.10.2026" — формат из ТЗ
@@ -68,26 +88,33 @@ export function formatDate(utcText) {
   return `${p.day}.${p.month}.${p.year}`;
 }
 
-// Сколько шла проверка: "8 мин 54 с"
+// Сколько шла проверка: "45 с", "8 мин 54 с", "1 ч 25 мин"
 export function formatDuration(startUtc, endUtc) {
   if (!startUtc || !endUtc) return '—';
-  const seconds = Math.round((new Date(`${endUtc.replace(' ', 'T')}Z`) - new Date(`${startUtc.replace(' ', 'T')}Z`)) / 1000);
+
+  const milliseconds = parseUtc(endUtc) - parseUtc(startUtc);
+  const seconds = Math.round(milliseconds / 1000);
   const minutes = Math.floor(seconds / 60);
-  if (minutes >= 60) return `${Math.floor(minutes / 60)} ч ${minutes % 60} мин`;
-  return minutes > 0 ? `${minutes} мин ${seconds % 60} с` : `${seconds} с`;
+  const hours = Math.floor(minutes / 60);
+
+  if (hours > 0) return `${hours} ч ${minutes % 60} мин`;
+  if (minutes > 0) return `${minutes} мин ${seconds % 60} с`;
+  return `${seconds} с`;
 }
 
 // --- Проценты и статусы ---
 
 // Процент успешных: percentOf(33, 50) → 66
 export function percentOf(passed, total) {
-  return total > 0 ? Math.round((passed / total) * 100) : 0;
+  if (!total) return 0;
+  return Math.round((passed / total) * 100);
 }
 
 // Цвет по проценту успешных: всё прошло — зелёный, половина и больше — оранжевый, меньше — красный
 export function percentColor(percent) {
   if (percent === 100) return 'green';
-  return percent >= 50 ? 'orange' : 'red';
+  if (percent >= 50) return 'orange';
+  return 'red';
 }
 
 // Длина дуги кольца процента (окружность радиусом 44 в SVG 100×100)
@@ -108,5 +135,6 @@ export function reportStatus(report) {
 
 // Кто запустил проверку или создал сценарий: у автоматических записей автора нет
 export function authorName(name) {
-  return name ? shortName(name) : '808 Checker';
+  if (!name) return '808 Checker';
+  return shortName(name);
 }

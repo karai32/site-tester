@@ -2,9 +2,12 @@
 // Поля test_ids и page_sets в базе — JSON-текст, наружу отдаются массивами.
 import { db } from './database.js';
 
+// Списки хранятся в базе как JSON-текст — превращаем их обратно в массивы
 function parseScenario(row) {
   if (!row) return undefined;
-  return { ...row, test_ids: JSON.parse(row.test_ids), page_sets: JSON.parse(row.page_sets) };
+  row.test_ids = JSON.parse(row.test_ids);
+  row.page_sets = JSON.parse(row.page_sets);
+  return row;
 }
 
 // Сценарий вместе с именем автора

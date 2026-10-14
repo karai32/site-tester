@@ -34,8 +34,14 @@ export default {
 
     if (formCount === 0) problems.push(`${browserLabel}: на главной странице не найдено форм.`);
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено в браузере ${browserLabel}. Ключевые страницы и формы загружаются корректно.`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено в браузере ${browserLabel}. Ключевые страницы и формы загружаются корректно.`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

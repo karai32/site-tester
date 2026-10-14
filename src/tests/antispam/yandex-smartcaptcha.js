@@ -16,8 +16,16 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pagesWithForms} HTML-страниц(ы) с формами, скрипт SmartCaptcha подключён везде.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pagesWithForms} страниц(ы) с формами.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pagesWithForms} HTML-страниц(ы) с формами, скрипт SmartCaptcha подключён везде.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pagesWithForms} страниц(ы) с формами.`,
+      problems,
+    };
   },
 };

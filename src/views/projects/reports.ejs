@@ -56,7 +56,7 @@
 		</button>
 		<div class="dropdown-menu dropdown-menu-end">
 			<% for (const [id, option] of Object.entries(sorts)) { %>
-				<a class="dropdown-item <%= sort === id ? 'active' : '' %>" href="<%= archiveUrl({ sort: id === 'new' ? '' : id }) %>"><%= option.title %></a>
+				<a class="dropdown-item <%= sort === id ? 'active' : '' %>" href="<%= archiveUrl({ sort: id }) %>"><%= option.title %></a>
 			<% } %>
 		</div>
 	</div>

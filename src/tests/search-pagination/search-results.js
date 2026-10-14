@@ -20,8 +20,19 @@ export default {
     const countMatch = bodyText.match(/(\d+)\s*результ/i);
     const resultCount = countMatch ? Number(countMatch[1]) : 0;
 
-    return resultCount > 0
-      ? { passed: true, comment: `По запросу «${query}» найдено ${resultCount} результатов.`, media, pages }
-      : { passed: false, comment: `По запросу «${query}» на странице ${searchUrl} не найдено результатов (ожидались релевантные страницы).`, media, pages };
+    if (resultCount > 0) {
+      return {
+        passed: true,
+        comment: `По запросу «${query}» найдено ${resultCount} результатов.`,
+        media,
+        pages,
+      };
+    }
+    return {
+      passed: false,
+      comment: `По запросу «${query}» на странице ${searchUrl} не найдено результатов (ожидались релевантные страницы).`,
+      media,
+      pages,
+    };
   },
 };

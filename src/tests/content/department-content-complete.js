@@ -34,8 +34,14 @@ export default {
     if (doctorCount === 0) problems.push('на странице направления не найдено ни одного врача');
     if (formCount === 0) problems.push('на странице направления не найдено формы записи');
 
-    return problems.length === 0
-      ? { passed: true, comment: `Страница ${target}: контент раздела услуг присутствует (${bodyTextLength} символов текста), найдено ${doctorCount} врачей и ${formCount} форм(ы) записи. Скриншот приложен для визуальной проверки вёрстки.`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Страница ${target}: контент раздела услуг присутствует (${bodyTextLength} символов текста), найдено ${doctorCount} врачей и ${formCount} форм(ы) записи. Скриншот приложен для визуальной проверки вёрстки.`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

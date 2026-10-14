@@ -18,8 +18,16 @@ export default {
       else if (/noindex/i.test(content)) problems.push(`${pageUrl}: meta robots содержит noindex ("${content}")`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} HTML-страниц сайта, meta robots в порядке.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} HTML-страниц сайта, meta robots в порядке.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`,
+      problems,
+    };
   },
 };

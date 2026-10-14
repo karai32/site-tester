@@ -13,8 +13,16 @@ export default {
       if (!getTitle(getHtml(pageUrl))) problems.push(`${pageUrl}: title отсутствует или пуст`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} HTML-страниц сайта, у всех заполнен title.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} HTML-страниц сайта, у всех заполнен title.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`,
+      problems,
+    };
   },
 };

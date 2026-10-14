@@ -45,8 +45,18 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Карта сайта доступна (${sitemapUrl}) и указана в robots.txt.`, pages: [robotsUrl, sitemapUrl] }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, pages: [robotsUrl, sitemapUrl] };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Карта сайта доступна (${sitemapUrl}) и указана в robots.txt.`,
+        pages: [robotsUrl, sitemapUrl],
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}.`,
+      problems,
+      pages: [robotsUrl, sitemapUrl],
+    };
   },
 };

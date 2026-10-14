@@ -38,8 +38,14 @@ export default {
       if (media.length === 0) media.push(await takeScreenshot(page));
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} страниц направлений, все открываются без ошибок.`, media, pages }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} страниц направлений, все открываются без ошибок.`,
+        media,
+        pages,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
   },
 };

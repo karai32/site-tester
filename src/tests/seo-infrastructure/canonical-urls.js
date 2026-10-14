@@ -31,8 +31,16 @@ export default {
       }
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} HTML-страниц сайта, у всех ровно один корректный canonical.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} HTML-страниц сайта, у всех ровно один корректный canonical.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`,
+      problems,
+    };
   },
 };

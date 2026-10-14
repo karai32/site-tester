@@ -1,4 +1,4 @@
-<%# Пагинация: круглые кнопки. Нужны pagination (из src/pagination.js), pageUrl(номер) и noun — слово для «из N …». %>
+<%# Пагинация: круглые кнопки. Нужны pagination (из src/lists.js), pageUrl(номер) и noun — слово для «из N …». %>
 <% if (pagination.pagesCount > 1) { %>
 	<nav class="pager" aria-label="Страницы">
 		<span>Показаны <%= pagination.from %>–<%= pagination.to %> из <%= pagination.total %> <%= noun %></span>

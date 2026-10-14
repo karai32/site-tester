@@ -20,8 +20,16 @@ export default {
       if (!getMetaDescription(getHtml(pageUrl))) problems.push(`${pageUrl}: meta description отсутствует или пуст`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${pages.length} HTML-страниц сайта, у всех заполнен description.` }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`, problems };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${pages.length} HTML-страниц сайта, у всех заполнен description.`,
+      };
+    }
+    return {
+      passed: false,
+      comment: `Найдено проблем: ${problems.length}. Проверено ${pages.length} страниц.`,
+      problems,
+    };
   },
 };

@@ -3,13 +3,14 @@ import { findProjectById, getProjects } from '../db/projects.js';
 import { findLatestDoneReport, getProjectReports, getRecentReports, getReportResults } from '../db/reports.js';
 import { getProjectScenarios } from '../db/scenarios.js';
 import { authorName, formatDateTime } from '../helpers.js';
-import { listUrl, paginate } from '../pagination.js';
-import { groupByCategory, scenarioCategoryIds } from '../report-summary.js';
+import { listUrl, paginate, toList, uniqueSorted } from '../lists.js';
+import { groupByCategory } from '../report-summary.js';
+import { scenarioCategoryIds } from '../scenario-info.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const REPORTS_PER_PAGE = 10;
 
-// Сортировка архива: id → подпись и порядок
+// Варианты сортировки архива: название и правило сравнения двух отчётов
 const SORTS = {
   new: { title: 'По дате: сначала новые', compare: (a, b) => b.id - a.id },
   old: { title: 'По дате: сначала старые', compare: (a, b) => a.id - b.id },
@@ -33,12 +34,16 @@ export default async function projectRoutes(app) {
     const lastFull = findLatestDoneReport(project.id, true);
     const lastPartial = findLatestDoneReport(project.id, false);
 
+    // Плитки категорий для сводки по последней полной проверке
+    let lastFullCategories = [];
+    if (lastFull) lastFullCategories = groupByCategory(getReportResults(lastFull.id));
+
     return reply.view('projects/dashboard.ejs', {
       title: project.name,
       project,
       scenarios,
       lastFull,
-      lastFullCategories: lastFull ? groupByCategory(getReportResults(lastFull.id)) : [],
+      lastFullCategories,
       lastPartial,
       recentReports: getRecentReports(project.id, 10),
     }, { layout: 'layouts/app.ejs' });
@@ -52,36 +57,44 @@ export default async function projectRoutes(app) {
     // Параметры из адреса: ?q=...&author=...&cat=seo&cat=forms&sort=old&page=2
     const search = String(request.query.q || '').trim();
     const author = String(request.query.author || '');
-    const selectedCategories = [request.query.cat || []].flat();
-    const sort = SORTS[request.query.sort] ? request.query.sort : 'new';
+    const selectedCategories = toList(request.query.cat);
+    let sort = request.query.sort;
+    if (!SORTS[sort]) sort = 'new';
 
     const allReports = getProjectReports(project.id);
-    const authors = [...new Set(allReports.map((report) => authorName(report.started_by_name)))].sort();
+    const scenarios = getProjectScenarios(project.id);
+    const authors = uniqueSorted(allReports.map((report) => authorName(report.started_by_name)));
 
     let reports = allReports;
+
     if (search) {
       const needle = search.toLowerCase();
       reports = reports.filter((report) => {
-        // Ищем по тому же тексту, что виден в списке
+        // Ищем по тому же тексту, что виден в списке: номер, сценарий, автор, дата
         const text = `#${report.id} ${report.scenario_name} ${authorName(report.started_by_name)} ${formatDateTime(report.finished_at)}`;
         return text.toLowerCase().includes(needle);
       });
     }
+
     if (author) {
       reports = reports.filter((report) => authorName(report.started_by_name) === author);
     }
+
+    // Категории: оставляем отчёты, в сценарии которых есть все выбранные категории
     if (selectedCategories.length > 0) {
-      // Сценарий отчёта содержит все выбранные категории
       reports = reports.filter((report) => {
-        const ids = scenarioCategoryIds({ is_full: report.scenario_is_full, test_ids: JSON.parse(report.scenario_test_ids) });
-        return selectedCategories.every((id) => ids.includes(id));
+        const scenario = scenarios.find((item) => item.id === report.scenario_id);
+        const categoryIds = scenarioCategoryIds(scenario);
+        return selectedCategories.every((id) => categoryIds.includes(id));
       });
     }
-    reports = [...reports].sort(SORTS[sort].compare);
+
+    reports.sort(SORTS[sort].compare);
 
     // Адрес архива с текущими фильтрами и изменениями: archiveUrl({ page: 2 })
-    const current = { q: search, author, cat: selectedCategories, sort: sort === 'new' ? '' : sort };
-    const archiveUrl = (changes) => listUrl(`/projects/${project.id}/reports`, { ...current, ...changes });
+    const currentFilters = { q: search, author, cat: selectedCategories };
+    if (sort !== 'new') currentFilters.sort = sort;
+    const archiveUrl = (changes) => listUrl(`/projects/${project.id}/reports`, { ...currentFilters, ...changes });
 
     return reply.view('projects/reports.ejs', {
       title: `Архив отчётов — ${project.name}`,

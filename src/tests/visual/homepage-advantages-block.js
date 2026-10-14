@@ -42,8 +42,13 @@ export default {
       if (iconBroken) problems.push(`карточка «${title || `№${index + 1}`}»: иконка не загрузилась`);
     }
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${cardCount} карточек в блоке преимуществ/лицензий: текст и иконки отображаются корректно.`, media }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${cardCount} карточек в блоке преимуществ/лицензий: текст и иконки отображаются корректно.`,
+        media,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
   },
 };

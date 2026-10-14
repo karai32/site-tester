@@ -40,12 +40,22 @@ export function createArchivePagination({ id, title, path, itemSelector, itemsLa
 
       const page1 = await collectItemKeys(page, itemSelector);
       if (page1.length === 0) {
-        return { passed: false, comment: `На разводящей ${listUrl} не найдено ни одной карточки ${itemsLabel} (${itemSelector}).`, media: [await takeScreenshot(page)], pages: [listUrl] };
+        return {
+          passed: false,
+          comment: `На разводящей ${listUrl} не найдено ни одной карточки ${itemsLabel} (${itemSelector}).`,
+          media: [await takeScreenshot(page)],
+          pages: [listUrl],
+        };
       }
 
       const secondPageLink = page.locator(selectors.secondPageLink, { hasText: /^\s*2\s*$/ }).first();
       if (await secondPageLink.count() === 0) {
-        return { passed: false, comment: `На разводящей ${listUrl} не найдена ссылка на страницу 2 в пагинации (${selectors.secondPageLink}), выведено ${page1.length} ${itemsLabel}.`, media: [await takeScreenshot(page)], pages: [listUrl] };
+        return {
+          passed: false,
+          comment: `На разводящей ${listUrl} не найдена ссылка на страницу 2 в пагинации (${selectors.secondPageLink}), выведено ${page1.length} ${itemsLabel}.`,
+          media: [await takeScreenshot(page)],
+          pages: [listUrl],
+        };
       }
 
       // Страница 2 может открываться переходом по ссылке или подгружаться скриптом без перехода,
@@ -65,12 +75,22 @@ export function createArchivePagination({ id, title, path, itemSelector, itemsLa
       const pages = page2Url === listUrl ? [listUrl] : [listUrl, page2Url];
 
       if (page2.length === 0) {
-        return { passed: false, comment: `После перехода на страницу 2 список ${itemsLabel} пуст.`, media, pages };
+        return {
+          passed: false,
+          comment: `После перехода на страницу 2 список ${itemsLabel} пуст.`,
+          media,
+          pages,
+        };
       }
 
       const newItems = page2.filter((key) => !page1.includes(key));
       if (newItems.length === 0) {
-        return { passed: false, comment: `После перехода на страницу 2 список ${itemsLabel} не изменился за ${switchTimeoutMs / 1000} секунд (на странице 1 — ${page1.length}, на странице 2 — ${page2.length}, новых нет).`, media, pages };
+        return {
+          passed: false,
+          comment: `После перехода на страницу 2 список ${itemsLabel} не изменился за ${switchTimeoutMs / 1000} секунд (на странице 1 — ${page1.length}, на странице 2 — ${page2.length}, новых нет).`,
+          media,
+          pages,
+        };
       }
 
       const listSummary = `Страница 2 показывает новый набор ${itemsLabel} (на странице 1 — ${page1.length}, на странице 2 — ${page2.length}, новых — ${newItems.length})`;
@@ -84,15 +104,30 @@ export function createArchivePagination({ id, title, path, itemSelector, itemsLa
       const itemResponse = await page.goto(itemUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       const itemStatus = itemResponse?.status() ?? 0;
       if (itemStatus < 200 || itemStatus >= 400) {
-        return { passed: false, comment: `${listSummary}, но карточка со страницы 2 ${itemUrl} открывается с ошибкой HTTP ${itemStatus}.`, media, pages };
+        return {
+          passed: false,
+          comment: `${listSummary}, но карточка со страницы 2 ${itemUrl} открывается с ошибкой HTTP ${itemStatus}.`,
+          media,
+          pages,
+        };
       }
 
       const itemTitle = (await page.locator(selectors.itemTitle).first().textContent().catch(() => '') ?? '').replace(/\s+/g, ' ').trim();
       if (!itemTitle) {
-        return { passed: false, comment: `${listSummary}, но на странице карточки ${itemUrl} нет заголовка H1.`, media, pages };
+        return {
+          passed: false,
+          comment: `${listSummary}, но на странице карточки ${itemUrl} нет заголовка H1.`,
+          media,
+          pages,
+        };
       }
 
-      return { passed: true, comment: `${listSummary}, карточка «${itemTitle}» со страницы 2 открывается корректно.`, media, pages };
+      return {
+        passed: true,
+        comment: `${listSummary}, карточка «${itemTitle}» со страницы 2 открывается корректно.`,
+        media,
+        pages,
+      };
     },
   };
 }

@@ -20,7 +20,10 @@ export default {
       if (appeared) break;
     }
     if (await widgetFrame.count() === 0) {
-      return { passed: false, comment: `Виджет обратного звонка (${selectors.widgetFrame}) не появился за ${maxAttempts} попытки.` };
+      return {
+        passed: false,
+        comment: `Виджет обратного звонка (${selectors.widgetFrame}) не появился за ${maxAttempts} попытки.`,
+      };
     }
 
     // Виджет живёт во фрейме: кнопка и поле ищутся внутри него
@@ -36,8 +39,17 @@ export default {
     const phoneInputVisible = await frame.locator('input').first().isVisible().catch(() => false);
     const media = [await takeScreenshot(page)];
 
-    return phoneInputVisible
-      ? { passed: true, comment: 'Виджет обратного звонка открывается по клику и показывает форму ввода телефона.', media }
-      : { passed: false, comment: 'После клика по виджету обратного звонка не появилось поле ввода телефона.', media };
+    if (phoneInputVisible) {
+      return {
+        passed: true,
+        comment: 'Виджет обратного звонка открывается по клику и показывает форму ввода телефона.',
+        media,
+      };
+    }
+    return {
+      passed: false,
+      comment: 'После клика по виджету обратного звонка не появилось поле ввода телефона.',
+      media,
+    };
   },
 };

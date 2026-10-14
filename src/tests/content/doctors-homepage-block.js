@@ -54,8 +54,13 @@ export default {
     await cards.first().scrollIntoViewIfNeeded();
     const media = [await takeScreenshot(page)];
 
-    return problems.length === 0
-      ? { passed: true, comment: `Проверено ${checkedCount} из ${cardCount} карточек врачей: фото загружаются, должность указана, кнопка записи (где есть) кликабельна.`, media }
-      : { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
+    if (problems.length === 0) {
+      return {
+        passed: true,
+        comment: `Проверено ${checkedCount} из ${cardCount} карточек врачей: фото загружаются, должность указана, кнопка записи (где есть) кликабельна.`,
+        media,
+      };
+    }
+    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media };
   },
 };

@@ -1,5 +1,6 @@
 // Запросы к таблицам reports и report_results.
-// Статусы отчёта: queued — ждёт в очереди, running — идёт, done — готов, error — не выполнился.
+// Статусы отчёта: queued — ждёт в очереди, running — идёт, done — готов, error — не выполнился,
+// cancelled — отменён пользователем.
 import { db } from './database.js';
 
 export function findReportById(id) {
@@ -67,17 +68,27 @@ export function markReportRunning(id) {
   return result.changes === 1;
 }
 
-export function setReportPlan(id, { pagesCount, testsTotal, note }) {
-  db.prepare('UPDATE reports SET pages_count = ?, tests_total = ?, note = ? WHERE id = ?')
-    .run(pagesCount, testsTotal, note ?? null, id);
+export function setReportPlan(id, { pagesCount, sitePagesCount, testsTotal, note }) {
+  db.prepare('UPDATE reports SET pages_count = ?, site_pages_count = ?, tests_total = ?, note = ? WHERE id = ?')
+    .run(pagesCount, sitePagesCount, testsTotal, note ?? null, id);
 }
 
+// Готов и ошибка ставятся только идущему отчёту: отменённый так и остаётся отменённым
 export function markReportDone(id) {
-  db.prepare(`UPDATE reports SET status = 'done', finished_at = datetime('now') WHERE id = ?`).run(id);
+  db.prepare(`UPDATE reports SET status = 'done', finished_at = datetime('now') WHERE id = ? AND status = 'running'`).run(id);
 }
 
 export function markReportError(id, error) {
-  db.prepare(`UPDATE reports SET status = 'error', error = ?, finished_at = datetime('now') WHERE id = ?`).run(error, id);
+  db.prepare(`UPDATE reports SET status = 'error', error = ?, finished_at = datetime('now') WHERE id = ? AND status IN ('queued', 'running')`).run(error, id);
+}
+
+// Отмена проверки: в очереди — сразу, идущую раннер остановит перед следующим тестом
+export function cancelReport(id) {
+  db.prepare(`UPDATE reports SET status = 'cancelled', finished_at = datetime('now') WHERE id = ? AND status IN ('queued', 'running')`).run(id);
+}
+
+export function isReportCancelled(id) {
+  return db.prepare('SELECT status FROM reports WHERE id = ?').get(id)?.status === 'cancelled';
 }
 
 // После перезапуска сервера проверки, которые шли, уже не продолжатся

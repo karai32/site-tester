@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { DATA_DIR, MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
-import { findReportById, markReportDone, markReportError, markReportRunning, saveTestResult, setReportPlan } from '../db/reports.js';
+import { findReportById, isReportCancelled, markReportDone, markReportError, markReportRunning, saveTestResult, setReportPlan } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
 import { categories } from '../tests/index.js';
 import { crawlSite, MAX_PAGES, readSavedHtml } from './crawl.js';
@@ -90,7 +90,12 @@ export async function runCheck(reportId, log = console) {
     // 1. Обход сайта
     mkdirSync(htmlDir, { recursive: true });
     log.info(`Отчёт #${reportId}: обход сайта ${project.url}`);
-    const site = await crawlSite(project.url, htmlDir);
+    const cancelled = () => isReportCancelled(reportId);
+    const site = await crawlSite(project.url, htmlDir, cancelled);
+    if (cancelled()) {
+      log.info(`Отчёт #${reportId}: отменён`);
+      return;
+    }
     if (site.htmlPages.length === 0) {
       throw new Error(`Сайт ${project.url} недоступен: не найдено ни одной страницы`);
     }
@@ -101,6 +106,7 @@ export async function runCheck(reportId, log = console) {
     const tests = scenarioTests(scenario);
     setReportPlan(reportId, {
       pagesCount: pages.length,
+      sitePagesCount: site.htmlPages.length,
       testsTotal: tests.length,
       note: site.truncated ? `Обход сайта остановлен на ${MAX_PAGES} адресах: на сайте могут быть и другие страницы` : null,
     });
@@ -109,6 +115,10 @@ export async function runCheck(reportId, log = console) {
     // 3. Тесты по одному
     browser = await chromium.launch();
     for (const { category, test } of tests) {
+      if (cancelled()) {
+        log.info(`Отчёт #${reportId}: отменён`);
+        return;
+      }
       if (!browser.isConnected()) browser = await chromium.launch(); // браузер мог упасть в прошлом тесте
 
       const startedAt = Date.now();

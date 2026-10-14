@@ -49,6 +49,33 @@ $(function () {
 		$('[data-launch-confirm]').prop('hidden', true);
 	});
 
+	// Форма сценария: галочка категории выбирает все её тесты.
+	// Если выбрана только часть тестов, галочка категории — с чёрточкой (indeterminate).
+	function updatePicker($group) {
+		var $items = $group.find('.tree-items input[type="checkbox"]');
+		var checked = $items.filter(':checked').length;
+		var all = $group.find('[data-picker-all]')[0];
+		all.checked = checked === $items.length;
+		all.indeterminate = checked > 0 && checked < $items.length;
+		$group.find('[data-picker-count]').text(checked + ' из ' + $items.length);
+	}
+	$('[data-picker]').each(function () {
+		updatePicker($(this));
+	});
+	$(document).on('change', '[data-picker-all]', function () {
+		var $group = $(this).closest('[data-picker]');
+		$group.find('.tree-items input[type="checkbox"]').prop('checked', this.checked);
+		updatePicker($group);
+	});
+	$(document).on('change', '[data-picker] .tree-items input', function () {
+		updatePicker($(this).closest('[data-picker]'));
+	});
+
+	// Формы с подтверждением: data-confirm — текст вопроса
+	$(document).on('submit', 'form[data-confirm]', function (event) {
+		if (!window.confirm($(this).data('confirm'))) event.preventDefault();
+	});
+
 	// Пока проверка идёт, страница отчёта обновляется сама (data-auto-refresh — через сколько секунд)
 	var $autoRefresh = $('[data-auto-refresh]');
 	if ($autoRefresh.length) {

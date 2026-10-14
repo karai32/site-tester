@@ -61,13 +61,14 @@ export function readSavedHtml(htmlDir, url) {
 }
 
 /**
+ * shouldStop() — если вернёт true, обход прекращается (проверку отменили).
  * Возвращает:
  *   htmlPages   — адреса HTML-страниц сайта
  *   linksByPage — Map: адрес страницы → внутренние ссылки на ней (страницы и файлы)
  *   statuses    — Map: адрес → { status, error }, HTTP-статус каждого найденного адреса
  *   truncated   — true, если обход остановлен на MAX_PAGES
  */
-export async function crawlSite(siteUrl, htmlDir) {
+export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
   const start = new URL(siteUrl);
   start.hash = '';
   start.search = '';
@@ -81,7 +82,7 @@ export async function crawlSite(siteUrl, htmlDir) {
 
   const api = await request.newContext();
   try {
-    while (queue.length > 0) {
+    while (queue.length > 0 && !shouldStop()) {
       const batch = queue.splice(0, BATCH_SIZE);
       await Promise.all(batch.map(async (pageUrl) => {
         let page;

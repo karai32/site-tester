@@ -1,0 +1,113 @@
+<div class="breadcrumbs">
+	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
+	<a href="/projects/<%= project.id %>/scenarios">Сценарии</a> /
+	<span><%= scenario.name %></span>
+</div>
+
+<div class="page-head">
+	<div>
+		<h1 class="page-title">
+			<%= scenario.name %>
+			<span class="custom-badge status-<%= scenario.is_active ? 'green' : 'grey' %> align-middle"><%= scenario.is_active ? 'Активный' : 'Неактивный' %></span>
+		</h1>
+		<p class="page-subtitle">Создан <%= formatDate(scenario.created_at) %><%= scenario.is_full ? ' · полная проверка: все тесты на всех страницах сайта' : '' %></p>
+	</div>
+	<div class="page-subtitle mt-0">Автор сценария: <span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span></div>
+</div>
+
+<div class="row g-4">
+	<div class="col-xl-6">
+		<%# Категории и тесты %>
+		<section class="panel">
+			<div class="panel__head">
+				<h2 class="panel__title">Категории и тесты</h2>
+				<span class="panel__meta"><%= categories.length %> <%= plural(categories.length, ['категория', 'категории', 'категорий']) %></span>
+			</div>
+			<% categories.forEach((category, index) => { %>
+				<div class="tree-group">
+					<button type="button" class="tree-group__head <%= index === 0 ? '' : 'collapsed' %>" data-bs-toggle="collapse" data-bs-target="#tests-<%= category.id %>" aria-expanded="<%= index === 0 %>">
+						<span class="icon-box icon-box-sm"><i class="<%= category.icon %>"></i></span>
+						<span class="tree-group__title"><%= category.title %></span>
+						<span class="tree-group__count"><%= category.tests.length %> <%= plural(category.tests.length, ['тест', 'теста', 'тестов']) %></span>
+						<i class="feather-chevron-down tree-group__arrow"></i>
+					</button>
+					<div class="collapse <%= index === 0 ? 'show' : '' %>" id="tests-<%= category.id %>">
+						<ul class="tree-items">
+							<% for (const test of category.tests) { %>
+								<li><i class="feather-check-circle text-success"></i><%= test.title %></li>
+							<% } %>
+						</ul>
+					</div>
+				</div>
+			<% }) %>
+		</section>
+
+		<%# Выборки страниц %>
+		<section class="panel">
+			<div class="panel__head">
+				<h2 class="panel__title">Выборки тестирования</h2>
+			</div>
+			<% for (const set of pageSets) { %>
+				<div class="check-row"><i class="feather-check-circle text-success"></i><%= set.title %></div>
+			<% } %>
+		</section>
+	</div>
+
+	<div class="col-xl-6">
+		<%# Запуск %>
+		<section class="panel">
+			<div class="panel__head">
+				<h2 class="panel__title">Запуск проверки</h2>
+			</div>
+			<% if (scenario.is_active) { %>
+				<div class="panel__actions">
+					<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-launch="<%= scenario.id %>" data-launch-name="<%= scenario.name %>">Запустить сейчас</button>
+				</div>
+				<form class="confirm-box" method="post" action="/projects/<%= project.id %>/checks" data-launch-confirm hidden>
+					<input type="hidden" name="scenario_id" value="">
+					<h3 class="confirm-box__title">Запустить сценарий «<span data-launch-confirm-name></span>»?</h3>
+					<p class="confirm-box__text">Проверка встанет в очередь. Результаты появятся в архиве отчётов после завершения.</p>
+					<div class="confirm-box__actions">
+						<button type="submit" class="btn btn-primary btn-pill btn-pill-sm">Запустить</button>
+						<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-launch-cancel>Отменить</button>
+					</div>
+				</form>
+			<% } else { %>
+				<p class="panel__empty">Сценарий неактивен. Чтобы запустить проверку, сначала активируйте его.</p>
+			<% } %>
+		</section>
+
+		<%# Регулярность и уведомления заработают вместе с расписанием и ботом %>
+		<section class="panel">
+			<div class="panel__head">
+				<div>
+					<h2 class="panel__title">Регулярность проверки</h2>
+					<p class="page-subtitle mt-2">Автоматический запуск по расписанию</p>
+				</div>
+				<span class="custom-badge status-grey">Нерегулярная</span>
+			</div>
+			<p class="panel__empty">Сценарий запускается только вручную</p>
+		</section>
+
+		<section class="panel">
+			<div class="panel__head">
+				<h2 class="panel__title">Уведомления</h2>
+			</div>
+			<p class="panel__empty">По этому сценарию уведомления не отправляются</p>
+		</section>
+	</div>
+</div>
+
+<div class="actions-bar">
+	<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/active">
+		<% if (scenario.is_active) { %>
+			<input type="hidden" name="active" value="0">
+			<button type="submit" class="btn btn-pill btn-soft-danger">Деактивировать сценарий</button>
+		<% } else { %>
+			<input type="hidden" name="active" value="1">
+			<button type="submit" class="btn btn-dark btn-pill">Активировать сценарий</button>
+		<% } %>
+	</form>
+	<%# По ТЗ форма редакции открывается в новой вкладке %>
+	<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/copy" target="_blank" class="btn btn-outline-primary btn-pill">Скопировать и изменить сценарий</a>
+</div>

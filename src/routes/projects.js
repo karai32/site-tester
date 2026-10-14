@@ -1,9 +1,9 @@
-// Проекты: список, дашборд проекта, сценарии, архив отчётов
+// Проекты: список, дашборд проекта, архив отчётов
 import { findProjectById, getProjects } from '../db/projects.js';
 import { findLatestDoneReport, getProjectReports, getRecentReports, getReportResults } from '../db/reports.js';
 import { getProjectScenarios } from '../db/scenarios.js';
 import { authorName, formatDateTime } from '../helpers.js';
-import { paginate } from '../pagination.js';
+import { listUrl, paginate } from '../pagination.js';
 import { groupByCategory, scenarioCategoryIds } from '../report-summary.js';
 import { categories as testCategories } from '../tests/index.js';
 
@@ -44,13 +44,6 @@ export default async function projectRoutes(app) {
     }, { layout: 'layouts/app.ejs' });
   });
 
-  // Сценарии (страница появится на следующем шаге)
-  app.get('/projects/:id/scenarios', async (request, reply) => {
-    const project = findProjectById(request.params.id);
-    if (!project) return reply.callNotFound();
-    return reply.view('projects/scenarios.ejs', { title: `Сценарии — ${project.name}`, project }, { layout: 'layouts/app.ejs' });
-  });
-
   // Архив отчётов: поиск, фильтры по автору и категориям, сортировка, по 10 на странице
   app.get('/projects/:id/reports', async (request, reply) => {
     const project = findProjectById(request.params.id);
@@ -86,16 +79,9 @@ export default async function projectRoutes(app) {
     }
     reports = [...reports].sort(SORTS[sort].compare);
 
-    // Адрес архива с текущими параметрами и изменениями: archiveUrl({ page: 2 })
+    // Адрес архива с текущими фильтрами и изменениями: archiveUrl({ page: 2 })
     const current = { q: search, author, cat: selectedCategories, sort: sort === 'new' ? '' : sort };
-    const archiveUrl = (changes) => {
-      const params = new URLSearchParams();
-      for (const [key, value] of Object.entries({ ...current, page: '', ...changes })) {
-        for (const item of [value].flat()) if (item) params.append(key, item);
-      }
-      const query = params.toString();
-      return `/projects/${project.id}/reports${query ? `?${query}` : ''}`;
-    };
+    const archiveUrl = (changes) => listUrl(`/projects/${project.id}/reports`, { ...current, ...changes });
 
     return reply.view('projects/reports.ejs', {
       title: `Архив отчётов — ${project.name}`,

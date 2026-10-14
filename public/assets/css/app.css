@@ -587,28 +587,64 @@ body {
 	font-weight: 500;
 }
 
-/* Подтверждение запуска — серый блок в карточке сценариев */
-.confirm-box {
-	margin-top: 32px;
-	padding: 32px;
-	border-radius: 13px;
-	background: var(--muted-bg);
-	text-align: center;
+/* Окно подтверждения запуска (модальное окно кита): шаги сценария */
+.launch-modal__hint {
+	margin: 6px 0 0;
+	color: var(--muted);
+	font-size: 13px;
 }
-.confirm-box__title {
+.launch-step {
+	padding: 20px 0;
+	border-bottom: 1px solid var(--border);
+}
+.launch-step:first-child {
+	padding-top: 0;
+}
+.launch-step:last-child {
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+.launch-step__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.launch-step__head .step-badge {
+	margin-right: 0;
+}
+.launch-step__head h5 {
 	margin: 0;
 	font-size: 18px;
 	font-weight: 500;
 }
-.confirm-box__text {
-	margin: 10px 0 20px;
+.launch-step__meta {
+	margin-left: auto;
 	color: var(--muted);
-	font-size: 11px;
+	font-size: 13px;
 }
-.confirm-box__actions {
+.launch-step__list {
 	display: flex;
-	justify-content: center;
-	gap: 16px;
+	flex-direction: column;
+	gap: 10px;
+	margin: 14px 0 0 44px;
+	padding: 0;
+	list-style: none;
+	font-size: 13px;
+	font-weight: 500;
+}
+.launch-step__list li {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.launch-step__text {
+	margin: 10px 0 0 44px;
+	color: var(--muted);
+	font-size: 13px;
+}
+.launch-modal .modal-footer {
+	justify-content: flex-start;
+	gap: 8px;
 }
 
 /* Плитки категорий в сводке */
@@ -1180,9 +1216,6 @@ body {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
-	margin-top: 24px;
-}
-.panel__actions + .confirm-box {
 	margin-top: 24px;
 }
 /* Кнопки внизу страницы по центру */

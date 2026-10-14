@@ -1,0 +1,57 @@
+<%#
+	Окно подтверждения запуска: что именно проверит сценарий. Модальное окно кита.
+	Нужны project, scenario и summary (из scenarioSummary в src/scenario-info.js).
+	Открывается кнопкой с data-bs-target="#launch-<id сценария>".
+%>
+<div class="modal fade" id="launch-<%= scenario.id %>" tabindex="-1" aria-labelledby="launch-<%= scenario.id %>-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<form class="modal-content launch-modal" method="post" action="/projects/<%= project.id %>/checks">
+			<input type="hidden" name="scenario_id" value="<%= scenario.id %>">
+
+			<div class="modal-header">
+				<div>
+					<h4 class="modal-title" id="launch-<%= scenario.id %>-title">Запустить «<%= scenario.name %>»</h4>
+					<p class="launch-modal__hint">Проверьте настройки сценария. Проверка встанет в очередь после подтверждения.</p>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+
+			<div class="modal-body">
+				<div class="launch-step">
+					<div class="launch-step__head">
+						<span class="step-badge">1</span>
+						<h5>Область тестирования</h5>
+						<span class="launch-step__meta"><%= summary.testsCount %> <%= plural(summary.testsCount, ['тест', 'теста', 'тестов']) %></span>
+					</div>
+					<ul class="launch-step__list">
+						<% for (const category of summary.categories) { %>
+							<li><i class="feather-check-circle text-success"></i><%= category.title %> — <%= category.tests.length %> <%= plural(category.tests.length, ['тест', 'теста', 'тестов']) %></li>
+						<% } %>
+					</ul>
+					<p class="launch-step__text">Страницы: <%= summary.pageSetsText %></p>
+				</div>
+
+				<div class="launch-step">
+					<div class="launch-step__head">
+						<span class="step-badge">2</span>
+						<h5>Регулярность</h5>
+					</div>
+					<p class="launch-step__text">Запускается вручную</p>
+				</div>
+
+				<div class="launch-step">
+					<div class="launch-step__head">
+						<span class="step-badge">3</span>
+						<h5>Уведомления</h5>
+					</div>
+					<p class="launch-step__text">Не отправляются</p>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary btn-pill btn-pill-sm">Запустить</button>
+				<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-bs-dismiss="modal">Отменить</button>
+			</div>
+		</form>
+	</div>
+</div>

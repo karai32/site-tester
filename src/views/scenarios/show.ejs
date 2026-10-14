@@ -21,9 +21,9 @@
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Категории и тесты</h2>
-				<span class="panel__meta"><%= categories.length %> <%= plural(categories.length, ['категория', 'категории', 'категорий']) %></span>
+				<span class="panel__meta"><%= summary.categories.length %> <%= plural(summary.categories.length, ['категория', 'категории', 'категорий']) %></span>
 			</div>
-			<% categories.forEach((category, index) => { %>
+			<% summary.categories.forEach((category, index) => { %>
 				<div class="tree-group">
 					<button type="button" class="tree-group__head <%= index === 0 ? '' : 'collapsed' %>" data-bs-toggle="collapse" data-bs-target="#tests-<%= category.id %>" aria-expanded="<%= index === 0 %>">
 						<span class="icon-box icon-box-sm"><i class="<%= category.icon %>"></i></span>
@@ -47,7 +47,7 @@
 			<div class="panel__head">
 				<h2 class="panel__title">Выборки тестирования</h2>
 			</div>
-			<% for (const set of pageSets) { %>
+			<% for (const set of summary.pageSets) { %>
 				<div class="check-row"><i class="feather-check-circle text-success"></i><%= set.title %></div>
 			<% } %>
 		</section>
@@ -61,17 +61,9 @@
 			</div>
 			<% if (scenario.is_active) { %>
 				<div class="panel__actions">
-					<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-launch="<%= scenario.id %>" data-launch-name="<%= scenario.name %>">Запустить сейчас</button>
+					<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-bs-toggle="modal" data-bs-target="#launch-<%= scenario.id %>">Запустить сейчас</button>
 				</div>
-				<form class="confirm-box" method="post" action="/projects/<%= project.id %>/checks" data-launch-confirm hidden>
-					<input type="hidden" name="scenario_id" value="">
-					<h3 class="confirm-box__title">Запустить сценарий «<span data-launch-confirm-name></span>»?</h3>
-					<p class="confirm-box__text">Проверка встанет в очередь. Результаты появятся в архиве отчётов после завершения.</p>
-					<div class="confirm-box__actions">
-						<button type="submit" class="btn btn-primary btn-pill btn-pill-sm">Запустить</button>
-						<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-launch-cancel>Отменить</button>
-					</div>
-				</form>
+				<%- include('../partials/launch-modal', { scenario, summary }) %>
 			<% } else { %>
 				<p class="panel__empty">Сценарий неактивен. Чтобы запустить проверку, сначала активируйте его.</p>
 			<% } %>

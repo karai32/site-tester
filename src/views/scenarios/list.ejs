@@ -76,7 +76,7 @@
 				<div class="meta-items">
 					<span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span>Автор: <%= authorName(scenario.author_name) %></span>
 					<span>Создан: <b><%= formatDate(scenario.created_at) %></b></span>
-					<span>Категорий: <b><%= scenario.categoryIds.length %></b></span>
+					<span>Категорий: <b><%= scenario.categoriesCount %></b></span>
 					<span>Тестов: <b><%= scenario.testsCount %>/<%= totalTests %></b></span>
 					<span>Страниц: <b><%= scenario.pagesText %></b></span>
 				</div>

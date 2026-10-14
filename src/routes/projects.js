@@ -3,20 +3,12 @@ import { findProjectById, getProjects } from '../db/projects.js';
 import { findLatestDoneReport, getProjectReports, getRecentReports, getReportResults } from '../db/reports.js';
 import { getProjectScenarios } from '../db/scenarios.js';
 import { authorName, formatDateTime } from '../helpers.js';
-import { listUrl, paginate, toList, uniqueSorted } from '../lists.js';
+import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { groupByCategory } from '../report-summary.js';
-import { scenarioCategoryIds } from '../scenario-info.js';
+import { scenarioCategoryIds, scenarioSummary } from '../scenario-info.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const REPORTS_PER_PAGE = 10;
-
-// Варианты сортировки архива: название и правило сравнения двух отчётов
-const SORTS = {
-  new: { title: 'По дате: сначала новые', compare: (a, b) => b.id - a.id },
-  old: { title: 'По дате: сначала старые', compare: (a, b) => a.id - b.id },
-  tests: { title: 'По числу тестов', compare: (a, b) => (b.tests_total || 0) - (a.tests_total || 0) },
-  pages: { title: 'По числу страниц', compare: (a, b) => (b.pages_count || 0) - (a.pages_count || 0) },
-};
 
 export default async function projectRoutes(app) {
   // Список проектов
@@ -30,7 +22,11 @@ export default async function projectRoutes(app) {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
 
-    const scenarios = getProjectScenarios(project.id).filter((scenario) => scenario.is_active);
+    // Активные сценарии и их состав — для окна подтверждения запуска
+    const scenarios = [];
+    for (const scenario of getProjectScenarios(project.id)) {
+      if (scenario.is_active) scenarios.push({ ...scenario, summary: scenarioSummary(scenario) });
+    }
     const lastFull = findLatestDoneReport(project.id, true);
     const lastPartial = findLatestDoneReport(project.id, false);
 
@@ -58,11 +54,22 @@ export default async function projectRoutes(app) {
     const search = String(request.query.q || '').trim();
     const author = String(request.query.author || '');
     const selectedCategories = toList(request.query.cat);
-    let sort = request.query.sort;
-    if (!SORTS[sort]) sort = 'new';
+    const sort = sortFromQuery(request.query.sort);
 
-    const allReports = getProjectReports(project.id);
+    // Отчёты с цифрами для фильтров и сортировки: категории сценария, число тестов и страниц
     const scenarios = getProjectScenarios(project.id);
+    const allReports = [];
+    for (const report of getProjectReports(project.id)) {
+      const scenario = scenarios.find((item) => item.id === report.scenario_id);
+      const categoryIds = scenarioCategoryIds(scenario);
+      allReports.push({
+        ...report,
+        categoryIds,
+        categoriesCount: categoryIds.length,
+        testsCount: report.tests_total || 0,
+        pagesCount: report.pages_count || 0,
+      });
+    }
     const authors = uniqueSorted(allReports.map((report) => authorName(report.started_by_name)));
 
     let reports = allReports;
@@ -82,11 +89,7 @@ export default async function projectRoutes(app) {
 
     // Категории: оставляем отчёты, в сценарии которых есть все выбранные категории
     if (selectedCategories.length > 0) {
-      reports = reports.filter((report) => {
-        const scenario = scenarios.find((item) => item.id === report.scenario_id);
-        const categoryIds = scenarioCategoryIds(scenario);
-        return selectedCategories.every((id) => categoryIds.includes(id));
-      });
+      reports = reports.filter((report) => selectedCategories.every((id) => report.categoryIds.includes(id)));
     }
 
     reports.sort(SORTS[sort].compare);

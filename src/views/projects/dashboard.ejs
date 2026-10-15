@@ -124,3 +124,18 @@
 		</a>
 	<% } %>
 </section>
+
+<%# Сводка по сценарию (ТЗ, п. 9): по умолчанию пустая, появляется после выбора сценария в списке %>
+<section class="panel">
+	<div class="panel__head">
+		<h2 class="panel__title">Сводка по сценарию</h2>
+	</div>
+	<select class="form-select summary-select" aria-label="Сценарий для сводки"
+		data-scenario-summary-select data-url="/projects/<%= project.id %>/scenario-summary">
+		<option value="">Выберите сценарий</option>
+		<% for (const scenario of summaryScenarios) { %>
+			<option value="<%= scenario.id %>"><%= scenario.name %> — <%= authorName(scenario.author_name) %></option>
+		<% } %>
+	</select>
+	<div data-scenario-summary></div>
+</section>

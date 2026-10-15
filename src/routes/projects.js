@@ -1,8 +1,14 @@
 // Проекты: список, дашборд проекта, архив отчётов
 import { findProjectById, getProjects } from '../db/projects.js';
-import { findLatestDoneReport, getProjectReports, getRecentReports, getReportResults } from '../db/reports.js';
-import { getProjectScenarios } from '../db/scenarios.js';
-import { authorName, formatDateTime } from '../helpers.js';
+import {
+  findLatestDoneReport,
+  getProjectReports,
+  getRecentReports,
+  getReportResults,
+  getScenarioReports,
+} from '../db/reports.js';
+import { findScenarioById, getProjectScenarios } from '../db/scenarios.js';
+import { authorName, formatDateTime, percentOf } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { groupByCategory } from '../report-summary.js';
 import { upcomingRuns } from '../schedule.js';
@@ -11,6 +17,7 @@ import { categories as testCategories } from '../tests/index.js';
 
 const REPORTS_PER_PAGE = 10;
 const UPCOMING_COUNT = 5; // сколько ближайших проверок показывать на дашборде (по ТЗ — 5)
+const SUMMARY_BATCH = 10; // сколько отчётов подгружается за раз в сводке по сценарию
 
 export default async function projectRoutes(app) {
   // Список проектов
@@ -25,8 +32,9 @@ export default async function projectRoutes(app) {
     if (!project) return reply.callNotFound();
 
     // Активные сценарии и их состав — для окна подтверждения запуска
+    const allScenarios = getProjectScenarios(project.id);
     const scenarios = [];
-    for (const scenario of getProjectScenarios(project.id)) {
+    for (const scenario of allScenarios) {
       if (scenario.is_active) scenarios.push({ ...scenario, summary: scenarioSummary(scenario) });
     }
     // Ближайшие проверки: отложенные и регулярные всех активных сценариев, по времени
@@ -53,7 +61,55 @@ export default async function projectRoutes(app) {
       lastFullCategories,
       lastPartial,
       recentReports: getRecentReports(project.id, 10),
+      summaryScenarios: [...allScenarios].reverse(), // для «Сводки по сценарию»: все сценарии, новые сверху
     }, { layout: 'layouts/app.ejs' });
+  });
+
+  // Сводка по сценарию для дашборда. Отдаёт кусок HTML — его вставляет в страницу app.js.
+  // ?scenario=5 — цифры сводки и первые отчёты, ?scenario=5&offset=10 — следующие отчёты.
+  app.get('/projects/:id/scenario-summary', async (request, reply) => {
+    const project = findProjectById(request.params.id);
+    const scenario = findScenarioById(request.query.scenario);
+    if (!project || !scenario || scenario.project_id !== project.id) return reply.callNotFound();
+
+    // Отчёты от самого недавнего до самого первого, порциями по SUMMARY_BATCH
+    const reports = getScenarioReports(scenario.id);
+    const offset = Number(request.query.offset) || 0;
+    const batch = reports.slice(offset, offset + SUMMARY_BATCH);
+    const remaining = reports.length - offset - batch.length;
+
+    let nextUrl = null; // адрес следующей порции; null — отчёты кончились
+    if (remaining > 0) {
+      nextUrl = `/projects/${project.id}/scenario-summary?scenario=${scenario.id}&offset=${offset + SUMMARY_BATCH}`;
+    }
+
+    // Следующие порции — только строки отчётов
+    if (offset > 0) {
+      return reply.view('partials/scenario-summary-rows.ejs', { reports: batch, remaining, nextUrl });
+    }
+
+    // Цифры сводки — по готовым отчётам
+    const doneReports = reports.filter((report) => report.status === 'done');
+    let averagePercent = null;
+    if (doneReports.length > 0) {
+      let percentSum = 0;
+      for (const report of doneReports) {
+        percentSum += percentOf(report.tests_passed, report.tests_total);
+      }
+      averagePercent = Math.round(percentSum / doneReports.length);
+    }
+
+    return reply.view('partials/scenario-summary.ejs', {
+      project,
+      scenario,
+      reportsCount: reports.length,
+      doneCount: doneReports.length,
+      lastDone: doneReports[0],
+      averagePercent,
+      reports: batch,
+      remaining,
+      nextUrl,
+    });
   });
 
   // Архив отчётов: поиск, фильтры по автору и категориям, сортировка, по 10 на странице

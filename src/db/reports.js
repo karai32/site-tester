@@ -27,6 +27,11 @@ export function getProjectReports(projectId) {
   return db.prepare(`${reportsWithNames} WHERE reports.project_id = ? ORDER BY reports.id DESC`).all(projectId);
 }
 
+// Все отчёты сценария, новые сверху
+export function getScenarioReports(scenarioId) {
+  return db.prepare(`${reportsWithNames} WHERE reports.scenario_id = ? ORDER BY reports.id DESC`).all(scenarioId);
+}
+
 export function getRecentReports(projectId, limit) {
   return db.prepare(`${reportsWithNames} WHERE reports.project_id = ? ORDER BY reports.id DESC LIMIT ?`).all(projectId, limit);
 }

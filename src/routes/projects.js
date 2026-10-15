@@ -8,7 +8,7 @@ import {
   getScenarioReports,
 } from '../db/reports.js';
 import { findScenarioById, getProjectScenarios } from '../db/scenarios.js';
-import { authorName, formatDateTime, percentOf } from '../helpers.js';
+import { authorName, formatDateTime } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { groupByCategory } from '../report-summary.js';
 import { upcomingRuns } from '../schedule.js';
@@ -66,7 +66,7 @@ export default async function projectRoutes(app) {
   });
 
   // Сводка по сценарию для дашборда. Отдаёт кусок HTML — его вставляет в страницу app.js.
-  // ?scenario=5 — цифры сводки и первые отчёты, ?scenario=5&offset=10 — следующие отчёты.
+  // ?scenario=5 — первые отчёты, ?scenario=5&offset=10 — следующие.
   app.get('/projects/:id/scenario-summary', async (request, reply) => {
     const project = findProjectById(request.params.id);
     const scenario = findScenarioById(request.query.scenario);
@@ -88,28 +88,7 @@ export default async function projectRoutes(app) {
       return reply.view('partials/scenario-summary-rows.ejs', { reports: batch, remaining, nextUrl });
     }
 
-    // Цифры сводки — по готовым отчётам
-    const doneReports = reports.filter((report) => report.status === 'done');
-    let averagePercent = null;
-    if (doneReports.length > 0) {
-      let percentSum = 0;
-      for (const report of doneReports) {
-        percentSum += percentOf(report.tests_passed, report.tests_total);
-      }
-      averagePercent = Math.round(percentSum / doneReports.length);
-    }
-
-    return reply.view('partials/scenario-summary.ejs', {
-      project,
-      scenario,
-      reportsCount: reports.length,
-      doneCount: doneReports.length,
-      lastDone: doneReports[0],
-      averagePercent,
-      reports: batch,
-      remaining,
-      nextUrl,
-    });
+    return reply.view('partials/scenario-summary.ejs', { reports: batch, remaining, nextUrl });
   });
 
   // Архив отчётов: поиск, фильтры по автору и категориям, сортировка, по 10 на странице

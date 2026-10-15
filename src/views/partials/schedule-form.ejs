@@ -1,0 +1,52 @@
+<%#
+	Поля регулярности: шаг 2 формы сценария и форма на странице сценария.
+	Нужен schedule: { type, time, number } — что выбрано; type = null — нерегулярный.
+	Варианты расписания (SCHEDULE_TYPES) — из src/schedule.js. Сервер читает поля в readScheduleForm.
+%>
+<%
+	const isRegular = Boolean(schedule.type);
+	let chosenType = 'daily'; // у нерегулярного заранее отмечен первый вариант
+	if (schedule.type) chosenType = schedule.type;
+%>
+<div class="schedule-fields">
+	<%# «Регулярная / Нерегулярная» — переключатель из радиокнопок Bootstrap (btn-check) %>
+	<div class="segmented" role="group" aria-label="Регулярность">
+		<input type="radio" class="btn-check" name="regular" value="1" id="regular-yes" <%= isRegular ? 'checked' : '' %>>
+		<label class="segmented__item" for="regular-yes">Регулярная</label>
+		<input type="radio" class="btn-check" name="regular" value="0" id="regular-no" <%= isRegular ? '' : 'checked' %>>
+		<label class="segmented__item" for="regular-no">Нерегулярная</label>
+	</div>
+
+	<%# Пока выбрано «Нерегулярная», варианты скрыты (см. .schedule-fields в app.css) %>
+	<p class="schedule-manual">Сценарий будет запускаться только вручную.</p>
+
+	<div class="schedule-options">
+		<% for (const type of SCHEDULE_TYPES) { %>
+			<%
+				const isChosen = type.id === chosenType;
+				let time = DEFAULT_TIME;
+				if (isChosen && schedule.time) time = schedule.time;
+				let number = null;
+				if (type.number) number = type.number.default;
+				if (isChosen && schedule.number) number = schedule.number;
+			%>
+			<div class="schedule-option">
+				<label class="custom_check schedule-option__title"><%= type.title %>
+					<input type="radio" name="schedule_type" value="<%= type.id %>" <%= isChosen ? 'checked' : '' %>>
+					<span class="checkmark"></span>
+					<% if (type.hint) { %><span class="schedule-option__hint"><%= type.hint %></span><% } %>
+				</label>
+				<div class="schedule-option__inputs">
+					<% if (type.number) { %>
+						<input type="number" class="form-control schedule-input schedule-input-number" name="number_<%= type.id %>"
+							value="<%= number %>" min="<%= type.number.min %>" max="<%= type.number.max %>" aria-label="<%= type.title %>: <%= type.number.unit %>">
+						<span class="schedule-option__unit"><%= type.number.unit %></span>
+					<% } %>
+					<% if (type.hasTime) { %>
+						<input type="time" class="form-control schedule-input" name="time_<%= type.id %>" value="<%= time %>" aria-label="<%= type.title %>: время">
+					<% } %>
+				</div>
+			</div>
+		<% } %>
+	</div>
+</div>

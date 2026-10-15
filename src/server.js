@@ -18,6 +18,7 @@ import profileRoutes from './routes/profile.js';
 import reportRoutes from './routes/reports.js';
 import scenarioRoutes from './routes/scenarios.js';
 import settingsRoutes from './routes/settings.js';
+import { DEFAULT_TIME, SCHEDULE_TYPES, scheduleText } from './schedule.js';
 import { startQueue } from './runner/queue.js';
 
 const app = Fastify({ logger: true });
@@ -47,11 +48,11 @@ await app.register(fastifyStatic, {
 });
 app.get('/ui.html', async (_request, reply) => reply.redirect('/ui-kit/ui.html'));
 
-// Шаблоны EJS из src/views. Функции из helpers.js доступны в любом шаблоне.
+// Шаблоны EJS из src/views. Функции из helpers.js и варианты расписания доступны в любом шаблоне.
 await app.register(fastifyView, {
   engine: { ejs },
   root: fileURLToPath(new URL('./views', import.meta.url)),
-  defaultContext: helpers,
+  defaultContext: { ...helpers, DEFAULT_TIME, SCHEDULE_TYPES, scheduleText },
 });
 
 // Страницы, которые открываются без входа

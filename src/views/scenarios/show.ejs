@@ -15,6 +15,10 @@
 	<div class="page-subtitle mt-0">Автор сценария: <span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span></div>
 </div>
 
+<% if (notice) { %>
+	<div class="alert alert-success" role="alert"><%= notice %></div>
+<% } %>
+
 <div class="row g-4">
 	<div class="col-xl-6">
 		<%# Категории и тесты %>
@@ -54,7 +58,7 @@
 	</div>
 
 	<div class="col-xl-6">
-		<%# Запуск %>
+		<%# Запуск: сейчас (с подтверждением в окне) или отложенный — в выбранные дату и время %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Запуск проверки</h2>
@@ -62,23 +66,87 @@
 			<% if (scenario.is_active) { %>
 				<div class="panel__actions">
 					<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-bs-toggle="modal" data-bs-target="#launch-<%= scenario.id %>">Запустить сейчас</button>
+					<button type="button" class="btn btn-pill btn-pill-sm btn-soft-warning" data-bs-toggle="collapse" data-bs-target="#deferred-form" aria-expanded="<%= deferredErrors.length > 0 %>">Отложенная проверка</button>
+					<% if (scenario.deferred_at) { %>
+						<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/deferred/cancel">
+							<button type="submit" class="btn btn-pill btn-pill-sm btn-soft-danger">Отменить отложенную проверку</button>
+						</form>
+					<% } %>
 				</div>
+
+				<%# Дата и время отложенной проверки — по Москве %>
+				<div class="collapse <%= deferredErrors.length > 0 ? 'show' : '' %>" id="deferred-form">
+					<form class="soft-box deferred-form" method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/deferred">
+						<% if (deferredErrors.length > 0) { %>
+							<div class="alert alert-danger w-100" role="alert">
+								<% for (const error of deferredErrors) { %><div><%= error %></div><% } %>
+							</div>
+						<% } %>
+						<div class="deferred-form__field">
+							<label for="deferred-date">Дата</label>
+							<input type="date" id="deferred-date" name="date" class="form-control" value="<%= deferredForm.date %>" required>
+						</div>
+						<div class="deferred-form__field">
+							<label for="deferred-time">Время</label>
+							<input type="time" id="deferred-time" name="time" class="form-control" value="<%= deferredForm.time %>" required>
+						</div>
+						<button type="submit" class="btn btn-primary btn-pill">Подтвердить</button>
+					</form>
+				</div>
+
+				<% if (scenario.deferred_at) { %>
+					<div class="notice-box notice-box-warning">
+						<i class="feather-info"></i>
+						<span>Отложенная проверка запланирована на <%= formatDateShort(scenario.deferred_at) %></span>
+					</div>
+				<% } %>
 				<%- include('../partials/launch-modal', { scenario, summary }) %>
 			<% } else { %>
 				<p class="panel__empty">Сценарий неактивен. Чтобы запустить проверку, сначала активируйте его.</p>
 			<% } %>
 		</section>
 
-		<%# Регулярность и уведомления заработают вместе с расписанием и ботом %>
-		<section class="panel">
+		<%# Регулярность: расписание и кнопка «Изменить», по ней открывается форма %>
+		<section class="panel" id="schedule">
 			<div class="panel__head">
 				<div>
 					<h2 class="panel__title">Регулярность проверки</h2>
 					<p class="page-subtitle mt-2">Автоматический запуск по расписанию</p>
 				</div>
-				<span class="custom-badge status-grey">Нерегулярная</span>
+				<% if (scenario.schedule_type) { %>
+					<span class="custom-badge status-green">Регулярная</span>
+				<% } else { %>
+					<span class="custom-badge status-grey">Нерегулярная</span>
+				<% } %>
 			</div>
-			<p class="panel__empty">Сценарий запускается только вручную</p>
+
+			<% if (editSchedule) { %>
+				<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/schedule">
+					<% if (scheduleErrors.length > 0) { %>
+						<div class="alert alert-danger" role="alert">
+							<% for (const error of scheduleErrors) { %><div><%= error %></div><% } %>
+						</div>
+					<% } %>
+					<%- include('../partials/schedule-form', { schedule }) %>
+					<div class="panel__actions">
+						<button type="submit" class="btn btn-primary btn-pill">Сохранить</button>
+						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
+					</div>
+				</form>
+			<% } else { %>
+				<div class="soft-box schedule-box">
+					<div>
+						<span class="schedule-box__label">Расписание</span>
+						<span class="schedule-box__value"><%= scheduleText(scenario) %></span>
+						<% if (scenario.schedule_type && scenario.is_active) { %>
+							<span class="schedule-box__next">Следующий запуск: <%= formatDateShort(scenario.next_run_at) %></span>
+						<% } else if (scenario.schedule_type) { %>
+							<span class="schedule-box__next">Сценарий неактивен — по расписанию не запускается</span>
+						<% } %>
+					</div>
+					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>?edit=schedule#schedule" class="btn btn-primary btn-pill">Изменить</a>
+				</div>
+			<% } %>
 		</section>
 
 		<section class="panel">

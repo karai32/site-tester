@@ -13,6 +13,7 @@
 	<input type="search" name="q" class="form-control" placeholder="Найти отчёт: сценарий, автор или дата" value="<%= search %>">
 	<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
 	<% for (const id of selectedCategories) { %><input type="hidden" name="cat" value="<%= id %>"><% } %>
+	<% if (regular) { %><input type="hidden" name="regular" value="<%= regular %>"><% } %>
 	<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
 </form>
 
@@ -44,10 +45,14 @@
 			<% } %>
 			<% if (search) { %><input type="hidden" name="q" value="<%= search %>"><% } %>
 			<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
+			<% if (regular) { %><input type="hidden" name="regular" value="<%= regular %>"><% } %>
 			<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
 			<div class="filters__apply"><button type="submit" class="btn btn-primary btn-pill btn-pill-sm w-100">Применить</button></div>
 		</form>
 	</div>
+
+	<%# Регулярность %>
+	<%- include('../partials/regular-filter', { regular, filterUrl: archiveUrl }) %>
 
 	<%# Сортировка %>
 	<div class="dropdown filters__sort">
@@ -76,7 +81,7 @@
 			<% } %>
 			<div class="list-row__main">
 				<h3 class="list-row__title"><%= report.scenario_name %></h3>
-				<div class="list-row__sub">Автор: <%= authorName(report.started_by_name) %> · отчёт #<%= report.id %></div>
+				<div class="list-row__sub">Автор: <%= authorName(report.started_by_name) %> · отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %></div>
 			</div>
 			<div class="list-row__aside">
 				<% if (report.status === 'done') { %>

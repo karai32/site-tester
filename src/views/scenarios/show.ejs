@@ -181,7 +181,7 @@
 					<div class="notify-item">
 						<div>
 							<span class="notify-item__title"><%= event.title %></span>
-							<% if (event.id === 'done' || event.id === 'critical' || event.id === 'regular') { %>
+							<% if (event.id === 'done' || event.id === 'regular') { %>
 								<span class="notify-item__hint">Проверка считается пройденной при успешности от <%= scenario.notifications.passPercent %>%</span>
 							<% } %>
 						</div>

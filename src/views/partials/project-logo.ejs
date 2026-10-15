@@ -1,0 +1,8 @@
+<%#
+	Аватарка проекта: загруженная картинка или первые буквы названия. Нужен project.
+%>
+<% if (project.logo) { %>
+	<span class="project-logo project-logo-image"><img src="/media/<%= project.logo %>" alt=""></span>
+<% } else { %>
+	<span class="project-logo"><%= initials(project.name) %></span>
+<% } %>

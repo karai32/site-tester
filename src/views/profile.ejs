@@ -64,7 +64,7 @@
 			<% } %>
 			<% for (const item of sidebarProjects) { %>
 				<a class="project-row" href="/projects/<%= item.id %>">
-					<span class="project-logo"><%= initials(item.name) %></span>
+					<%- include('partials/project-logo', { project: item }) %>
 					<span><%= item.name %></span>
 				</a>
 			<% } %>

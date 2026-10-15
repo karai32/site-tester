@@ -59,6 +59,11 @@ $(function () {
 		updatePicker($(this).closest('[data-picker]'));
 	});
 
+	// Выбрали файл — форма отправляется сама (аватарка проекта)
+	$(document).on('change', 'input[data-auto-submit]', function () {
+		this.form.submit();
+	});
+
 	// Формы с подтверждением: data-confirm — текст вопроса
 	$(document).on('submit', 'form[data-confirm]', function (event) {
 		if (!window.confirm($(this).data('confirm'))) event.preventDefault();

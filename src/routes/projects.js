@@ -1,5 +1,8 @@
-// Проекты: список, дашборд проекта, архив отчётов
-import { findProjectById, getProjects } from '../db/projects.js';
+// Проекты: список, дашборд проекта, аватарка, архив отчётов
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { MEDIA_DIR } from '../config.js';
+import { findProjectById, getProjects, setProjectLogo } from '../db/projects.js';
 import {
   findLatestDoneReport,
   getProjectReports,
@@ -18,6 +21,21 @@ import { categories as testCategories } from '../tests/index.js';
 const REPORTS_PER_PAGE = 10;
 const UPCOMING_COUNT = 5; // сколько ближайших проверок показывать на дашборде (по ТЗ — 5)
 const SUMMARY_BATCH = 10; // сколько отчётов подгружается за раз в сводке по сценарию
+
+// Сообщения на дашборде после загрузки аватарки: ?logo=saved
+const LOGO_NOTICES = {
+  saved: { type: 'success', text: 'Аватарка обновлена' },
+  error: { type: 'danger', text: 'Аватарка не загружена: нужна картинка PNG, JPEG или WebP не больше 2 МБ' },
+};
+
+// Тип картинки по первым байтам файла: 'png', 'jpg', 'webp' или null — не подходит.
+// Смотрим на сам файл, а не на его имя: имя можно подписать любое.
+function imageExtension(data) {
+  if (data[0] === 0x89 && data.toString('ascii', 1, 4) === 'PNG') return 'png';
+  if (data[0] === 0xff && data[1] === 0xd8) return 'jpg';
+  if (data.toString('ascii', 0, 4) === 'RIFF' && data.toString('ascii', 8, 12) === 'WEBP') return 'webp';
+  return null;
+}
 
 export default async function projectRoutes(app) {
   // Список проектов
@@ -61,8 +79,38 @@ export default async function projectRoutes(app) {
       lastFullCategories,
       lastPartial,
       recentReports: getRecentReports(project.id, 10),
+      logoNotice: LOGO_NOTICES[request.query.logo],
       summaryScenarios: [...allScenarios].reverse(), // для «Сводки по сценарию»: все сценарии, новые сверху
     }, { layout: 'layouts/app.ejs' });
+  });
+
+  // Новая аватарка проекта. Файл сохраняется в data/media/projects, старый удаляется.
+  app.post('/projects/:id/logo', async (request, reply) => {
+    const project = findProjectById(request.params.id);
+    if (!project) return reply.callNotFound();
+    const errorUrl = `/projects/${project.id}?logo=error`;
+
+    // Файл из формы. Больше 2 МБ — toBuffer() выдаст ошибку.
+    let data;
+    try {
+      const file = await request.file();
+      if (!file) return reply.redirect(errorUrl);
+      data = await file.toBuffer();
+    } catch {
+      return reply.redirect(errorUrl);
+    }
+
+    const extension = imageExtension(data);
+    if (!extension) return reply.redirect(errorUrl);
+
+    // Время в имени файла — чтобы браузер не показывал старую картинку из кэша
+    const file = `projects/${project.id}-${Date.now()}.${extension}`;
+    mkdirSync(join(MEDIA_DIR, 'projects'), { recursive: true });
+    writeFileSync(join(MEDIA_DIR, file), data);
+
+    if (project.logo) rmSync(join(MEDIA_DIR, project.logo), { force: true });
+    setProjectLogo(project.id, file);
+    return reply.redirect(`/projects/${project.id}?logo=saved`);
   });
 
   // Сводка по сценарию для дашборда. Отдаёт кусок HTML — его вставляет в страницу app.js.

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifyFormbody from '@fastify/formbody';
+import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import ejs from 'ejs';
@@ -28,6 +29,9 @@ const app = Fastify({ logger: true });
 // Cookie (для сессий) и данные из обычных HTML-форм
 await app.register(fastifyCookie);
 await app.register(fastifyFormbody);
+
+// Загрузка файлов из форм (аватарка проекта): один файл, не больше 2 МБ
+await app.register(fastifyMultipart, { limits: { files: 1, fileSize: 2 * 1024 * 1024 } });
 
 // CSS, JS и картинки: файл public/assets/css/style.css открывается по адресу /assets/css/style.css
 await app.register(fastifyStatic, {

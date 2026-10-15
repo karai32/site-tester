@@ -1709,3 +1709,38 @@ body {
 .scenario-summary {
 	margin-top: 16px;
 }
+
+/* --- Аватарка проекта --- */
+
+.project-logo-image {
+	overflow: hidden;
+	background: var(--paper);
+}
+.project-logo-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+/* На дашборде аватарка — кнопка: при наведении поверх появляется значок камеры */
+.project-logo-change {
+	position: relative;
+	display: block;
+	cursor: pointer;
+}
+.project-logo-change__icon {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	background: rgba(18, 24, 42, 0.55);
+	color: var(--paper);
+	font-size: 20px;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+.project-logo-change:hover .project-logo-change__icon,
+.project-logo-change:focus-within .project-logo-change__icon {
+	opacity: 1;
+}

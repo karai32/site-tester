@@ -11,7 +11,7 @@
 	<% } %>
 	<% for (const project of projects) { %>
 		<div class="list-row">
-			<span class="project-logo"><%= initials(project.name) %></span>
+			<%- include('../partials/project-logo', { project }) %>
 			<div class="list-row__main">
 				<h3 class="list-row__title"><%= project.name %></h3>
 				<div class="list-row__sub"><%= displayUrl(project.url) %></div>

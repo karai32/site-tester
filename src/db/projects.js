@@ -14,3 +14,8 @@ export function createProject({ name, url }) {
   const result = db.prepare('INSERT INTO projects (name, url) VALUES (?, ?)').run(name, url);
   return result.lastInsertRowid;
 }
+
+// file — путь к аватарке внутри папки media
+export function setProjectLogo(id, file) {
+  db.prepare('UPDATE projects SET logo = ? WHERE id = ?').run(file, id);
+}

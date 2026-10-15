@@ -2,13 +2,24 @@
 
 <div class="page-head">
 	<div class="project-head">
-		<div class="project-logo"><%= initials(project.name) %></div>
+		<%# Аватарка: нажатие открывает выбор файла, выбранный файл сразу отправляется (app.js, data-auto-submit) %>
+		<form method="post" action="/projects/<%= project.id %>/logo" enctype="multipart/form-data">
+			<label class="project-logo-change" title="Сменить аватарку">
+				<%- include('../partials/project-logo', { project }) %>
+				<span class="project-logo-change__icon"><i class="feather-camera"></i></span>
+				<input type="file" name="logo" accept="image/png,image/jpeg,image/webp" class="visually-hidden" data-auto-submit>
+			</label>
+		</form>
 		<div>
 			<h1 class="page-title"><%= project.name %></h1>
 			<p class="page-subtitle"><i class="feather-link"></i><a href="<%= project.url %>" target="_blank" rel="noopener"><%= displayUrl(project.url) %></a></p>
 		</div>
 	</div>
 </div>
+
+<% if (logoNotice) { %>
+	<div class="alert alert-<%= logoNotice.type %>" role="alert"><%= logoNotice.text %></div>
+<% } %>
 
 <div class="row g-4">
 	<div class="col-xl-8">

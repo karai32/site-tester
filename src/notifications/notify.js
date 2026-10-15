@@ -68,7 +68,7 @@ export async function notifyCheckStarted(reportId, log) {
   }
 }
 
-// Проверка закончилась: итог, критические ошибки, повторяющиеся ошибки, смена статусов тестов
+// Проверка закончилась: итог, критическая ошибка, повторяющиеся ошибки, смена статусов тестов
 export async function notifyCheckFinished(reportId, log) {
   try {
     const report = findReportById(reportId);
@@ -102,17 +102,6 @@ export async function notifyCheckFinished(reportId, log) {
       `Успешных тестов: ${report.tests_passed}/${report.tests_total} (${percent}%, порог ${settings.passPercent}%)\n\n${link}`,
       log,
     );
-
-    // Успешность ниже порога — критические ошибки: какие тесты провалены
-    if (!isPassed) {
-      await deliver(
-        settings,
-        'critical',
-        `${title}: успешность ${percent}% — ниже порога ${settings.passPercent}%`,
-        `Провалены тесты:\n${testList(failed)}\n\n${link}`,
-        log,
-      );
-    }
 
     // Дальше сравниваем с прошлым отчётом этого сценария
     const previous = findPreviousDoneReport(scenario.id, report.id);

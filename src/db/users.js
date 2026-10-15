@@ -24,3 +24,8 @@ export function updatePassword(userId, passwordHash) {
     db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
   })();
 }
+
+// Контакты для уведомлений: почта и Telegram ID (пустые — null)
+export function updateUserContacts(userId, { email, telegramId }) {
+  db.prepare('UPDATE users SET email = ?, telegram_id = ? WHERE id = ?').run(email || null, telegramId || null, userId);
+}

@@ -13,10 +13,20 @@
 	</div>
 </section>
 
+<% if (saved) { %>
+	<div class="alert alert-success" role="alert">Профиль сохранён</div>
+<% } %>
+
 <div class="row g-4">
 	<div class="col-xl-6">
-		<section class="panel">
+		<%# Имя и логин меняет администратор, почту и Telegram ID — сам пользователь %>
+		<form class="panel" method="post" action="/profile">
 			<h2 class="panel__title">Данные аккаунта</h2>
+			<% if (errors.length > 0) { %>
+				<div class="alert alert-danger mt-3" role="alert">
+					<% for (const error of errors) { %><div><%= error %></div><% } %>
+				</div>
+			<% } %>
 			<div class="field">
 				<label for="profile-name">Имя</label>
 				<input id="profile-name" class="form-control" value="<%= user.name %>" readonly>
@@ -27,14 +37,21 @@
 			</div>
 			<div class="field">
 				<label for="profile-email">Почта</label>
-				<input id="profile-email" class="form-control <%= user.email ? '' : 'is-empty' %>" value="<%= user.email || 'Не указана' %>" readonly>
+				<input id="profile-email" name="email" type="email" class="form-control" value="<%= contacts.email %>" placeholder="name@808.ru">
 			</div>
 			<div class="field">
 				<label for="profile-telegram">Telegram ID</label>
-				<input id="profile-telegram" class="form-control <%= user.telegram_id ? '' : 'is-empty' %>" value="<%= user.telegram_id || 'Не привязан' %>" readonly>
-				<p class="field__hint">Чтобы получать уведомления в Telegram, привяжите свой ID в профиле — это появится вместе с уведомлениями</p>
+				<input id="profile-telegram" name="telegram_id" class="form-control" value="<%= contacts.telegramId %>" placeholder="Например, 123456789" inputmode="numeric">
+				<% if (TELEGRAM_BOT_NAME) { %>
+					<p class="field__hint">Напишите боту <a href="https://t.me/<%= TELEGRAM_BOT_NAME %>" target="_blank" rel="noopener">@<%= TELEGRAM_BOT_NAME %></a> любое сообщение — он ответит вашим ID. Без этого бот не сможет присылать вам уведомления.</p>
+				<% } else { %>
+					<p class="field__hint">Telegram-бот ещё не подключён к сервису</p>
+				<% } %>
 			</div>
-		</section>
+			<div class="panel__actions">
+				<button type="submit" class="btn btn-primary btn-pill">Сохранить</button>
+			</div>
+		</form>
 	</div>
 
 	<div class="col-xl-6">

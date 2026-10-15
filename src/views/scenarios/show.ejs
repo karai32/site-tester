@@ -149,11 +149,54 @@
 			<% } %>
 		</section>
 
-		<section class="panel">
+		<%# Уведомления: включённые события и получатели, «Изменить» открывает форму %>
+		<section class="panel" id="notifications">
 			<div class="panel__head">
 				<h2 class="panel__title">Уведомления</h2>
 			</div>
-			<p class="panel__empty">По этому сценарию уведомления не отправляются</p>
+
+			<% if (editNotifications) { %>
+				<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/notifications">
+					<% if (notificationErrors.length > 0) { %>
+						<div class="alert alert-danger" role="alert">
+							<% for (const error of notificationErrors) { %><div><%= error %></div><% } %>
+						</div>
+					<% } %>
+					<%- include('../partials/notifications-form', { notifications }) %>
+					<div class="panel__actions">
+						<button type="submit" class="btn btn-primary btn-pill">Сохранить</button>
+						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
+					</div>
+				</form>
+			<% } else { %>
+				<% const enabled = enabledEvents(scenario.notifications); %>
+				<% if (enabled.length === 0) { %>
+					<p class="panel__empty">По этому сценарию уведомления не отправляются</p>
+				<% } %>
+				<% for (const { event, channel } of enabled) { %>
+					<%
+						let recipients = scenario.notifications.emails;
+						if (channel === 'telegram') recipients = scenario.notifications.telegramIds;
+					%>
+					<div class="notify-item">
+						<div>
+							<span class="notify-item__title"><%= event.title %></span>
+							<% if (event.id === 'done' || event.id === 'critical' || event.id === 'regular') { %>
+								<span class="notify-item__hint">Проверка считается пройденной при успешности от <%= scenario.notifications.passPercent %>%</span>
+							<% } %>
+						</div>
+						<div class="notify-item__to">
+							<span class="notify-item__icon" title="<%= channel === 'telegram' ? 'Telegram' : 'Почта' %>"><i class="<%= channel === 'telegram' ? 'feather-send' : 'feather-mail' %>"></i></span>
+							<% for (const recipient of recipients) { %>
+								<span class="notify-item__chip"><%= recipient %></span>
+							<% } %>
+						</div>
+					</div>
+				<% } %>
+				<div class="panel__actions">
+					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>?edit=notifications#notifications" class="btn btn-primary btn-pill">Изменить</a>
+				</div>
+			<% } %>
 		</section>
 	</div>
 </div>

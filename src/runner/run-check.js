@@ -14,6 +14,7 @@ import {
   setReportPlan,
 } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
+import { notifyCheckFinished, notifyCheckStarted } from '../notifications/notify.js';
 import { scenarioPageSetIds, scenarioTestIds } from '../scenario-info.js';
 import { categories } from '../tests/index.js';
 import { crawlSite, MAX_PAGES, readSavedHtml } from './crawl.js';
@@ -117,6 +118,8 @@ export async function runCheck(reportId, log = console) {
   const htmlDir = join(DATA_DIR, 'cache', `report-${reportId}`);
   let browser;
 
+  await notifyCheckStarted(reportId, log);
+
   try {
     // 1. Обход сайта
     mkdirSync(htmlDir, { recursive: true });
@@ -196,4 +199,7 @@ export async function runCheck(reportId, log = console) {
     if (browser) await browser.close().catch(() => {});
     rmSync(htmlDir, { recursive: true, force: true }); // HTML страниц больше не нужен
   }
+
+  // Итог проверки — по настройкам уведомлений сценария. Об отменённой не сообщаем.
+  await notifyCheckFinished(reportId, log);
 }

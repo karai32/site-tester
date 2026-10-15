@@ -40,6 +40,15 @@ export function findLatestDoneReport(projectId, isFull) {
   `).get(projectId, isFull ? 1 : 0);
 }
 
+// Предыдущий готовый отчёт того же сценария — чтобы сравнить результаты тестов
+export function findPreviousDoneReport(scenarioId, reportId) {
+  return db.prepare(`
+    SELECT * FROM reports
+    WHERE scenario_id = ? AND id < ? AND status = 'done'
+    ORDER BY id DESC LIMIT 1
+  `).get(scenarioId, reportId);
+}
+
 // Ставит проверку в очередь. Возвращает id отчёта.
 // isRegular: проверку поставило расписание сценария.
 export function createReport({ projectId, scenarioId, startedBy, isRegular = false }) {

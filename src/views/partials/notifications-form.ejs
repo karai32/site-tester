@@ -1,0 +1,49 @@
+<%#
+	Поля уведомлений: шаг 3 формы сценария и форма на странице сценария.
+	Нужен notifications: { events, passPercent, emails, telegramIds } — см. src/notifications/settings.js.
+	Сервер читает поля в readNotificationsForm.
+%>
+<div class="notify-fields">
+	<div class="notice-box notice-box-info">
+		<i class="feather-info"></i>
+		<% if (TELEGRAM_BOT_NAME) { %>
+			<span>Чтобы получать уведомления в Telegram, напишите боту <a href="https://t.me/<%= TELEGRAM_BOT_NAME %>" target="_blank" rel="noopener">@<%= TELEGRAM_BOT_NAME %></a> и укажите свой Telegram ID в профиле</span>
+		<% } else { %>
+			<span>Telegram-бот ещё не подключён: уведомления в Telegram начнут приходить после его настройки</span>
+		<% } %>
+	</div>
+
+	<%# Событие и способ: Тг, Почта или Нет — выбирается один %>
+	<% for (const event of NOTIFICATION_EVENTS) { %>
+		<div class="notify-row">
+			<div class="notify-row__text">
+				<span class="notify-row__question"><%= event.question %></span>
+				<span class="notify-row__hint"><%= event.hint %></span>
+				<% if (event.id === 'done') { %>
+					<label class="notify-row__percent">Считать пройденной от
+						<input type="number" name="pass_percent" class="form-control schedule-input schedule-input-number" value="<%= notifications.passPercent %>" min="0" max="100">
+						% успешности
+					</label>
+				<% } %>
+			</div>
+			<div class="notify-row__channels" role="radiogroup" aria-label="<%= event.question %>">
+				<% for (const channel of CHANNELS) { %>
+					<label class="custom_check notify-row__channel"><%= channel.title %>
+						<input type="radio" name="notify_<%= event.id %>" value="<%= channel.id %>" <%= notifications.events[event.id] === channel.id ? 'checked' : '' %>>
+						<span class="checkmark"></span>
+					</label>
+				<% } %>
+			</div>
+		</div>
+	<% } %>
+
+	<%# Получатели. Плагин bootstrap-tagsinput из кита показывает их «чипами», на сервер уходит строка через запятую %>
+	<div class="field">
+		<label for="notify-emails">Почты для отправки уведомлений</label>
+		<input id="notify-emails" name="emails" class="form-control" data-role="tagsinput" value="<%= notifications.emails.join(',') %>" placeholder="Почта и Enter">
+	</div>
+	<div class="field">
+		<label for="notify-telegram">Telegram ID, которые получают уведомления</label>
+		<input id="notify-telegram" name="telegram_ids" class="form-control" data-role="tagsinput" value="<%= notifications.telegramIds.join(',') %>" placeholder="ID и Enter">
+	</div>
+</div>

@@ -1,5 +1,7 @@
 // Запросы к таблице scenarios.
-// Поля test_ids и page_sets в базе — JSON-текст, наружу отдаются массивами.
+// Поля test_ids и page_sets в базе — JSON-текст, наружу отдаются массивами,
+// notifications — объектом настроек (см. src/notifications/settings.js).
+import { defaultNotifications, parseNotifications } from '../notifications/settings.js';
 import { db } from './database.js';
 
 // Списки хранятся в базе как JSON-текст — превращаем их обратно в массивы
@@ -7,6 +9,7 @@ function parseScenario(row) {
   if (!row) return undefined;
   row.test_ids = JSON.parse(row.test_ids);
   row.page_sets = JSON.parse(row.page_sets);
+  row.notifications = parseNotifications(row.notifications);
   return row;
 }
 
@@ -40,11 +43,12 @@ export function createScenario({
   revision = 1,
   schedule = { type: null, time: null, number: null },
   nextRunAt = null,
+  notifications = defaultNotifications(null),
 }) {
   const result = db.prepare(`
     INSERT INTO scenarios (project_id, author_id, name, is_full, test_ids, page_sets, root_id, revision,
-                           schedule_type, schedule_time, schedule_number, next_run_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                           schedule_type, schedule_time, schedule_number, next_run_at, notifications)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     projectId,
     authorId ?? null,
@@ -58,6 +62,7 @@ export function createScenario({
     schedule.time,
     schedule.number,
     nextRunAt,
+    JSON.stringify(notifications),
   );
   return result.lastInsertRowid;
 }
@@ -82,6 +87,10 @@ export function setScenarioSchedule(id, schedule, nextRunAt) {
 
 export function setNextRunAt(id, nextRunAt) {
   db.prepare('UPDATE scenarios SET next_run_at = ? WHERE id = ?').run(nextRunAt, id);
+}
+
+export function setScenarioNotifications(id, notifications) {
+  db.prepare('UPDATE scenarios SET notifications = ? WHERE id = ?').run(JSON.stringify(notifications), id);
 }
 
 // Отложенная проверка: когда (UTC-текст) и кто её поставил

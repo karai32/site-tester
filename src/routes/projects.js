@@ -165,7 +165,8 @@ export default async function projectRoutes(app) {
         pagesCount: report.pages_count || 0,
       });
     }
-    const authors = uniqueSorted(allReports.map((report) => authorName(report.started_by_name)));
+    // Автор — автор сценария отчёта (по ТЗ), а не тот, кто запустил проверку
+    const authors = uniqueSorted(allReports.map((report) => authorName(report.scenario_author_name)));
 
     let reports = allReports;
 
@@ -173,13 +174,13 @@ export default async function projectRoutes(app) {
       const needle = search.toLowerCase();
       reports = reports.filter((report) => {
         // Ищем по тому же тексту, что виден в списке: номер, сценарий, автор, дата
-        const text = `#${report.id} ${report.scenario_name} ${authorName(report.started_by_name)} ${formatDateTime(report.finished_at)}`;
+        const text = `#${report.id} ${report.scenario_name} ${authorName(report.scenario_author_name)} ${formatDateTime(report.finished_at)}`;
         return text.toLowerCase().includes(needle);
       });
     }
 
     if (author) {
-      reports = reports.filter((report) => authorName(report.started_by_name) === author);
+      reports = reports.filter((report) => authorName(report.scenario_author_name) === author);
     }
 
     // Категории: оставляем отчёты, в сценарии которых есть все выбранные категории

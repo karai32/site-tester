@@ -14,7 +14,7 @@ import {
   setScenarioNotifications,
   setScenarioSchedule,
 } from '../db/scenarios.js';
-import { authorName } from '../helpers.js';
+import { authorName, scenarioTitle } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { defaultNotifications, readNotificationsForm } from '../notifications/settings.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
@@ -97,7 +97,7 @@ function showScenarioPage(reply, project, scenario, options) {
   if (options.scheduleErrors || options.deferredErrors || options.notificationErrors) reply.code(400);
 
   return reply.view('scenarios/show.ejs', {
-    title: `${scenario.name} — ${project.name}`,
+    title: `${scenarioTitle(scenario)} — ${project.name}`,
     project,
     scenario,
     summary: scenarioSummary(scenario),

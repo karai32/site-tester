@@ -21,7 +21,7 @@
 	<%# Автор %>
 	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-			Автор: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
+			Автор сценария: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
 		</button>
 		<div class="dropdown-menu">
 			<a class="dropdown-item <%= author ? '' : 'active' %>" href="<%= archiveUrl({ author: '' }) %>">Все</a>
@@ -81,7 +81,7 @@
 			<% } %>
 			<div class="list-row__main">
 				<h3 class="list-row__title"><%= report.scenario_name %></h3>
-				<div class="list-row__sub">Автор: <%= authorName(report.started_by_name) %> · отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %></div>
+				<div class="list-row__sub">Автор сценария: <%= authorName(report.scenario_author_name) %> · отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %></div>
 			</div>
 			<div class="list-row__aside">
 				<% if (report.status === 'done') { %>

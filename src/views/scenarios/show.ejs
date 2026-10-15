@@ -1,13 +1,13 @@
 <div class="breadcrumbs">
 	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
 	<a href="/projects/<%= project.id %>/scenarios">Сценарии</a> /
-	<span><%= scenario.name %></span>
+	<span><%= scenarioTitle(scenario) %></span>
 </div>
 
 <div class="page-head">
 	<div>
 		<h1 class="page-title">
-			<%= scenario.name %>
+			<%= scenarioTitle(scenario) %>
 			<span class="custom-badge status-<%= scenario.is_active ? 'green' : 'grey' %> align-middle"><%= scenario.is_active ? 'Активный' : 'Неактивный' %></span>
 		</h1>
 		<p class="page-subtitle">Создан <%= formatDate(scenario.created_at) %><%= scenario.is_full ? ' · полная проверка: все тесты на всех страницах сайта' : '' %></p>

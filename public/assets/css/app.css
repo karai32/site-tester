@@ -1546,3 +1546,150 @@ body {
 .schedule-input-number.form-control {
 	width: 72px;
 }
+
+/* --- Уведомления --- */
+
+/* Синяя подсказка про Telegram-бота */
+.notice-box-info {
+	margin-top: 0;
+	margin-bottom: 8px;
+	background: var(--info-bg);
+	color: var(--info);
+	font-size: 13px;
+}
+.notice-box-info a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+/* Вопрос формы и выбор способа: Тг / Почта / Нет */
+.notify-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px 16px;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--border);
+}
+.notify-row__question {
+	display: block;
+	color: var(--ink);
+	font-size: 13px;
+	font-weight: 500;
+}
+.notify-row__hint {
+	display: block;
+	margin-top: 4px;
+	color: var(--muted);
+	font-size: 12px;
+}
+.notify-row__percent {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+	color: var(--muted);
+	font-size: 13px;
+}
+.notify-row__percent .schedule-input-number.form-control {
+	width: 64px;
+	height: 34px;
+}
+.notify-row__channels {
+	display: flex;
+	gap: 16px;
+}
+.notify-row__channel.custom_check {
+	margin: 0;
+	padding-left: 24px;
+	font-size: 11px;
+}
+.notify-fields .field:first-of-type {
+	margin-top: 24px;
+}
+
+/* Получатели «чипами»: серое поле, белые «таблетки» с крестиком.
+   Плагин прячет исходное поле классом sr-only из Bootstrap 4 — в Bootstrap 5 его нет, задаём сами. */
+.sr-only {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+}
+.notify-fields .bootstrap-tagsinput {
+	min-height: 43px;
+	padding: 6px 12px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--muted-bg);
+}
+.notify-fields .bootstrap-tagsinput .badge {
+	margin-right: 6px;
+	padding: 2px 10px;
+	border-radius: 669px;
+	background: var(--paper) !important; /* плагин ставит класс badge-info, у которого в ките !important */
+	color: var(--ink);
+	font-size: 13px;
+	font-weight: 400;
+}
+.notify-fields .bootstrap-tagsinput .badge [data-role="remove"] {
+	margin-left: 6px;
+	cursor: pointer;
+}
+.notify-fields .bootstrap-tagsinput .badge [data-role="remove"]::after {
+	content: "×";
+}
+.notify-fields .bootstrap-tagsinput .badge [data-role="remove"]:hover {
+	color: var(--error);
+}
+
+/* Включённое уведомление на странице сценария: событие, значок способа, получатели */
+.notify-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px 16px;
+	padding: 20px 0;
+	border-bottom: 1px solid var(--border);
+}
+.notify-item__title {
+	display: block;
+	color: var(--ink);
+	font-size: 14px;
+	font-weight: 500;
+}
+.notify-item__hint {
+	display: block;
+	margin-top: 6px;
+	color: var(--muted);
+	font-size: 14px;
+}
+.notify-item__to {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.notify-item__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: var(--primary-gradient);
+	color: var(--paper);
+	font-size: 16px;
+}
+.notify-item__chip {
+	padding: 8px 16px;
+	border-radius: 40px;
+	background: var(--muted-bg);
+	color: var(--ink);
+	font-size: 14px;
+	overflow-wrap: anywhere;
+}

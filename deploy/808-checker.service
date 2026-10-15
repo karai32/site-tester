@@ -14,6 +14,8 @@ User=checker
 Group=checker
 WorkingDirectory=/opt/808-checker
 EnvironmentFile=/etc/808-checker.env
+# Токены и пароли для уведомлений — только на сервере, не в git. «-» — файла может не быть.
+EnvironmentFile=-/etc/808-checker.secrets.env
 ExecStart=/usr/bin/node src/server.js
 Restart=on-failure
 RestartSec=5

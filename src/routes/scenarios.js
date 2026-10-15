@@ -11,10 +11,12 @@ import {
   setDeferredCheck,
   setNextRunAt,
   setScenarioActive,
+  setScenarioNotifications,
   setScenarioSchedule,
 } from '../db/scenarios.js';
 import { authorName } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
+import { defaultNotifications, readNotificationsForm } from '../notifications/settings.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
 import {
   DEFAULT_TIME,
@@ -39,6 +41,7 @@ const SCENARIOS_PER_PAGE = 10;
 // Сообщения после сохранения на странице сценария: ?saved=schedule
 const NOTICES = {
   schedule: 'Регулярность сохранена',
+  notifications: 'Уведомления сохранены',
   deferred: 'Отложенная проверка запланирована',
   'deferred-cancelled': 'Отложенная проверка отменена',
 };
@@ -49,6 +52,7 @@ function readScenarioForm(body) {
   const testIds = toList(body.tests);
   const pageSetIds = toList(body.page_sets);
   const scheduleForm = readScheduleForm(body);
+  const notificationsForm = readNotificationsForm(body);
 
   // Берём только существующие тесты и выборки: в форму могли подставить что угодно
   const form = {
@@ -56,6 +60,7 @@ function readScenarioForm(body) {
     testIds: testIds.filter((id) => allTests.some((test) => test.id === id)),
     pageSets: pageSetIds.filter((id) => PAGE_SETS.some((set) => set.id === id)),
     schedule: scheduleForm.schedule,
+    notifications: notificationsForm.notifications,
   };
 
   const errors = [];
@@ -63,6 +68,7 @@ function readScenarioForm(body) {
   if (form.testIds.length === 0) errors.push('Выберите хотя бы один тест');
   if (form.pageSets.length === 0) errors.push('Выберите хотя бы одну выборку страниц');
   errors.push(...scheduleForm.errors);
+  errors.push(...notificationsForm.errors);
 
   return { form, errors };
 }
@@ -88,7 +94,7 @@ function showForm(reply, project, form, source, errors) {
 // форма регулярности открыта, ошибки, сообщение после сохранения.
 function showScenarioPage(reply, project, scenario, options) {
   // Ошибки передаются, только когда форму прислали с ошибками
-  if (options.scheduleErrors || options.deferredErrors) reply.code(400);
+  if (options.scheduleErrors || options.deferredErrors || options.notificationErrors) reply.code(400);
 
   return reply.view('scenarios/show.ejs', {
     title: `${scenario.name} — ${project.name}`,
@@ -101,6 +107,9 @@ function showScenarioPage(reply, project, scenario, options) {
     scheduleErrors: [],
     deferredForm: { date: tomorrowDateInput(), time: DEFAULT_TIME },
     deferredErrors: [],
+    editNotifications: false,
+    notifications: scenario.notifications,
+    notificationErrors: [],
     ...options,
   }, { layout: 'layouts/app.ejs' });
 }
@@ -222,6 +231,7 @@ export default async function scenarioRoutes(app) {
       testIds: [],
       pageSets: [],
       schedule: { type: null, time: null, number: null },
+      notifications: defaultNotifications(reply.locals.user), // получатели — сам автор
     };
     return showForm(reply, project, emptyForm, null, []);
   });
@@ -242,6 +252,7 @@ export default async function scenarioRoutes(app) {
       pageSets: form.pageSets,
       schedule: form.schedule,
       nextRunAt: firstRunText(form.schedule),
+      notifications: form.notifications,
     });
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });
@@ -253,6 +264,7 @@ export default async function scenarioRoutes(app) {
 
     return showScenarioPage(reply, data.project, data.scenario, {
       editSchedule: request.query.edit === 'schedule',
+      editNotifications: request.query.edit === 'notifications',
       notice: NOTICES[request.query.saved] || '',
     });
   });
@@ -289,6 +301,21 @@ export default async function scenarioRoutes(app) {
 
     setScenarioSchedule(scenario.id, schedule, firstRunText(schedule));
     return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=schedule`);
+  });
+
+  // Сохранить уведомления
+  app.post('/projects/:id/scenarios/:sid/notifications', async (request, reply) => {
+    const data = loadScenario(request);
+    if (!data) return reply.callNotFound();
+    const { project, scenario } = data;
+
+    const { notifications, errors } = readNotificationsForm(request.body || {});
+    if (errors.length > 0) {
+      return showScenarioPage(reply, project, scenario, { editNotifications: true, notifications, notificationErrors: errors });
+    }
+
+    setScenarioNotifications(scenario.id, notifications);
+    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=notifications`);
   });
 
   // Запланировать отложенную проверку. Дата и время в форме — московские.
@@ -338,6 +365,7 @@ export default async function scenarioRoutes(app) {
       testIds: scenarioTestIds(scenario),
       pageSets: scenarioPageSetIds(scenario),
       schedule: scenarioSchedule(scenario),
+      notifications: scenario.notifications,
     };
     return showForm(reply, project, form, scenario, []);
   });
@@ -363,6 +391,7 @@ export default async function scenarioRoutes(app) {
       revision: nextRevision(rootId),
       schedule: form.schedule,
       nextRunAt: firstRunText(form.schedule),
+      notifications: form.notifications,
     });
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });

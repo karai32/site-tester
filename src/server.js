@@ -8,7 +8,7 @@ import fastifyView from '@fastify/view';
 import ejs from 'ejs';
 
 import { getCurrentUser } from './auth/session.js';
-import { HOST, MEDIA_DIR, PORT } from './config.js';
+import { HOST, MEDIA_DIR, PORT, TELEGRAM_BOT_NAME } from './config.js';
 import { getProjects } from './db/projects.js';
 import { isCheckRunning } from './db/reports.js';
 import * as helpers from './helpers.js';
@@ -19,6 +19,8 @@ import reportRoutes from './routes/reports.js';
 import scenarioRoutes from './routes/scenarios.js';
 import settingsRoutes from './routes/settings.js';
 import { DEFAULT_TIME, SCHEDULE_TYPES, scheduleText } from './schedule.js';
+import { CHANNELS, enabledEvents, NOTIFICATION_EVENTS, notificationsText } from './notifications/settings.js';
+import { startTelegramBot } from './notifications/telegram.js';
 import { startQueue } from './runner/queue.js';
 
 const app = Fastify({ logger: true });
@@ -48,11 +50,22 @@ await app.register(fastifyStatic, {
 });
 app.get('/ui.html', async (_request, reply) => reply.redirect('/ui-kit/ui.html'));
 
-// Шаблоны EJS из src/views. Функции из helpers.js и варианты расписания доступны в любом шаблоне.
+// Шаблоны EJS из src/views. В любом шаблоне доступны функции из helpers.js,
+// варианты расписания и настройки уведомлений.
 await app.register(fastifyView, {
   engine: { ejs },
   root: fileURLToPath(new URL('./views', import.meta.url)),
-  defaultContext: { ...helpers, DEFAULT_TIME, SCHEDULE_TYPES, scheduleText },
+  defaultContext: {
+    ...helpers,
+    DEFAULT_TIME,
+    SCHEDULE_TYPES,
+    scheduleText,
+    NOTIFICATION_EVENTS,
+    CHANNELS,
+    enabledEvents,
+    notificationsText,
+    TELEGRAM_BOT_NAME,
+  },
 });
 
 // Страницы, которые открываются без входа
@@ -97,6 +110,9 @@ await app.listen({ port: PORT, host: HOST });
 
 // Очередь проверок: запускает отчёты со статусом queued по одному
 startQueue(app.log);
+
+// Telegram-бот отвечает пользователям их Telegram ID (если задан TELEGRAM_BOT_TOKEN)
+startTelegramBot(app.log);
 
 // Остановка сервера (systemctl stop, Ctrl+C): выходим сразу, браузер закроет Playwright.
 // Без этого Playwright перехватывает сигнал, и сервер продолжает работать.

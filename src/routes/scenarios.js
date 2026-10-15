@@ -1,10 +1,30 @@
-// Сценарии проекта: список, страница сценария, создание, копия с новой редакцией
+// Сценарии проекта: список, страница сценария, создание, копия с новой редакцией,
+// регулярность и отложенная проверка
 import { findProjectById } from '../db/projects.js';
 import { getProjectReports } from '../db/reports.js';
-import { createScenario, findScenarioById, getProjectScenarios, nextRevision, setScenarioActive } from '../db/scenarios.js';
+import {
+  cancelDeferredCheck,
+  createScenario,
+  findScenarioById,
+  getProjectScenarios,
+  nextRevision,
+  setDeferredCheck,
+  setNextRunAt,
+  setScenarioActive,
+  setScenarioSchedule,
+} from '../db/scenarios.js';
 import { authorName } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
+import {
+  DEFAULT_TIME,
+  firstRunText,
+  moscowToDate,
+  readScheduleForm,
+  scenarioSchedule,
+  toUtcText,
+  tomorrowDateInput,
+} from '../schedule.js';
 import {
   allTests,
   scenarioCategoryIds,
@@ -16,23 +36,33 @@ import { categories as testCategories } from '../tests/index.js';
 
 const SCENARIOS_PER_PAGE = 10;
 
+// Сообщения после сохранения на странице сценария: ?saved=schedule
+const NOTICES = {
+  schedule: 'Регулярность сохранена',
+  deferred: 'Отложенная проверка запланирована',
+  'deferred-cancelled': 'Отложенная проверка отменена',
+};
+
 // Данные формы сценария. Возвращает { form, errors }: что выбрано и что не так.
 function readScenarioForm(body) {
   if (!body) body = {}; // запрос без формы — как пустая форма
   const testIds = toList(body.tests);
   const pageSetIds = toList(body.page_sets);
+  const scheduleForm = readScheduleForm(body);
 
   // Берём только существующие тесты и выборки: в форму могли подставить что угодно
   const form = {
     name: String(body.name || '').trim(),
     testIds: testIds.filter((id) => allTests.some((test) => test.id === id)),
     pageSets: pageSetIds.filter((id) => PAGE_SETS.some((set) => set.id === id)),
+    schedule: scheduleForm.schedule,
   };
 
   const errors = [];
   if (!form.name) errors.push('Укажите название сценария');
   if (form.testIds.length === 0) errors.push('Выберите хотя бы один тест');
   if (form.pageSets.length === 0) errors.push('Выберите хотя бы одну выборку страниц');
+  errors.push(...scheduleForm.errors);
 
   return { form, errors };
 }
@@ -54,6 +84,27 @@ function showForm(reply, project, form, source, errors) {
   }, { layout: 'layouts/app.ejs' });
 }
 
+// Страница сценария. options — что отличается от обычного вида:
+// форма регулярности открыта, ошибки, сообщение после сохранения.
+function showScenarioPage(reply, project, scenario, options) {
+  // Ошибки передаются, только когда форму прислали с ошибками
+  if (options.scheduleErrors || options.deferredErrors) reply.code(400);
+
+  return reply.view('scenarios/show.ejs', {
+    title: `${scenario.name} — ${project.name}`,
+    project,
+    scenario,
+    summary: scenarioSummary(scenario),
+    notice: '',
+    editSchedule: false,
+    schedule: scenarioSchedule(scenario),
+    scheduleErrors: [],
+    deferredForm: { date: tomorrowDateInput(), time: DEFAULT_TIME },
+    deferredErrors: [],
+    ...options,
+  }, { layout: 'layouts/app.ejs' });
+}
+
 // Проект и сценарий из адреса /projects/:id/scenarios/:sid. null — если чего-то нет
 // или сценарий из другого проекта.
 function loadScenario(request) {
@@ -72,9 +123,10 @@ export default async function scenarioRoutes(app) {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
 
-    // Параметры из адреса: ?status=inactive&author=...&cat=seo&sort=tests&page=2
+    // Параметры из адреса: ?status=inactive&author=...&cat=seo&regular=yes&sort=tests&page=2
     const showInactive = request.query.status === 'inactive';
     const author = String(request.query.author || '');
+    const regular = String(request.query.regular || ''); // 'yes', 'no' или '' — все
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
@@ -129,10 +181,14 @@ export default async function scenarioRoutes(app) {
       scenarios = scenarios.filter((scenario) => selectedCategories.every((id) => scenario.categoryIds.includes(id)));
     }
 
+    // Регулярность: у регулярного сценария есть расписание
+    if (regular === 'yes') scenarios = scenarios.filter((scenario) => scenario.schedule_type);
+    if (regular === 'no') scenarios = scenarios.filter((scenario) => !scenario.schedule_type);
+
     scenarios.sort(SORTS[sort].compare);
 
     // Адрес списка с текущими фильтрами и изменениями: scenariosUrl({ page: 2 })
-    const currentFilters = { author, cat: selectedCategories };
+    const currentFilters = { author, cat: selectedCategories, regular };
     if (showInactive) currentFilters.status = 'inactive';
     if (sort !== 'new') currentFilters.sort = sort;
     const scenariosUrl = (changes) => listUrl(`/projects/${project.id}/scenarios`, { ...currentFilters, ...changes });
@@ -147,6 +203,7 @@ export default async function scenarioRoutes(app) {
       authors,
       selectedCategories,
       categories: testCategories,
+      regular,
       sort,
       sorts: SORTS,
       totalTests: allTests.length,
@@ -160,7 +217,12 @@ export default async function scenarioRoutes(app) {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
 
-    const emptyForm = { name: '', testIds: [], pageSets: [] };
+    const emptyForm = {
+      name: '',
+      testIds: [],
+      pageSets: [],
+      schedule: { type: null, time: null, number: null },
+    };
     return showForm(reply, project, emptyForm, null, []);
   });
 
@@ -178,31 +240,87 @@ export default async function scenarioRoutes(app) {
       name: form.name,
       testIds: form.testIds,
       pageSets: form.pageSets,
+      schedule: form.schedule,
+      nextRunAt: firstRunText(form.schedule),
     });
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });
 
-  // Страница сценария
+  // Страница сценария. ?edit=schedule — открыта форма регулярности, ?saved=... — сообщение
   app.get('/projects/:id/scenarios/:sid', async (request, reply) => {
     const data = loadScenario(request);
     if (!data) return reply.callNotFound();
 
-    return reply.view('scenarios/show.ejs', {
-      title: `${data.scenario.name} — ${data.project.name}`,
-      project: data.project,
-      scenario: data.scenario,
-      summary: scenarioSummary(data.scenario),
-    }, { layout: 'layouts/app.ejs' });
+    return showScenarioPage(reply, data.project, data.scenario, {
+      editSchedule: request.query.edit === 'schedule',
+      notice: NOTICES[request.query.saved] || '',
+    });
   });
 
   // Включить или выключить сценарий
   app.post('/projects/:id/scenarios/:sid/active', async (request, reply) => {
     const data = loadScenario(request);
     if (!data) return reply.callNotFound();
+    const { project, scenario } = data;
 
     const makeActive = request.body && request.body.active === '1';
-    setScenarioActive(data.scenario.id, makeActive);
-    return reply.redirect(`/projects/${data.project.id}/scenarios/${data.scenario.id}`);
+    setScenarioActive(scenario.id, makeActive);
+
+    if (makeActive) {
+      // Пока сценарий был выключен, запуски по расписанию не шли — считаем следующий заново
+      setNextRunAt(scenario.id, firstRunText(scenarioSchedule(scenario)));
+    } else {
+      // Выключенный сценарий не запускается, поэтому отложенная проверка отменяется
+      cancelDeferredCheck(scenario.id);
+    }
+    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
+  });
+
+  // Сохранить регулярность
+  app.post('/projects/:id/scenarios/:sid/schedule', async (request, reply) => {
+    const data = loadScenario(request);
+    if (!data) return reply.callNotFound();
+    const { project, scenario } = data;
+
+    const { schedule, errors } = readScheduleForm(request.body || {});
+    if (errors.length > 0) {
+      return showScenarioPage(reply, project, scenario, { editSchedule: true, schedule, scheduleErrors: errors });
+    }
+
+    setScenarioSchedule(scenario.id, schedule, firstRunText(schedule));
+    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=schedule`);
+  });
+
+  // Запланировать отложенную проверку. Дата и время в форме — московские.
+  app.post('/projects/:id/scenarios/:sid/deferred', async (request, reply) => {
+    const data = loadScenario(request);
+    if (!data) return reply.callNotFound();
+    const { project, scenario } = data;
+    if (!scenario.is_active) return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
+
+    const body = request.body || {};
+    const deferredForm = { date: String(body.date || ''), time: String(body.time || '') };
+    const runAt = moscowToDate(deferredForm.date, deferredForm.time);
+
+    const errors = [];
+    if (!runAt) errors.push('Укажите дату и время проверки');
+    else if (runAt <= new Date()) errors.push('Это время уже прошло — выберите время в будущем');
+
+    if (errors.length > 0) {
+      return showScenarioPage(reply, project, scenario, { deferredForm, deferredErrors: errors });
+    }
+
+    setDeferredCheck(scenario.id, toUtcText(runAt), reply.locals.user.id);
+    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=deferred`);
+  });
+
+  // Отменить отложенную проверку
+  app.post('/projects/:id/scenarios/:sid/deferred/cancel', async (request, reply) => {
+    const data = loadScenario(request);
+    if (!data) return reply.callNotFound();
+
+    cancelDeferredCheck(data.scenario.id);
+    return reply.redirect(`/projects/${data.project.id}/scenarios/${data.scenario.id}?saved=deferred-cancelled`);
   });
 
   // «Скопировать и изменить»: форма с настройками сценария и номером новой редакции в названии
@@ -219,6 +337,7 @@ export default async function scenarioRoutes(app) {
       name: `${baseName} #${revision}`,
       testIds: scenarioTestIds(scenario),
       pageSets: scenarioPageSetIds(scenario),
+      schedule: scenarioSchedule(scenario),
     };
     return showForm(reply, project, form, scenario, []);
   });
@@ -242,6 +361,8 @@ export default async function scenarioRoutes(app) {
       pageSets: form.pageSets,
       rootId,
       revision: nextRevision(rootId),
+      schedule: form.schedule,
+      nextRunAt: firstRunText(form.schedule),
     });
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });

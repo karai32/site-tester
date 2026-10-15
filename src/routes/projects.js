@@ -5,10 +5,12 @@ import { getProjectScenarios } from '../db/scenarios.js';
 import { authorName, formatDateTime } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
 import { groupByCategory } from '../report-summary.js';
+import { upcomingRuns } from '../schedule.js';
 import { scenarioCategoryIds, scenarioSummary } from '../scenario-info.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const REPORTS_PER_PAGE = 10;
+const UPCOMING_COUNT = 5; // сколько ближайших проверок показывать на дашборде (по ТЗ — 5)
 
 export default async function projectRoutes(app) {
   // Список проектов
@@ -27,6 +29,14 @@ export default async function projectRoutes(app) {
     for (const scenario of getProjectScenarios(project.id)) {
       if (scenario.is_active) scenarios.push({ ...scenario, summary: scenarioSummary(scenario) });
     }
+    // Ближайшие проверки: отложенные и регулярные всех активных сценариев, по времени
+    let upcoming = [];
+    for (const scenario of scenarios) {
+      upcoming.push(...upcomingRuns(scenario, UPCOMING_COUNT));
+    }
+    upcoming.sort((a, b) => a.runAt.localeCompare(b.runAt));
+    upcoming = upcoming.slice(0, UPCOMING_COUNT);
+
     const lastFull = findLatestDoneReport(project.id, true);
     const lastPartial = findLatestDoneReport(project.id, false);
 
@@ -38,6 +48,7 @@ export default async function projectRoutes(app) {
       title: project.name,
       project,
       scenarios,
+      upcoming,
       lastFull,
       lastFullCategories,
       lastPartial,
@@ -50,9 +61,10 @@ export default async function projectRoutes(app) {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
 
-    // Параметры из адреса: ?q=...&author=...&cat=seo&cat=forms&sort=old&page=2
+    // Параметры из адреса: ?q=...&author=...&cat=seo&cat=forms&regular=yes&sort=old&page=2
     const search = String(request.query.q || '').trim();
     const author = String(request.query.author || '');
+    const regular = String(request.query.regular || ''); // 'yes', 'no' или '' — все
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
@@ -92,10 +104,14 @@ export default async function projectRoutes(app) {
       reports = reports.filter((report) => selectedCategories.every((id) => report.categoryIds.includes(id)));
     }
 
+    // Регулярность: проверку поставило расписание сценария или нет
+    if (regular === 'yes') reports = reports.filter((report) => report.is_regular);
+    if (regular === 'no') reports = reports.filter((report) => !report.is_regular);
+
     reports.sort(SORTS[sort].compare);
 
     // Адрес архива с текущими фильтрами и изменениями: archiveUrl({ page: 2 })
-    const currentFilters = { q: search, author, cat: selectedCategories };
+    const currentFilters = { q: search, author, cat: selectedCategories, regular };
     if (sort !== 'new') currentFilters.sort = sort;
     const archiveUrl = (changes) => listUrl(`/projects/${project.id}/reports`, { ...currentFilters, ...changes });
 
@@ -107,6 +123,7 @@ export default async function projectRoutes(app) {
       authors,
       selectedCategories,
       categories: testCategories,
+      regular,
       sort,
       sorts: SORTS,
       totalReports: allReports.length,

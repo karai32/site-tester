@@ -1,6 +1,6 @@
 <%#
 	Форма сценария: создание нового (source = null) или новая редакция копией (source — исходный сценарий).
-	form: { name, testIds, pageSets } — что отмечено.
+	form: { name, testIds, pageSets, schedule } — что отмечено.
 %>
 <% const action = source ? `/projects/${project.id}/scenarios/${source.id}/copy` : `/projects/${project.id}/scenarios`; %>
 <div class="breadcrumbs">
@@ -38,11 +38,11 @@
 		</div>
 	</section>
 
-	<%# Шаги по ТЗ. Регулярность и уведомления заработают вместе с расписанием и ботом %>
+	<%# Шаги по ТЗ. Уведомления заработают вместе с ботом %>
 	<div class="stepper">
 		<span class="stepper__step is-current"><span class="stepper__num">1</span>Область тестирования</span>
 		<span class="stepper__line"></span>
-		<span class="stepper__step"><span class="stepper__num">2</span>Регулярность</span>
+		<span class="stepper__step is-current"><span class="stepper__num">2</span>Регулярность</span>
 		<span class="stepper__line"></span>
 		<span class="stepper__step"><span class="stepper__num">3</span>Уведомления</span>
 	</div>
@@ -108,9 +108,9 @@
 		<div class="col-xl-6">
 			<section class="panel">
 				<div class="panel__head">
-					<h2 class="panel__title"><span class="step-badge step-badge-muted">2</span> Регулярность</h2>
+					<h2 class="panel__title"><span class="step-badge">2</span> Регулярность</h2>
 				</div>
-				<p class="panel__empty">Сценарий будет запускаться вручную. Расписание (каждый день, по будням, раз в N дней и т. д.) появится вместе с регулярными проверками.</p>
+				<%- include('../partials/schedule-form', { schedule: form.schedule }) %>
 			</section>
 			<section class="panel">
 				<div class="panel__head">

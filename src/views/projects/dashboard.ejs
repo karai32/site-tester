@@ -83,12 +83,23 @@
 			<% } %>
 		</section>
 
-		<%# Ближайшие проверки: появятся вместе с регулярными и отложенными проверками %>
+		<%# Ближайшие проверки: отложенные и по расписанию %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Ближайшие проверки</h2>
 			</div>
-			<p class="panel__empty">Запланированных проверок нет</p>
+			<% if (upcoming.length === 0) { %>
+				<p class="panel__empty">Запланированных проверок нет</p>
+			<% } %>
+			<% for (const run of upcoming) { %>
+				<div class="info-row">
+					<span class="info-row__label">
+						<a href="/projects/<%= project.id %>/scenarios/<%= run.scenario.id %>"><%= run.scenario.name %></a>
+						<span class="info-row__note"><%= run.isRegular ? 'По расписанию' : 'Отложенная' %></span>
+					</span>
+					<span class="info-row__value"><%= formatDateShort(run.runAt) %></span>
+				</div>
+			<% } %>
 		</section>
 	</div>
 </div>

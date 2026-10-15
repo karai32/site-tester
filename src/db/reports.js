@@ -41,10 +41,17 @@ export function findLatestDoneReport(projectId, isFull) {
 }
 
 // Ставит проверку в очередь. Возвращает id отчёта.
-export function createReport({ projectId, scenarioId, startedBy }) {
-  const result = db.prepare('INSERT INTO reports (project_id, scenario_id, started_by) VALUES (?, ?, ?)')
-    .run(projectId, scenarioId, startedBy ?? null);
+// isRegular: проверку поставило расписание сценария.
+export function createReport({ projectId, scenarioId, startedBy, isRegular = false }) {
+  const result = db.prepare('INSERT INTO reports (project_id, scenario_id, started_by, is_regular) VALUES (?, ?, ?, ?)')
+    .run(projectId, scenarioId, startedBy ?? null, isRegular ? 1 : 0);
   return result.lastInsertRowid;
+}
+
+// Есть ли у сценария проверка, которая ждёт в очереди или идёт
+export function hasUnfinishedReport(scenarioId) {
+  const row = db.prepare(`SELECT 1 FROM reports WHERE scenario_id = ? AND status IN ('queued', 'running') LIMIT 1`).get(scenarioId);
+  return Boolean(row);
 }
 
 // Идёт ли сейчас проверка

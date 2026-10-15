@@ -44,10 +44,14 @@
 			<% } %>
 			<% if (showInactive) { %><input type="hidden" name="status" value="inactive"><% } %>
 			<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
+			<% if (regular) { %><input type="hidden" name="regular" value="<%= regular %>"><% } %>
 			<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
 			<div class="filters__apply"><button type="submit" class="btn btn-primary btn-pill btn-pill-sm w-100">Применить</button></div>
 		</form>
 	</div>
+
+	<%# Регулярность %>
+	<%- include('../partials/regular-filter', { regular, filterUrl: scenariosUrl }) %>
 
 	<%# Сортировка %>
 	<div class="dropdown filters__sort">
@@ -79,11 +83,18 @@
 					<span>Категорий: <b><%= scenario.categoriesCount %></b></span>
 					<span>Тестов: <b><%= scenario.testsCount %>/<%= totalTests %></b></span>
 					<span>Страниц: <b><%= scenario.pagesText %></b></span>
+					<% if (scenario.schedule_type) { %><span>Расписание: <b><%= scheduleText(scenario) %></b></span><% } %>
 				</div>
 			</div>
 			<div class="list-row__aside">
-				<%# Регулярность появится вместе с расписанием: пока все сценарии запускаются вручную %>
-				<span class="custom-badge custom-badge-lg status-grey"><i class="feather-info"></i>Не регулярно</span>
+				<% if (scenario.deferred_at) { %>
+					<span class="custom-badge custom-badge-lg status-orange" title="Отложенная проверка: <%= formatDateShort(scenario.deferred_at) %>"><i class="feather-slash"></i>Отложено</span>
+				<% } %>
+				<% if (scenario.schedule_type) { %>
+					<span class="custom-badge custom-badge-lg status-green"><i class="feather-check-circle"></i>Регулярно</span>
+				<% } else { %>
+					<span class="custom-badge custom-badge-lg status-grey"><i class="feather-info"></i>Не регулярно</span>
+				<% } %>
 				<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-circle" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a>
 			</div>
 		</div>

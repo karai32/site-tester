@@ -69,7 +69,8 @@ jobs:
             # Настройки сервера из папки deploy
             install -m 644 deploy/808-checker.service /etc/systemd/system/808-checker.service
             install -m 644 deploy/808-checker.env /etc/808-checker.env
-            install -m 644 deploy/cron /etc/cron.d/808-checker
+            # Ночной cron больше не нужен: проверки по расписанию ставит сам сервис
+            rm -f /etc/cron.d/808-checker
             systemctl daemon-reload
             systemctl enable 808-checker.service
 

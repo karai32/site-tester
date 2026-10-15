@@ -27,12 +27,38 @@ export function getProjectScenarios(projectId) {
     .all(projectId).map(parseScenario);
 }
 
-// Возвращает id нового сценария
-export function createScenario({ projectId, authorId, name, isFull = false, testIds = [], pageSets = [], rootId = null, revision = 1 }) {
+// Возвращает id нового сценария. schedule — регулярность, см. src/schedule.js
+// (по умолчанию нерегулярный), nextRunAt — когда первый регулярный запуск (UTC-текст).
+export function createScenario({
+  projectId,
+  authorId,
+  name,
+  isFull = false,
+  testIds = [],
+  pageSets = [],
+  rootId = null,
+  revision = 1,
+  schedule = { type: null, time: null, number: null },
+  nextRunAt = null,
+}) {
   const result = db.prepare(`
-    INSERT INTO scenarios (project_id, author_id, name, is_full, test_ids, page_sets, root_id, revision)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(projectId, authorId ?? null, name, isFull ? 1 : 0, JSON.stringify(testIds), JSON.stringify(pageSets), rootId, revision);
+    INSERT INTO scenarios (project_id, author_id, name, is_full, test_ids, page_sets, root_id, revision,
+                           schedule_type, schedule_time, schedule_number, next_run_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    projectId,
+    authorId ?? null,
+    name,
+    isFull ? 1 : 0,
+    JSON.stringify(testIds),
+    JSON.stringify(pageSets),
+    rootId,
+    revision,
+    schedule.type,
+    schedule.time,
+    schedule.number,
+    nextRunAt,
+  );
   return result.lastInsertRowid;
 }
 
@@ -44,4 +70,38 @@ export function nextRevision(rootId) {
 
 export function setScenarioActive(id, isActive) {
   db.prepare('UPDATE scenarios SET is_active = ? WHERE id = ?').run(isActive ? 1 : 0, id);
+}
+
+// --- Регулярные и отложенные проверки ---
+
+// Новая регулярность сценария. nextRunAt — когда первый запуск (UTC-текст), у нерегулярного null.
+export function setScenarioSchedule(id, schedule, nextRunAt) {
+  db.prepare('UPDATE scenarios SET schedule_type = ?, schedule_time = ?, schedule_number = ?, next_run_at = ? WHERE id = ?')
+    .run(schedule.type, schedule.time, schedule.number, nextRunAt, id);
+}
+
+export function setNextRunAt(id, nextRunAt) {
+  db.prepare('UPDATE scenarios SET next_run_at = ? WHERE id = ?').run(nextRunAt, id);
+}
+
+// Отложенная проверка: когда (UTC-текст) и кто её поставил
+export function setDeferredCheck(id, runAt, userId) {
+  db.prepare('UPDATE scenarios SET deferred_at = ?, deferred_by = ? WHERE id = ?').run(runAt, userId, id);
+}
+
+export function cancelDeferredCheck(id) {
+  db.prepare('UPDATE scenarios SET deferred_at = NULL, deferred_by = NULL WHERE id = ?').run(id);
+}
+
+// Активные сценарии, у которых подошло время отложенной проверки
+export function getDueDeferredScenarios() {
+  return db.prepare(`SELECT * FROM scenarios WHERE is_active = 1 AND deferred_at <= datetime('now')`).all();
+}
+
+// Активные регулярные сценарии, у которых подошло время следующего запуска
+export function getDueRegularScenarios() {
+  return db.prepare(`
+    SELECT * FROM scenarios
+    WHERE is_active = 1 AND schedule_type IS NOT NULL AND next_run_at <= datetime('now')
+  `).all();
 }

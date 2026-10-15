@@ -1347,3 +1347,202 @@ body {
 		display: none;
 	}
 }
+
+/* --- Регулярные и отложенные проверки --- */
+
+/* Подпись под названием в строке сводки: «По расписанию», «Отложенная» */
+.info-row__label a {
+	color: inherit;
+}
+.info-row__label a:hover {
+	color: var(--primary);
+}
+.info-row__note {
+	display: block;
+	margin-top: 4px;
+	color: var(--muted-2);
+	font-size: 11px;
+	font-weight: 400;
+}
+
+/* «Отложенная проверка» — жёлтый текст на мягком жёлтом фоне */
+.btn-soft-warning {
+	border: 0;
+	background: var(--warning-bg);
+	color: var(--warning);
+}
+.btn-soft-warning:hover,
+.btn-soft-warning:focus-visible {
+	background: var(--warning);
+	color: var(--paper);
+}
+.panel__actions form {
+	margin: 0;
+}
+
+/* Серая плашка внутри карточки: форма отложенной проверки, расписание */
+.soft-box {
+	margin-top: 24px;
+	padding: 24px 32px;
+	border-radius: 13px;
+	background: var(--muted-bg);
+}
+
+/* Дата и время отложенной проверки */
+.deferred-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 16px;
+}
+.deferred-form__field label {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--muted);
+	font-size: 14px;
+	font-weight: 500;
+}
+.deferred-form .form-control {
+	width: auto;
+	height: 44px;
+	border: 0;
+	border-radius: 13px;
+	background: var(--paper);
+	font-size: 14px;
+}
+
+/* Сообщение в карточке: «Отложенная проверка запланирована на …» */
+.notice-box {
+	display: flex;
+	align-items: center;
+	gap: 13px;
+	margin-top: 24px;
+	padding: 17px 32px;
+	border-radius: 13px;
+	font-size: 14px;
+	font-weight: 700;
+}
+.notice-box i {
+	font-size: 19px;
+}
+.notice-box-warning {
+	background: var(--warning-bg);
+	color: var(--warning);
+}
+
+/* Расписание на странице сценария: подпись, крупный текст и кнопка «Изменить» */
+.schedule-box {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+.schedule-box__label {
+	display: block;
+	color: var(--muted);
+	font-size: 14px;
+	font-weight: 500;
+}
+.schedule-box__value {
+	display: block;
+	margin-top: 8px;
+	color: var(--ink);
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+.schedule-box__next {
+	display: block;
+	margin-top: 8px;
+	color: var(--muted);
+	font-size: 13px;
+}
+
+/* Переключатель «Регулярная / Нерегулярная»: радиокнопки btn-check в серой «таблетке» */
+.segmented {
+	display: inline-flex;
+	padding: 3px;
+	border-radius: 520px;
+	background: var(--muted-bg);
+}
+.segmented__item {
+	padding: 9px 29px;
+	border-radius: 520px;
+	color: var(--muted);
+	font-size: 13px;
+	cursor: pointer;
+}
+.btn-check:checked + .segmented__item {
+	background: var(--ink);
+	color: var(--paper);
+	font-weight: 500;
+}
+.btn-check:focus-visible + .segmented__item {
+	outline: 2px solid var(--muted-2);
+}
+
+/* Варианты расписания: пока выбрано «Нерегулярная», они скрыты */
+.schedule-manual {
+	display: none;
+	margin: 24px 0 0;
+	color: var(--muted);
+	font-size: 14px;
+}
+.schedule-fields:has(#regular-no:checked) .schedule-options {
+	display: none;
+}
+.schedule-fields:has(#regular-no:checked) .schedule-manual {
+	display: block;
+}
+.schedule-options {
+	margin-top: 20px;
+	border-top: 1px solid var(--border);
+}
+.schedule-option {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+	min-height: 80px;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border);
+}
+.schedule-option:last-child {
+	border-bottom: 0;
+}
+.schedule-option__title.custom_check {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 500;
+}
+.schedule-option__hint {
+	display: block;
+	color: var(--muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+.schedule-option__inputs {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.schedule-option__unit {
+	margin-right: 8px;
+	color: var(--ink);
+	font-size: 16px;
+	font-weight: 500;
+}
+.schedule-input.form-control {
+	width: auto;
+	height: 41px;
+	padding: 0 14px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--muted-bg);
+	font-size: 13px;
+}
+.schedule-input-number.form-control {
+	width: 72px;
+}

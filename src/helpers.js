@@ -138,3 +138,11 @@ export function authorName(name) {
   if (!name) return '808 Checker';
   return shortName(name);
 }
+
+// Название сценария с номером редакции (ТЗ): «Полный аудит» → «Полный аудит #1».
+// Если этот номер уже стоит в конце названия («Полный аудит #2»), второй раз не добавляется.
+export function scenarioTitle(scenario) {
+  const revision = `#${scenario.revision}`;
+  if (scenario.name.endsWith(revision)) return scenario.name;
+  return `${scenario.name} ${revision}`;
+}

@@ -7,15 +7,18 @@ export function findReportById(id) {
   return db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
 }
 
-// Отчёты вместе со сценарием и именем того, кто запустил проверку
+// Отчёты вместе со сценарием, его автором и тем, кто запустил проверку.
+// Таблица users подключается дважды, поэтому у каждого раза своё имя: starters и authors.
 const reportsWithNames = `
   SELECT reports.*,
          scenarios.name     AS scenario_name,
          scenarios.is_full  AS scenario_is_full,
-         users.name         AS started_by_name
+         starters.name      AS started_by_name,
+         authors.name       AS scenario_author_name
   FROM reports
   JOIN scenarios ON scenarios.id = reports.scenario_id
-  LEFT JOIN users ON users.id = reports.started_by
+  LEFT JOIN users AS starters ON starters.id = reports.started_by
+  LEFT JOIN users AS authors ON authors.id = scenarios.author_id
 `;
 
 export function findReportWithNames(id) {

@@ -1,0 +1,17 @@
+<%#
+	Отчёты в сводке по сценарию (порция) и кнопка «Показать ещё» для следующей.
+	Нужны reports, remaining (сколько отчётов ещё не показано) и nextUrl (null — больше нет).
+%>
+<% for (const report of reports) { %>
+	<% const status = reportStatus(report); %>
+	<a class="report-link-row" href="/reports/<%= report.id %>">
+		<span>Отчёт #<%= report.id %> · <%= authorName(report.started_by_name) %><%= report.is_regular ? ' · по расписанию' : '' %></span>
+		<span class="custom-badge status-<%= status.color %>"><%= status.label %></span>
+		<span class="report-link-row__date"><%= formatDateTime(report.finished_at || report.created_at) %></span>
+	</a>
+<% } %>
+<% if (nextUrl) { %>
+	<button type="button" class="btn btn-outline-primary btn-pill w-100 panel__footer" data-load-more="<%= nextUrl %>">
+		Показать ещё <%= Math.min(remaining, 10) %> из <%= remaining %>
+	</button>
+<% } %>

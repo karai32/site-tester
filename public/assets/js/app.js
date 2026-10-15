@@ -96,6 +96,35 @@ $(function () {
 		$(this).find('[data-media-modal-body]').empty();
 	});
 
+	// Сводка по сценарию на дашборде: выбрали сценарий — берём сводку с сервера и вставляем в страницу
+	$(document).on('change', '[data-scenario-summary-select]', function () {
+		var $box = $('[data-scenario-summary]');
+		if (!this.value) {
+			$box.empty(); // «Выберите сценарий» — сводку убираем
+			return;
+		}
+		$box.html('<p class="panel__empty">Загрузка…</p>');
+		$.get($(this).data('url'), { scenario: this.value })
+			.done(function (html) {
+				$box.html(html);
+			})
+			.fail(function () {
+				$box.html('<p class="panel__empty">Не удалось загрузить сводку</p>');
+			});
+	});
+
+	// «Показать ещё»: следующие отчёты сводки встают на место кнопки (с новой кнопкой, если отчёты ещё есть)
+	$(document).on('click', '[data-load-more]', function () {
+		var $button = $(this).prop('disabled', true);
+		$.get($button.data('load-more'))
+			.done(function (html) {
+				$button.replaceWith(html);
+			})
+			.fail(function () {
+				$button.prop('disabled', false);
+			});
+	});
+
 	// Поиск по отчёту: прячем тесты без совпадений и пустые категории, найденное раскрываем
 	$(document).on('input', '[data-report-search]', function () {
 		var query = $(this).val().trim().toLowerCase();

@@ -1,0 +1,39 @@
+<%#
+	Сводка по сценарию на дашборде (ТЗ, п. 9). Сервер отдаёт её кусочком HTML,
+	app.js вставляет в блок «Сводка по сценарию», когда сценарий выбран в списке.
+%>
+<div class="scenario-summary">
+	<p class="scenario-summary__about">
+		<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>">Страница сценария</a>
+		· <%= scheduleText(scenario) %>
+		<% if (!scenario.is_active) { %>· <span class="custom-badge status-grey">Неактивный</span><% } %>
+	</p>
+
+	<% if (reportsCount === 0) { %>
+		<p class="panel__empty">По этому сценарию ещё не было проверок</p>
+	<% } else { %>
+		<div class="stat-tiles">
+			<div class="stat-tile">
+				<span class="stat-tile__value"><%= reportsCount %></span>
+				<span class="stat-tile__label"><%= plural(reportsCount, ['проверка', 'проверки', 'проверок']) %>, готово <%= doneCount %></span>
+			</div>
+			<div class="stat-tile">
+				<span class="stat-tile__value"><%= averagePercent === null ? '—' : averagePercent + '%' %></span>
+				<span class="stat-tile__label">средняя успешность</span>
+			</div>
+			<div class="stat-tile">
+				<span class="stat-tile__value"><%= lastDone ? percentOf(lastDone.tests_passed, lastDone.tests_total) + '%' : '—' %></span>
+				<span class="stat-tile__label">успешность последней</span>
+			</div>
+			<div class="stat-tile">
+				<span class="stat-tile__value stat-tile__value-sm"><%= lastDone ? formatDateShort(lastDone.finished_at) : '—' %></span>
+				<span class="stat-tile__label">последняя готовая</span>
+			</div>
+		</div>
+
+		<%# Отчёты от новых к старым. «Показать ещё» подгружает следующие %>
+		<div class="scenario-summary__reports">
+			<%- include('scenario-summary-rows', { reports, remaining, nextUrl }) %>
+		</div>
+	<% } %>
+</div>

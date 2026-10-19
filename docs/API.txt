@@ -1,0 +1,122 @@
+808 Checker API
+
+Адрес: https://audit.808-test.ru/api
+
+Ключ передаётся в каждом запросе заголовком:
+  Authorization: Bearer <ключ>
+
+Все запросы выполняются от имени пользователя, который создал ключ
+(он будет автором сценариев и тем, кто запустил проверку).
+Тело запросов - JSON, заголовок Content-Type: application/json.
+
+
+ОТВЕТЫ
+
+Успех:   {"ok": true, "data": ...}
+Список:  {"ok": true, "data": [...], "meta": {"page": 1, "perPage": 10, "total": 37, "pagesCount": 4}}
+Ошибка:  {"ok": false, "error": {"code": "validation_failed", "message": "...", "fields": {"name": "..."}}}
+
+Коды ошибок:
+  400 validation_failed - неверные данные, в fields написано, какое поле не так
+  400 bad_request       - запрос не разобран (например, кривой JSON)
+  401 unauthorized      - нет ключа или он удалён
+  404 not_found         - нет такого объекта
+  409 conflict          - сейчас нельзя (сценарий выключен, проверка уже закончилась и т.п.)
+  500 server_error      - ошибка на нашей стороне
+
+Даты - в UTC: 2026-10-19T08:00:00Z. Время в расписании - московское: "17:00".
+Списки по страницам: ?page=2&perPage=20 (по умолчанию 10, максимум 100).
+
+
+СПРАВОЧНИКИ
+
+GET /me        - владелец ключа
+GET /catalog   - категории и тесты, выборки страниц, варианты расписания, события уведомлений.
+                 Отсюда берутся id для сценариев.
+
+
+ПРОЕКТЫ
+
+GET    /projects
+GET    /projects/:id         - проект и данные для дашборда: сценарии, ближайшие проверки,
+                               последняя полная и частичная проверки, 10 последних отчётов
+POST   /projects             - {"name": "Hadassah", "url": "https://hadassah.moscow/"}
+                               вместе с проектом создаётся сценарий "Полная проверка"
+PATCH  /projects/:id         - {"name": ..., "url": ...}, можно передать только одно поле
+DELETE /projects/:id         - удаляет проект вместе со всеми сценариями и отчётами
+POST   /projects/:id/logo    - аватарка: multipart/form-data, поле logo, png/jpg/webp до 2 МБ
+
+
+СЦЕНАРИИ
+
+GET    /projects/:id/scenarios   - список
+GET    /scenarios/:id            - сценарий целиком (тесты, выборки, расписание, уведомления)
+GET    /scenarios/:id/reports    - отчёты сценария, новые сверху
+
+Параметры списка:
+  status=inactive                 - выключенные (по умолчанию включённые)
+  author=...                      - значение из meta.authors этого же списка
+  categories=seo,forms            - сценарий содержит все указанные категории
+  regular=yes | no
+  sort=new | old | tests-desc | tests-asc | categories-desc | categories-asc | pages-desc | pages-asc
+
+POST   /projects/:id/scenarios   - создать:
+  {
+    "name": "SEO главных страниц",
+    "testIds": ["title-present", "h1-present"],
+    "pageSets": ["top"],
+    "schedule": {"type": "daily", "time": "17:00"},
+    "notifications": {
+      "events": {"done": "telegram", "critical": "email"},
+      "passPercent": 80,
+      "emails": ["qa@808.ru"],
+      "telegramIds": ["123456789"]
+    }
+  }
+  schedule и notifications можно не передавать.
+
+POST   /scenarios/:id/copy           - новая редакция ("Скопировать и изменить"). Поля те же,
+                                       все необязательные: что не передано, берётся из исходного.
+PUT    /scenarios/:id/active         - {"isActive": false}
+PUT    /scenarios/:id/schedule       - {"type": "days", "time": "15:00", "number": 3}
+                                       type: null - запуск только вручную
+PUT    /scenarios/:id/notifications  - {"events": {...}, "passPercent": 80, "emails": [...], "telegramIds": [...]}
+                                       события: started, done, critical, regular, repeated, status
+                                       способ: telegram, email или none
+PUT    /scenarios/:id/deferred       - отложенная проверка: {"runAt": "2026-10-20T06:00:00Z"}
+DELETE /scenarios/:id/deferred       - отменить её
+
+
+ПРОВЕРКИ И ОТЧЁТЫ
+
+POST /scenarios/:id/checks       - запустить проверку, в ответе отчёт со статусом queued
+POST /reports/:id/cancel         - отменить
+GET  /reports/:id                - отчёт: статус, прогресс (testsDone из testsTotal),
+                                   результаты тестов по категориям
+GET  /projects/:id/reports       - архив, параметры как у сценариев + q (поиск)
+GET  /reports/:id/download       - отчёт одним html-файлом
+GET  /media/...                  - скриншоты, видео, аватарки. Ссылки приходят в ответах
+                                   (url, logoUrl), запрашивать с тем же ключом.
+
+Статусы отчёта: queued, running, done, error (причина в поле error), cancelled.
+Проверки идут по одной, полная может идти больше часа - статус просто перезапрашивать.
+
+
+ПОЛЬЗОВАТЕЛИ
+
+GET    /users
+GET    /users/:id
+POST   /users                - {"login": "maria", "name": "Мария Иванова", "email": "...", "telegramId": "..."}
+                               в ответе пароль, он показывается только один раз
+PATCH  /users/:id            - {"name": ..., "email": ..., "telegramId": ...}, логин не меняется
+POST   /users/:id/password   - выдать новый пароль
+DELETE /users/:id
+
+
+ПРИМЕР
+
+curl -H "Authorization: Bearer $KEY" https://audit.808-test.ru/api/projects
+curl -X POST -H "Authorization: Bearer $KEY" https://audit.808-test.ru/api/scenarios/1/checks
+curl -H "Authorization: Bearer $KEY" https://audit.808-test.ru/api/reports/12
+
+Ключ - как пароль: только на сервере админки, не в браузере и не в репозитории.

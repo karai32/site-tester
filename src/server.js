@@ -25,8 +25,7 @@ import { CHANNELS, enabledEvents, NOTIFICATION_EVENTS, notificationsText } from 
 import { startTelegramBot } from './notifications/telegram.js';
 import { startQueue } from './runner/queue.js';
 
-// trustProxy: сервер стоит за nginx, настоящий IP посетителя — в заголовке X-Forwarded-For
-const app = Fastify({ logger: true, trustProxy: true });
+const app = Fastify({ logger: true });
 
 // Cookie (для сессий) и данные из обычных HTML-форм
 await app.register(fastifyCookie);

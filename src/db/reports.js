@@ -14,6 +14,7 @@ const reportsWithNames = `
          scenarios.name     AS scenario_name,
          scenarios.is_full  AS scenario_is_full,
          starters.name      AS started_by_name,
+         scenarios.author_id AS scenario_author_id,
          authors.name       AS scenario_author_name
   FROM reports
   JOIN scenarios ON scenarios.id = reports.scenario_id

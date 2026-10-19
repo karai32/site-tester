@@ -3,23 +3,14 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { MEDIA_DIR } from '../config.js';
 import { findProjectById, getProjects, setProjectLogo } from '../db/projects.js';
-import {
-  findLatestDoneReport,
-  getProjectReports,
-  getRecentReports,
-  getReportResults,
-  getScenarioReports,
-} from '../db/reports.js';
-import { findScenarioById, getProjectScenarios } from '../db/scenarios.js';
-import { authorName, formatDateTime } from '../helpers.js';
-import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
-import { groupByCategory } from '../report-summary.js';
-import { upcomingRuns } from '../schedule.js';
-import { scenarioCategoryIds, scenarioSummary } from '../scenario-info.js';
+import { dashboardData } from '../dashboard.js';
+import { getScenarioReports } from '../db/reports.js';
+import { findScenarioById } from '../db/scenarios.js';
+import { listUrl, paginate, SORTS, sortFromQuery, toList } from '../lists.js';
+import { listReports } from '../report-list.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const REPORTS_PER_PAGE = 10;
-const UPCOMING_COUNT = 5; // сколько ближайших проверок показывать на дашборде (по ТЗ — 5)
 const SUMMARY_BATCH = 10; // сколько отчётов подгружается за раз в сводке по сценарию
 
 // Сообщения на дашборде после загрузки аватарки: ?logo=saved
@@ -49,38 +40,19 @@ export default async function projectRoutes(app) {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
 
-    // Активные сценарии и их состав — для окна подтверждения запуска
-    const allScenarios = getProjectScenarios(project.id);
-    const scenarios = [];
-    for (const scenario of allScenarios) {
-      if (scenario.is_active) scenarios.push({ ...scenario, summary: scenarioSummary(scenario) });
-    }
-    // Ближайшие проверки: отложенные и регулярные всех активных сценариев, по времени
-    let upcoming = [];
-    for (const scenario of scenarios) {
-      upcoming.push(...upcomingRuns(scenario, UPCOMING_COUNT));
-    }
-    upcoming.sort((a, b) => a.runAt.localeCompare(b.runAt));
-    upcoming = upcoming.slice(0, UPCOMING_COUNT);
-
-    const lastFull = findLatestDoneReport(project.id, true);
-    const lastPartial = findLatestDoneReport(project.id, false);
-
-    // Плитки категорий для сводки по последней полной проверке
-    let lastFullCategories = [];
-    if (lastFull) lastFullCategories = groupByCategory(getReportResults(lastFull.id));
+    const data = dashboardData(project.id);
 
     return reply.view('projects/dashboard.ejs', {
       title: project.name,
       project,
-      scenarios,
-      upcoming,
-      lastFull,
-      lastFullCategories,
-      lastPartial,
-      recentReports: getRecentReports(project.id, 10),
+      scenarios: data.scenarios,
+      upcoming: data.upcoming,
+      lastFull: data.lastFull,
+      lastFullCategories: data.lastFullCategories,
+      lastPartial: data.lastPartial,
+      recentReports: data.recentReports,
       logoNotice: LOGO_NOTICES[request.query.logo],
-      summaryScenarios: [...allScenarios].reverse(), // для «Сводки по сценарию»: все сценарии, новые сверху
+      summaryScenarios: [...data.allScenarios].reverse(), // для «Сводки по сценарию»: все сценарии, новые сверху
     }, { layout: 'layouts/app.ejs' });
   });
 
@@ -151,48 +123,13 @@ export default async function projectRoutes(app) {
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
-    // Отчёты с цифрами для фильтров и сортировки: категории сценария, число тестов и страниц
-    const scenarios = getProjectScenarios(project.id);
-    const allReports = [];
-    for (const report of getProjectReports(project.id)) {
-      const scenario = scenarios.find((item) => item.id === report.scenario_id);
-      const categoryIds = scenarioCategoryIds(scenario);
-      allReports.push({
-        ...report,
-        categoryIds,
-        categoriesCount: categoryIds.length,
-        testsCount: report.tests_total || 0,
-        pagesCount: report.pages_count || 0,
-      });
-    }
-    // Автор — автор сценария отчёта (по ТЗ), а не тот, кто запустил проверку
-    const authors = uniqueSorted(allReports.map((report) => authorName(report.scenario_author_name)));
-
-    let reports = allReports;
-
-    if (search) {
-      const needle = search.toLowerCase();
-      reports = reports.filter((report) => {
-        // Ищем по тому же тексту, что виден в списке: номер, сценарий, автор, дата
-        const text = `#${report.id} ${report.scenario_name} ${authorName(report.scenario_author_name)} ${formatDateTime(report.finished_at)}`;
-        return text.toLowerCase().includes(needle);
-      });
-    }
-
-    if (author) {
-      reports = reports.filter((report) => authorName(report.scenario_author_name) === author);
-    }
-
-    // Категории: оставляем отчёты, в сценарии которых есть все выбранные категории
-    if (selectedCategories.length > 0) {
-      reports = reports.filter((report) => selectedCategories.every((id) => report.categoryIds.includes(id)));
-    }
-
-    // Регулярность: проверку поставило расписание сценария или нет
-    if (regular === 'yes') reports = reports.filter((report) => report.is_regular);
-    if (regular === 'no') reports = reports.filter((report) => !report.is_regular);
-
-    reports.sort(SORTS[sort].compare);
+    const result = listReports(project.id, {
+      search,
+      author,
+      categories: selectedCategories,
+      regular,
+      sort,
+    });
 
     // Адрес архива с текущими фильтрами и изменениями: archiveUrl({ page: 2 })
     const currentFilters = { q: search, author, cat: selectedCategories, regular };
@@ -204,14 +141,14 @@ export default async function projectRoutes(app) {
       project,
       search,
       author,
-      authors,
+      authors: result.authors,
       selectedCategories,
       categories: testCategories,
       regular,
       sort,
       sorts: SORTS,
-      totalReports: allReports.length,
-      pagination: paginate(reports, Number(request.query.page) || 1, REPORTS_PER_PAGE),
+      totalReports: result.total,
+      pagination: paginate(result.reports, Number(request.query.page) || 1, REPORTS_PER_PAGE),
       archiveUrl,
     }, { layout: 'layouts/app.ejs' });
   });

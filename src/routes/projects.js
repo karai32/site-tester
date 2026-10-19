@@ -1,12 +1,10 @@
 // Проекты: список, дашборд проекта, аватарка, архив отчётов
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { MEDIA_DIR } from '../config.js';
-import { findProjectById, getProjects, setProjectLogo } from '../db/projects.js';
 import { dashboardData } from '../dashboard.js';
+import { findProjectById, getProjects } from '../db/projects.js';
 import { getScenarioReports } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList } from '../lists.js';
+import { saveProjectLogo } from '../project-actions.js';
 import { listReports } from '../report-list.js';
 import { categories as testCategories } from '../tests/index.js';
 
@@ -18,15 +16,6 @@ const LOGO_NOTICES = {
   saved: { type: 'success', text: 'Аватарка обновлена' },
   error: { type: 'danger', text: 'Аватарка не загружена: нужна картинка PNG, JPEG или WebP не больше 2 МБ' },
 };
-
-// Тип картинки по первым байтам файла: 'png', 'jpg', 'webp' или null — не подходит.
-// Смотрим на сам файл, а не на его имя: имя можно подписать любое.
-function imageExtension(data) {
-  if (data[0] === 0x89 && data.toString('ascii', 1, 4) === 'PNG') return 'png';
-  if (data[0] === 0xff && data[1] === 0xd8) return 'jpg';
-  if (data.toString('ascii', 0, 4) === 'RIFF' && data.toString('ascii', 8, 12) === 'WEBP') return 'webp';
-  return null;
-}
 
 export default async function projectRoutes(app) {
   // Список проектов
@@ -56,7 +45,7 @@ export default async function projectRoutes(app) {
     }, { layout: 'layouts/app.ejs' });
   });
 
-  // Новая аватарка проекта. Файл сохраняется в data/media/projects, старый удаляется.
+  // Новая аватарка проекта: PNG, JPEG или WebP до 2 МБ
   app.post('/projects/:id/logo', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
@@ -72,16 +61,7 @@ export default async function projectRoutes(app) {
       return reply.redirect(errorUrl);
     }
 
-    const extension = imageExtension(data);
-    if (!extension) return reply.redirect(errorUrl);
-
-    // Время в имени файла — чтобы браузер не показывал старую картинку из кэша
-    const file = `projects/${project.id}-${Date.now()}.${extension}`;
-    mkdirSync(join(MEDIA_DIR, 'projects'), { recursive: true });
-    writeFileSync(join(MEDIA_DIR, file), data);
-
-    if (project.logo) rmSync(join(MEDIA_DIR, project.logo), { force: true });
-    setProjectLogo(project.id, file);
+    if (!saveProjectLogo(project, data)) return reply.redirect(errorUrl);
     return reply.redirect(`/projects/${project.id}?logo=saved`);
   });
 

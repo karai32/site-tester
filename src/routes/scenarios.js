@@ -3,18 +3,13 @@
 import { findProjectById } from '../db/projects.js';
 import {
   cancelDeferredCheck,
-  createScenario,
   findScenarioById,
-  nextRevision,
-  setDeferredCheck,
-  setNextRunAt,
-  setScenarioActive,
   setScenarioNotifications,
   setScenarioSchedule,
 } from '../db/scenarios.js';
 import { scenarioTitle } from '../helpers.js';
 import { listUrl, paginate, SORTS, sortFromQuery, toList } from '../lists.js';
-import { defaultNotifications, readNotificationsForm } from '../notifications/settings.js';
+import { defaultNotifications, notificationsFromForm, readNotificationsForm } from '../notifications/settings.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
 import {
   DEFAULT_TIME,
@@ -22,9 +17,10 @@ import {
   moscowToDate,
   readScheduleForm,
   scenarioSchedule,
-  toUtcText,
+  scheduleFromForm,
   tomorrowDateInput,
 } from '../schedule.js';
+import { cleanScenario, planDeferredCheck, revisionName, saveScenario, setActive } from '../scenario-actions.js';
 import { allTests, scenarioPageSetIds, scenarioSummary, scenarioTestIds } from '../scenario-info.js';
 import { listScenarios } from '../scenario-list.js';
 import { categories as testCategories } from '../tests/index.js';
@@ -39,31 +35,17 @@ const NOTICES = {
   'deferred-cancelled': 'Отложенная проверка отменена',
 };
 
-// Данные формы сценария. Возвращает { form, errors }: что выбрано и что не так.
+// Данные формы сценария. Возвращает { form, errors }: что выбрано и что не так (список текстов).
 function readScenarioForm(body) {
   if (!body) body = {}; // запрос без формы — как пустая форма
-  const testIds = toList(body.tests);
-  const pageSetIds = toList(body.page_sets);
-  const scheduleForm = readScheduleForm(body);
-  const notificationsForm = readNotificationsForm(body);
-
-  // Берём только существующие тесты и выборки: в форму могли подставить что угодно
-  const form = {
-    name: String(body.name || '').trim(),
-    testIds: testIds.filter((id) => allTests.some((test) => test.id === id)),
-    pageSets: pageSetIds.filter((id) => PAGE_SETS.some((set) => set.id === id)),
-    schedule: scheduleForm.schedule,
-    notifications: notificationsForm.notifications,
-  };
-
-  const errors = [];
-  if (!form.name) errors.push('Укажите название сценария');
-  if (form.testIds.length === 0) errors.push('Выберите хотя бы один тест');
-  if (form.pageSets.length === 0) errors.push('Выберите хотя бы одну выборку страниц');
-  errors.push(...scheduleForm.errors);
-  errors.push(...notificationsForm.errors);
-
-  return { form, errors };
+  const { scenario, errors } = cleanScenario({
+    name: body.name,
+    testIds: toList(body.tests),
+    pageSets: toList(body.page_sets),
+    schedule: scheduleFromForm(body),
+    notifications: notificationsFromForm(body),
+  });
+  return { form: scenario, errors: Object.values(errors) };
 }
 
 // Показать форму сценария. source — исходный сценарий, если это копия; errors — ошибки заполнения.
@@ -188,16 +170,7 @@ export default async function scenarioRoutes(app) {
     const { form, errors } = readScenarioForm(request.body);
     if (errors.length > 0) return showForm(reply, project, form, null, errors);
 
-    const scenarioId = createScenario({
-      projectId: project.id,
-      authorId: reply.locals.user.id,
-      name: form.name,
-      testIds: form.testIds,
-      pageSets: form.pageSets,
-      schedule: form.schedule,
-      nextRunAt: firstRunText(form.schedule),
-      notifications: form.notifications,
-    });
+    const scenarioId = saveScenario({ projectId: project.id, authorId: reply.locals.user.id, scenario: form });
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });
 
@@ -220,15 +193,7 @@ export default async function scenarioRoutes(app) {
     const { project, scenario } = data;
 
     const makeActive = request.body && request.body.active === '1';
-    setScenarioActive(scenario.id, makeActive);
-
-    if (makeActive) {
-      // Пока сценарий был выключен, запуски по расписанию не шли — считаем следующий заново
-      setNextRunAt(scenario.id, firstRunText(scenarioSchedule(scenario)));
-    } else {
-      // Выключенный сценарий не запускается, поэтому отложенная проверка отменяется
-      cancelDeferredCheck(scenario.id);
-    }
+    setActive(scenario, makeActive);
     return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
   });
 
@@ -273,15 +238,10 @@ export default async function scenarioRoutes(app) {
     const deferredForm = { date: String(body.date || ''), time: String(body.time || '') };
     const runAt = moscowToDate(deferredForm.date, deferredForm.time);
 
-    const errors = [];
-    if (!runAt) errors.push('Укажите дату и время проверки');
-    else if (runAt <= new Date()) errors.push('Это время уже прошло — выберите время в будущем');
-
-    if (errors.length > 0) {
-      return showScenarioPage(reply, project, scenario, { deferredForm, deferredErrors: errors });
+    const error = planDeferredCheck(scenario, runAt, reply.locals.user.id);
+    if (error) {
+      return showScenarioPage(reply, project, scenario, { deferredForm, deferredErrors: [error] });
     }
-
-    setDeferredCheck(scenario.id, toUtcText(runAt), reply.locals.user.id);
     return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=deferred`);
   });
 
@@ -300,12 +260,8 @@ export default async function scenarioRoutes(app) {
     if (!data) return reply.callNotFound();
     const { project, scenario } = data;
 
-    // «Полный аудит #2» → «Полный аудит #3»: старый номер убираем, ставим следующий
-    const baseName = scenario.name.replace(/\s*#\d+$/, '');
-    const revision = nextRevision(scenario.root_id || scenario.id);
-
     const form = {
-      name: `${baseName} #${revision}`,
+      name: revisionName(scenario), // «Полный аудит #2» → «Полный аудит #3»
       testIds: scenarioTestIds(scenario),
       pageSets: scenarioPageSetIds(scenario),
       schedule: scenarioSchedule(scenario),
@@ -323,19 +279,11 @@ export default async function scenarioRoutes(app) {
     const { form, errors } = readScenarioForm(request.body);
     if (errors.length > 0) return showForm(reply, project, form, scenario, errors);
 
-    // Все редакции ссылаются на самый первый сценарий — так считается номер следующей
-    const rootId = scenario.root_id || scenario.id;
-    const scenarioId = createScenario({
+    const scenarioId = saveScenario({
       projectId: project.id,
       authorId: reply.locals.user.id,
-      name: form.name,
-      testIds: form.testIds,
-      pageSets: form.pageSets,
-      rootId,
-      revision: nextRevision(rootId),
-      schedule: form.schedule,
-      nextRunAt: firstRunText(form.schedule),
-      notifications: form.notifications,
+      scenario: form,
+      source: scenario,
     });
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });

@@ -1,8 +1,8 @@
 // Выдаёт пользователю новый пароль (например, если он забыл старый) и показывает его один раз.
 // Пользователя выкидывает из всех сессий.
 // Запуск: npm run set-password -- <логин>
-import { generatePassword, hashPassword } from '../src/auth/passwords.js';
-import { findUserByLogin, updatePassword } from '../src/db/users.js';
+import { findUserByLogin } from '../src/db/users.js';
+import { resetPassword } from '../src/user-actions.js';
 
 const login = process.argv[2];
 const user = login && findUserByLogin(login);
@@ -11,7 +11,6 @@ if (!user) {
   process.exit(1);
 }
 
-const password = generatePassword();
-updatePassword(user.id, hashPassword(password));
+const password = resetPassword(user.id);
 
 console.log(`Новый пароль для ${login}: ${password}\nСохраните пароль: больше он нигде не показывается.`);

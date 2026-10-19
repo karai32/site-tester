@@ -160,36 +160,54 @@ function isTime(text) {
   return hours < 24 && minutes < 60;
 }
 
-// Регулярность из формы (partials/schedule-form.ejs). Возвращает { schedule, errors }.
-// Поля формы: regular = '1' или '0', schedule_type, и у каждого варианта свои
-// time_<вариант> и number_<вариант>, например time_daily, number_hours.
-export function readScheduleForm(body) {
-  const errors = [];
-  const type = findScheduleType(body.schedule_type);
-
-  // Нерегулярный: остальные поля не нужны
-  if (body.regular !== '1') {
-    return { schedule: { type: null, time: null, number: null }, errors };
+// Проверка регулярности — общая для формы и API.
+// input: { type, time, number }, type = null — нерегулярный.
+// Возвращает { schedule, errors }: schedule — только нужные варианту поля,
+// errors — ошибки по полям { 'schedule.time': 'текст' }, пусто — всё верно.
+export function cleanSchedule(input) {
+  const errors = {};
+  const schedule = { type: null, time: null, number: null };
+  if (!input || input.type === null || input.type === undefined || input.type === '') {
+    return { schedule, errors }; // нерегулярный
   }
+
+  const type = findScheduleType(input.type);
   if (!type) {
-    errors.push('Выберите вариант расписания');
-    return { schedule: { type: null, time: null, number: null }, errors };
+    errors['schedule.type'] = 'Выберите вариант расписания';
+    return { schedule, errors };
   }
-
-  const schedule = { type: type.id, time: null, number: null };
+  schedule.type = type.id;
 
   if (type.hasTime) {
-    schedule.time = String(body[`time_${type.id}`] || '');
-    if (!isTime(schedule.time)) errors.push('Укажите время запуска в формате ЧЧ:ММ');
+    schedule.time = String(input.time || '');
+    if (!isTime(schedule.time)) errors['schedule.time'] = 'Укажите время запуска в формате ЧЧ:ММ';
   }
 
   if (type.number) {
-    schedule.number = Number(body[`number_${type.id}`]);
+    schedule.number = Number(input.number);
     const { min, max } = type.number;
     if (!Number.isInteger(schedule.number) || schedule.number < min || schedule.number > max) {
-      errors.push(`Укажите число от ${min} до ${max}`);
+      errors['schedule.number'] = `Укажите число от ${min} до ${max}`;
     }
   }
 
   return { schedule, errors };
+}
+
+// Регулярность из полей формы (partials/schedule-form.ejs) → { type, time, number } для cleanSchedule.
+// Поля формы: regular = '1' или '0', schedule_type, и у каждого варианта свои
+// time_<вариант> и number_<вариант>, например time_daily, number_hours.
+export function scheduleFromForm(body) {
+  if (body.regular !== '1') return { type: null, time: null, number: null };
+  return {
+    type: body.schedule_type || 'не выбран', // регулярная без варианта — cleanSchedule выдаст ошибку
+    time: body[`time_${body.schedule_type}`],
+    number: body[`number_${body.schedule_type}`],
+  };
+}
+
+// Регулярность из формы, проверенная. Возвращает { schedule, errors }, errors — список текстов.
+export function readScheduleForm(body) {
+  const result = cleanSchedule(scheduleFromForm(body));
+  return { schedule: result.schedule, errors: Object.values(result.errors) };
 }

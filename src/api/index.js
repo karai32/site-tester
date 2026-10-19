@@ -8,6 +8,7 @@ import projectsApi from './projects.js';
 import reportsApi from './reports.js';
 import { sendError } from './response.js';
 import scenariosApi from './scenarios.js';
+import usersApi from './users.js';
 
 export default async function api(app) {
   // Ключ: нет или неверный — 401
@@ -37,4 +38,5 @@ export default async function api(app) {
   await app.register(projectsApi);
   await app.register(scenariosApi);
   await app.register(reportsApi);
+  await app.register(usersApi);
 }

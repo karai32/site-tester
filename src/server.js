@@ -96,7 +96,7 @@ app.addHook('preHandler', async (request, reply) => {
   }
 });
 
-await app.register(api, { prefix: '/api/v1' });
+await app.register(api, { prefix: '/api' });
 await app.register(authRoutes);
 await app.register(projectRoutes);
 await app.register(scenarioRoutes);

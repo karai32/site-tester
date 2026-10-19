@@ -1,12 +1,10 @@
 // Сценарии проекта: список, страница сценария, создание, копия с новой редакцией,
 // регулярность и отложенная проверка
 import { findProjectById } from '../db/projects.js';
-import { getProjectReports } from '../db/reports.js';
 import {
   cancelDeferredCheck,
   createScenario,
   findScenarioById,
-  getProjectScenarios,
   nextRevision,
   setDeferredCheck,
   setNextRunAt,
@@ -14,8 +12,8 @@ import {
   setScenarioNotifications,
   setScenarioSchedule,
 } from '../db/scenarios.js';
-import { authorName, scenarioTitle } from '../helpers.js';
-import { listUrl, paginate, SORTS, sortFromQuery, toList, uniqueSorted } from '../lists.js';
+import { scenarioTitle } from '../helpers.js';
+import { listUrl, paginate, SORTS, sortFromQuery, toList } from '../lists.js';
 import { defaultNotifications, readNotificationsForm } from '../notifications/settings.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
 import {
@@ -27,13 +25,8 @@ import {
   toUtcText,
   tomorrowDateInput,
 } from '../schedule.js';
-import {
-  allTests,
-  scenarioCategoryIds,
-  scenarioPageSetIds,
-  scenarioSummary,
-  scenarioTestIds,
-} from '../scenario-info.js';
+import { allTests, scenarioPageSetIds, scenarioSummary, scenarioTestIds } from '../scenario-info.js';
+import { listScenarios } from '../scenario-list.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const SCENARIOS_PER_PAGE = 10;
@@ -139,62 +132,13 @@ export default async function scenarioRoutes(app) {
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
-    // Последний готовый отчёт каждого сценария — сколько страниц проверено.
-    // Отчёты идут от новых к старым, поэтому первый найденный — самый свежий.
-    const lastReports = {};
-    for (const report of getProjectReports(project.id)) {
-      if (report.status === 'done' && !lastReports[report.scenario_id]) {
-        lastReports[report.scenario_id] = report;
-      }
-    }
-
-    // Сценарии с цифрами для списка
-    const allScenarios = [];
-    for (const scenario of getProjectScenarios(project.id)) {
-      const lastReport = lastReports[scenario.id];
-
-      // «Страниц: 28/1228» — проверено последней проверкой из всех найденных на сайте.
-      // В старых отчётах (до миграции 003) общего числа нет — тогда просто «28».
-      let pagesCount = 0;
-      let pagesText = '—';
-      if (lastReport) {
-        pagesCount = lastReport.pages_count;
-        pagesText = String(lastReport.pages_count);
-        if (lastReport.site_pages_count) pagesText += `/${lastReport.site_pages_count}`;
-      }
-
-      const categoryIds = scenarioCategoryIds(scenario);
-      allScenarios.push({
-        ...scenario,
-        categoryIds,
-        categoriesCount: categoryIds.length,
-        testsCount: scenarioTestIds(scenario).length,
-        pagesCount,
-        pagesText,
-      });
-    }
-
-    const activeScenarios = allScenarios.filter((scenario) => scenario.is_active);
-    const inactiveScenarios = allScenarios.filter((scenario) => !scenario.is_active);
-    const authors = uniqueSorted(allScenarios.map((scenario) => authorName(scenario.author_name)));
-
-    let scenarios = activeScenarios;
-    if (showInactive) scenarios = inactiveScenarios;
-
-    if (author) {
-      scenarios = scenarios.filter((scenario) => authorName(scenario.author_name) === author);
-    }
-
-    // Категории: оставляем сценарии, в которых есть все выбранные категории
-    if (selectedCategories.length > 0) {
-      scenarios = scenarios.filter((scenario) => selectedCategories.every((id) => scenario.categoryIds.includes(id)));
-    }
-
-    // Регулярность: у регулярного сценария есть расписание
-    if (regular === 'yes') scenarios = scenarios.filter((scenario) => scenario.schedule_type);
-    if (regular === 'no') scenarios = scenarios.filter((scenario) => !scenario.schedule_type);
-
-    scenarios.sort(SORTS[sort].compare);
+    const result = listScenarios(project.id, {
+      inactive: showInactive,
+      author,
+      categories: selectedCategories,
+      regular,
+      sort,
+    });
 
     // Адрес списка с текущими фильтрами и изменениями: scenariosUrl({ page: 2 })
     const currentFilters = { author, cat: selectedCategories, regular };
@@ -206,17 +150,17 @@ export default async function scenarioRoutes(app) {
       title: `Сценарии — ${project.name}`,
       project,
       showInactive,
-      activeCount: activeScenarios.length,
-      inactiveCount: inactiveScenarios.length,
+      activeCount: result.activeCount,
+      inactiveCount: result.inactiveCount,
       author,
-      authors,
+      authors: result.authors,
       selectedCategories,
       categories: testCategories,
       regular,
       sort,
       sorts: SORTS,
       totalTests: allTests.length,
-      pagination: paginate(scenarios, Number(request.query.page) || 1, SCENARIOS_PER_PAGE),
+      pagination: paginate(result.scenarios, Number(request.query.page) || 1, SCENARIOS_PER_PAGE),
       scenariosUrl,
     }, { layout: 'layouts/app.ejs' });
   });

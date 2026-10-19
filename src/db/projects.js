@@ -19,3 +19,12 @@ export function createProject({ name, url }) {
 export function setProjectLogo(id, file) {
   db.prepare('UPDATE projects SET logo = ? WHERE id = ?').run(file, id);
 }
+
+export function updateProject(id, { name, url }) {
+  db.prepare('UPDATE projects SET name = ?, url = ? WHERE id = ?').run(name, url, id);
+}
+
+// Удаляет проект вместе со сценариями и отчётами (в базе это делает ON DELETE CASCADE)
+export function deleteProject(id) {
+  db.prepare('DELETE FROM projects WHERE id = ?').run(id);
+}

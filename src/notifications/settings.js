@@ -109,16 +109,6 @@ export function notificationsText(notifications) {
 
 // --- Форма ---
 
-// «a@b.ru, c@d.ru» → ['a@b.ru', 'c@d.ru'] без пустых и повторов
-function splitList(text) {
-  const items = [];
-  for (const part of String(text || '').split(',')) {
-    const item = part.trim();
-    if (item && !items.includes(item)) items.push(item);
-  }
-  return items;
-}
-
 export function isEmail(text) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
 }
@@ -128,39 +118,75 @@ export function isTelegramId(text) {
   return /^-?\d+$/.test(text);
 }
 
-// Настройки из формы (partials/notifications-form.ejs). Возвращает { notifications, errors }.
-// Поля: notify_<событие> = telegram, email или none; pass_percent; emails и telegram_ids — через запятую.
-export function readNotificationsForm(body) {
+// Проверка настроек уведомлений — общая для формы и API.
+// input: { events, passPercent, emails, telegramIds } — как в базе, emails и telegramIds — массивы.
+// Возвращает { notifications, errors }: errors — ошибки по полям, пусто — всё верно.
+export function cleanNotifications(input) {
   const notifications = defaultNotifications(null);
-  const errors = [];
+  const errors = {};
+  if (!input) input = {};
 
+  // Неизвестные события и способы пропускаем: у них остаётся «none»
+  const events = input.events || {};
   for (const event of NOTIFICATION_EVENTS) {
-    const channel = body[`notify_${event.id}`];
+    const channel = events[event.id];
     if (CHANNELS.some((item) => item.id === channel)) notifications.events[event.id] = channel;
   }
 
-  notifications.passPercent = Number(body.pass_percent);
+  if (input.passPercent !== undefined) notifications.passPercent = Number(input.passPercent);
   if (!Number.isInteger(notifications.passPercent) || notifications.passPercent < 0 || notifications.passPercent > 100) {
-    errors.push('Порог успешности — целое число от 0 до 100');
+    errors['notifications.passPercent'] = 'Порог успешности — целое число от 0 до 100';
   }
 
-  notifications.emails = splitList(body.emails);
-  notifications.telegramIds = splitList(body.telegram_ids);
+  notifications.emails = uniqueTexts(input.emails);
+  notifications.telegramIds = uniqueTexts(input.telegramIds);
 
   const wrongEmails = notifications.emails.filter((email) => !isEmail(email));
-  if (wrongEmails.length > 0) errors.push(`Неверная почта: ${wrongEmails.join(', ')}`);
+  if (wrongEmails.length > 0) errors['notifications.emails'] = `Неверная почта: ${wrongEmails.join(', ')}`;
 
   const wrongIds = notifications.telegramIds.filter((id) => !isTelegramId(id));
-  if (wrongIds.length > 0) errors.push(`Telegram ID — это число, а не имя: ${wrongIds.join(', ')}`);
+  if (wrongIds.length > 0) errors['notifications.telegramIds'] = `Telegram ID — это число, а не имя: ${wrongIds.join(', ')}`;
 
   // Выбран способ, но некому отправлять
   const channels = Object.values(notifications.events);
   if (channels.includes('email') && notifications.emails.length === 0) {
-    errors.push('Укажите хотя бы одну почту для уведомлений');
+    errors['notifications.emails'] = 'Укажите хотя бы одну почту для уведомлений';
   }
   if (channels.includes('telegram') && notifications.telegramIds.length === 0) {
-    errors.push('Укажите хотя бы один Telegram ID для уведомлений');
+    errors['notifications.telegramIds'] = 'Укажите хотя бы один Telegram ID для уведомлений';
   }
 
   return { notifications, errors };
+}
+
+// Список строк без пустых и повторов. Не массив — пустой список.
+function uniqueTexts(list) {
+  const items = [];
+  if (!Array.isArray(list)) return items;
+  for (const value of list) {
+    const item = String(value).trim();
+    if (item && !items.includes(item)) items.push(item);
+  }
+  return items;
+}
+
+// Настройки из полей формы (partials/notifications-form.ejs) → объект для cleanNotifications.
+// Поля: notify_<событие> = telegram, email или none; pass_percent; emails и telegram_ids — через запятую.
+export function notificationsFromForm(body) {
+  const events = {};
+  for (const event of NOTIFICATION_EVENTS) {
+    events[event.id] = body[`notify_${event.id}`];
+  }
+  return {
+    events,
+    passPercent: body.pass_percent,
+    emails: String(body.emails || '').split(','),
+    telegramIds: String(body.telegram_ids || '').split(','),
+  };
+}
+
+// Настройки из формы, проверенные. Возвращает { notifications, errors }, errors — список текстов.
+export function readNotificationsForm(body) {
+  const result = cleanNotifications(notificationsFromForm(body));
+  return { notifications: result.notifications, errors: Object.values(result.errors) };
 }

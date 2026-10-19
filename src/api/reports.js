@@ -1,5 +1,6 @@
 // Отчёты: архив проекта с фильтрами, отчёт целиком, скачивание HTML, скриншоты и видео
 import { findProjectById } from '../db/projects.js';
+import { cancelReport, findReportWithNames } from '../db/reports.js';
 import { loadReport, sendReportDownload } from '../report-data.js';
 import { listReports } from '../report-list.js';
 import { MEDIA_DIR } from '../config.js';
@@ -29,6 +30,18 @@ export default async function reportsApi(app) {
     const data = loadReport(request.params.id);
     if (!data) return sendError(reply, 404, 'not_found', 'Отчёт не найден');
     return sendData(reply, formatFullReport(data.report, data.categories));
+  });
+
+  // Отменить проверку: из очереди убирается сразу, идущая останавливается перед следующим тестом
+  app.post('/reports/:id/cancel', async (request, reply) => {
+    const report = findReportWithNames(request.params.id);
+    if (!report) return sendError(reply, 404, 'not_found', 'Отчёт не найден');
+    if (report.status !== 'queued' && report.status !== 'running') {
+      return sendError(reply, 409, 'conflict', 'Проверка уже закончилась');
+    }
+
+    cancelReport(report.id);
+    return sendData(reply, formatReport(findReportWithNames(report.id)));
   });
 
   // Отчёт одним HTML-файлом — тот же, что кнопка «Скачать» в сервисе

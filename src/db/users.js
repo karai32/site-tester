@@ -5,15 +5,20 @@ export function findUserById(id) {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(id);
 }
 
+// Все пользователи по алфавиту
+export function getUsers() {
+  return db.prepare('SELECT * FROM users ORDER BY name').all();
+}
+
 export function findUserByLogin(login) {
   return db.prepare('SELECT * FROM users WHERE login = ?').get(login);
 }
 
 // Возвращает id нового пользователя
-export function createUser({ login, name, email, passwordHash }) {
+export function createUser({ login, name, email, telegramId, passwordHash }) {
   const result = db
-    .prepare('INSERT INTO users (login, name, email, password_hash) VALUES (?, ?, ?, ?)')
-    .run(login, name, email || null, passwordHash);
+    .prepare('INSERT INTO users (login, name, email, telegram_id, password_hash) VALUES (?, ?, ?, ?, ?)')
+    .run(login, name, email || null, telegramId || null, passwordHash);
   return result.lastInsertRowid;
 }
 
@@ -28,4 +33,14 @@ export function updatePassword(userId, passwordHash) {
 // Контакты для уведомлений: почта и Telegram ID (пустые — null)
 export function updateUserContacts(userId, { email, telegramId }) {
   db.prepare('UPDATE users SET email = ?, telegram_id = ? WHERE id = ?').run(email || null, telegramId || null, userId);
+}
+
+export function updateUser(userId, { name, email, telegramId }) {
+  db.prepare('UPDATE users SET name = ?, email = ?, telegram_id = ? WHERE id = ?')
+    .run(name, email || null, telegramId || null, userId);
+}
+
+// Удаляет пользователя. Его сессии и API-ключи удаляются, у сценариев и отчётов автор становится пустым.
+export function deleteUser(userId) {
+  db.prepare('DELETE FROM users WHERE id = ?').run(userId);
 }

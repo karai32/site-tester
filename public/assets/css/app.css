@@ -1744,3 +1744,47 @@ body {
 .project-logo-change:focus-within .project-logo-change__icon {
 	opacity: 1;
 }
+
+/* --- API-ключи (Настройки) --- */
+
+/* Только что созданный ключ: показывается один раз */
+.api-key-new {
+	margin-top: 24px;
+	padding: 24px 32px;
+	border-radius: 13px;
+	background: var(--success-bg);
+}
+.api-key-new__title {
+	margin: 0 0 16px;
+	color: var(--success);
+	font-size: 14px;
+	font-weight: 700;
+}
+.api-key-new__row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+.api-key-new__row .form-control {
+	flex: 1 1 320px;
+	height: 44px;
+	border: 0;
+	border-radius: 13px;
+	background: var(--paper);
+	font-size: 14px;
+}
+.list-row form {
+	margin: 0;
+}
+/* Создание ключа: поле с названием и кнопка в одну строку */
+.api-key-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 16px;
+	margin-top: 24px;
+}
+.api-key-form__name {
+	flex: 1 1 320px;
+	margin-top: 0;
+}

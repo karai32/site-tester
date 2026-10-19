@@ -8,6 +8,7 @@ import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import ejs from 'ejs';
 
+import api from './api/index.js';
 import { getCurrentUser } from './auth/session.js';
 import { HOST, MEDIA_DIR, PORT, TELEGRAM_BOT_NAME } from './config.js';
 import { getProjects } from './db/projects.js';
@@ -24,7 +25,8 @@ import { CHANNELS, enabledEvents, NOTIFICATION_EVENTS, notificationsText } from 
 import { startTelegramBot } from './notifications/telegram.js';
 import { startQueue } from './runner/queue.js';
 
-const app = Fastify({ logger: true });
+// trustProxy: сервер стоит за nginx, настоящий IP посетителя — в заголовке X-Forwarded-For
+const app = Fastify({ logger: true, trustProxy: true });
 
 // Cookie (для сессий) и данные из обычных HTML-форм
 await app.register(fastifyCookie);
@@ -76,9 +78,10 @@ await app.register(fastifyView, {
 const PUBLIC_PATHS = ['/login', '/health'];
 
 // Перед каждым запросом: узнаём, кто вошёл. Без входа отправляем на /login.
+// API проверяет вход сам — по ключу (src/api/index.js).
 app.addHook('preHandler', async (request, reply) => {
   const path = request.url.split('?')[0];
-  if (path.startsWith('/assets/')) return;
+  if (path.startsWith('/assets/') || path.startsWith('/api/')) return;
 
   const user = getCurrentUser(request);
 
@@ -94,6 +97,7 @@ app.addHook('preHandler', async (request, reply) => {
   }
 });
 
+await app.register(api, { prefix: '/api/v1' });
 await app.register(authRoutes);
 await app.register(projectRoutes);
 await app.register(scenarioRoutes);

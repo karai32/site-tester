@@ -64,6 +64,18 @@ $(function () {
 		this.form.submit();
 	});
 
+	// Кнопка «Скопировать»: data-copy — что скопировать (новый API-ключ)
+	$(document).on('click', '[data-copy]', function () {
+		var $button = $(this);
+		navigator.clipboard.writeText($button.data('copy')).then(function () {
+			$button.text('Скопировано');
+		});
+	});
+	// Поле с ключом: при нажатии выделяется целиком, чтобы скопировать вручную
+	$(document).on('focus', '[data-select-on-focus]', function () {
+		this.select();
+	});
+
 	// Формы с подтверждением: data-confirm — текст вопроса
 	$(document).on('submit', 'form[data-confirm]', function (event) {
 		if (!window.confirm($(this).data('confirm'))) event.preventDefault();

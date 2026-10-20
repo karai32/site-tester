@@ -77,7 +77,7 @@ await app.register(fastifyView, {
 const PUBLIC_PATHS = ['/login', '/health'];
 
 // Перед каждым запросом: узнаём, кто вошёл. Без входа отправляем на /login.
-// API проверяет вход сам — по ключу (src/api/index.js).
+// API проверяет вход сам - по ключу (src/api/index.js).
 app.addHook('preHandler', async (request, reply) => {
   const path = request.url.split('?')[0];
   if (path.startsWith('/assets/') || path.startsWith('/api/')) return;

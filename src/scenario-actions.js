@@ -1,4 +1,4 @@
-// Действия со сценариями — общие для страниц сервиса (routes/scenarios.js) и API (api/scenarios.js):
+// Действия со сценариями - общие для страниц сервиса (routes/scenarios.js) и API (api/scenarios.js):
 // проверка данных, создание и новая редакция, включение и выключение, отложенная проверка.
 import {
   cancelDeferredCheck,
@@ -13,16 +13,16 @@ import { PAGE_SETS } from './runner/page-sets.js';
 import { cleanSchedule, firstRunText, scenarioSchedule, toUtcText } from './schedule.js';
 import { allTests } from './scenario-info.js';
 
-// Список из запроса: не массив — пустой список
+// Список из запроса: не массив - пустой список
 function toArray(value) {
   if (Array.isArray(value)) return value;
   return [];
 }
 
 // Проверка данных сценария.
-// input: { name, testIds, pageSets, schedule, notifications } — schedule и notifications см. в
+// input: { name, testIds, pageSets, schedule, notifications } - schedule и notifications см. в
 // cleanSchedule (schedule.js) и cleanNotifications (notifications/settings.js).
-// Возвращает { scenario, errors }: errors — ошибки по полям { name: 'текст' }, пусто — всё верно.
+// Возвращает { scenario, errors }: errors - ошибки по полям { name: 'текст' }, пусто - всё верно.
 export function cleanScenario(input) {
   const scheduleResult = cleanSchedule(input.schedule);
   const notificationsResult = cleanNotifications(input.notifications);
@@ -49,9 +49,9 @@ export function cleanScenario(input) {
 }
 
 // Сохраняет проверенный сценарий (из cleanScenario). Возвращает id нового сценария.
-// source — исходный сценарий, если это новая редакция («Скопировать и изменить»): исходный не меняется.
+// source - исходный сценарий, если это новая редакция («Скопировать и изменить»): исходный не меняется.
 export function saveScenario({ projectId, authorId, scenario, source }) {
-  // Все редакции ссылаются на самый первый сценарий — по нему считается номер следующей
+  // Все редакции ссылаются на самый первый сценарий - по нему считается номер следующей
   let rootId = null;
   let revision = 1;
   if (source) {
@@ -73,7 +73,7 @@ export function saveScenario({ projectId, authorId, scenario, source }) {
   });
 }
 
-// Название новой редакции: «Полный аудит #2» → «Полный аудит #3» (старый номер убираем, ставим следующий)
+// Название новой редакции: «Полный аудит #2» -> «Полный аудит #3» (старый номер убираем, ставим следующий)
 export function revisionName(source) {
   const baseName = source.name.replace(/\s*#\d+$/, '');
   return `${baseName} #${nextRevision(source.root_id || source.id)}`;
@@ -84,7 +84,7 @@ export function setActive(scenario, isActive) {
   setScenarioActive(scenario.id, isActive);
 
   if (isActive) {
-    // Пока сценарий был выключен, запуски по расписанию не шли — считаем следующий заново
+    // Пока сценарий был выключен, запуски по расписанию не шли - считаем следующий заново
     setNextRunAt(scenario.id, firstRunText(scenarioSchedule(scenario)));
   } else {
     // Выключенный сценарий не запускается, поэтому отложенная проверка отменяется
@@ -96,7 +96,7 @@ export function setActive(scenario, isActive) {
 // Возвращает текст ошибки или null, если проверка запланирована.
 export function planDeferredCheck(scenario, runAt, userId) {
   if (!runAt) return 'Укажите дату и время проверки';
-  if (runAt <= new Date()) return 'Это время уже прошло — выберите время в будущем';
+  if (runAt <= new Date()) return 'Это время уже прошло';
 
   setDeferredCheck(scenario.id, toUtcText(runAt), userId);
   return null;

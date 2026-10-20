@@ -21,7 +21,7 @@ function examplesBySection() {
   return sections;
 }
 
-// options: newKey — только что созданный ключ (показывается один раз), error — ошибка формы
+// options: newKey - только что созданный ключ (показывается один раз), error - ошибка формы
 function showSettings(reply, options) {
   if (options.error) reply.code(400);
   return reply.view('settings.ejs', {
@@ -41,7 +41,7 @@ export default async function settingsRoutes(app) {
   // Новый ключ. Показываем его сразу на странице, без перехода: больше он нигде не появится.
   app.post('/settings/api-keys', async (request, reply) => {
     const name = String((request.body && request.body.name) || '').trim();
-    if (!name) return showSettings(reply, { error: 'Укажите, для чего ключ, например «Админка 808»' });
+    if (!name) return showSettings(reply, { error: 'Укажите название ключа' });
 
     const { key, keyHash, keyStart } = generateApiKey();
     createApiKey({ userId: reply.locals.user.id, name, keyHash, keyStart });

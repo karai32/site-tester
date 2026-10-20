@@ -31,5 +31,5 @@ if (report.status === 'error') {
 console.log(`\nОтчёт #${reportId}: успешно ${report.tests_passed} из ${report.tests_total}, страниц в выборке: ${report.pages_count}`);
 if (report.note) console.log(report.note);
 for (const result of getReportResults(reportId)) {
-  console.log(`${result.passed ? '✓' : '✗'} ${result.test_id} — ${result.comment}`);
+  console.log(`${result.passed ? '✓' : '✗'} ${result.test_id} - ${result.comment}`);
 }

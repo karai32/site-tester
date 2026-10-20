@@ -1,6 +1,6 @@
 // Запросы к таблицам reports и report_results.
-// Статусы отчёта: queued — ждёт в очереди, running — идёт, done — готов, error — не выполнился,
-// cancelled — отменён пользователем.
+// Статусы отчёта: queued - ждёт в очереди, running - идёт, done - готов, error - не выполнился,
+// cancelled - отменён пользователем.
 import { db } from './database.js';
 
 export function findReportById(id) {
@@ -49,7 +49,7 @@ export function findLatestDoneReport(projectId, isFull) {
   `).get(projectId, isFull ? 1 : 0);
 }
 
-// Предыдущий готовый отчёт того же сценария — чтобы сравнить результаты тестов
+// Предыдущий готовый отчёт того же сценария - чтобы сравнить результаты тестов
 export function findPreviousDoneReport(scenarioId, reportId) {
   return db.prepare(`
     SELECT * FROM reports
@@ -105,7 +105,7 @@ export function markReportError(id, error) {
   db.prepare(`UPDATE reports SET status = 'error', error = ?, finished_at = datetime('now') WHERE id = ? AND status IN ('queued', 'running')`).run(error, id);
 }
 
-// Отмена проверки: в очереди — сразу, идущую раннер остановит перед следующим тестом
+// Отмена проверки: в очереди - сразу, идущую раннер остановит перед следующим тестом
 export function cancelReport(id) {
   db.prepare(`UPDATE reports SET status = 'cancelled', finished_at = datetime('now') WHERE id = ? AND status IN ('queued', 'running')`).run(id);
 }
@@ -150,7 +150,7 @@ export function saveTestResult(reportId, result) {
 
 export function getReportResults(reportId) {
   const rows = db.prepare('SELECT * FROM report_results WHERE report_id = ? ORDER BY id').all(reportId);
-  // Списки хранятся в базе как JSON-текст — превращаем их обратно в массивы
+  // Списки хранятся в базе как JSON-текст - превращаем их обратно в массивы
   for (const row of rows) {
     row.problems = JSON.parse(row.problems);
     row.pages = JSON.parse(row.pages);

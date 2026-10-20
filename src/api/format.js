@@ -3,7 +3,7 @@ import { percentOf, scenarioTitle } from '../helpers.js';
 import { describeSchedule, scenarioSchedule } from '../schedule.js';
 import { allTests, scenarioCategories, scenarioPageSets } from '../scenario-info.js';
 
-// '2026-10-19 08:00:00' (UTC в базе) → '2026-10-19T08:00:00Z'. Пусто — null.
+// '2026-10-19 08:00:00' (UTC в базе) -> '2026-10-19T08:00:00Z'. Пусто - null.
 export function isoDate(utcText) {
   if (!utcText) return null;
   return utcText.replace(' ', 'T') + 'Z';
@@ -25,7 +25,7 @@ export function formatUser(user) {
   };
 }
 
-// Автор или тот, кто запустил проверку: { id, name }. null — сам сервис (полный сценарий, расписание).
+// Автор или тот, кто запустил проверку: { id, name }. null - сам сервис (полный сценарий, расписание).
 function formatPerson(id, name) {
   if (!id) return null;
   return { id, name };
@@ -44,7 +44,7 @@ export function formatProject(project) {
   };
 }
 
-// Регулярность: type = null — нерегулярный (запускается вручную)
+// Регулярность: type = null - нерегулярный (запускается вручную)
 function formatSchedule(scenario) {
   const schedule = scenarioSchedule(scenario);
   return {
@@ -56,7 +56,7 @@ function formatSchedule(scenario) {
   };
 }
 
-// Сценарий для списков. item — сценарий с цифрами из scenario-list.js (categoriesCount, testsCount, ...)
+// Сценарий для списков. item - сценарий с цифрами из scenario-list.js (categoriesCount, testsCount, ...)
 export function formatScenarioItem(item) {
   return {
     id: item.id,
@@ -64,18 +64,18 @@ export function formatScenarioItem(item) {
     name: item.name,
     title: scenarioTitle(item), // название с номером редакции: «Полный аудит #1»
     revision: item.revision,
-    rootId: item.root_id, // первый сценарий семейства редакций; у исходного — null
+    rootId: item.root_id, // первый сценарий семейства редакций; у исходного - null
     isFull: Boolean(item.is_full),
     isActive: Boolean(item.is_active),
     author: formatPerson(item.author_id, item.author_name),
     createdAt: isoDate(item.created_at),
     categoriesCount: item.categoriesCount,
     testsCount: item.testsCount,
-    testsTotal: allTests.length, // сколько тестов всего в сервисе — для «54/154»
+    testsTotal: allTests.length, // сколько тестов всего в сервисе - для «54/154»
     pagesCount: item.pagesCount, // страниц в последней готовой проверке
     sitePagesCount: item.sitePagesCount, // страниц на сайте при последней проверке
     schedule: formatSchedule(item),
-    deferredAt: isoDate(item.deferred_at), // отложенная проверка; null — нет
+    deferredAt: isoDate(item.deferred_at), // отложенная проверка; null - нет
   };
 }
 
@@ -95,7 +95,7 @@ export function formatScenario(item) {
   };
 }
 
-// Отчёт без результатов тестов — для списков
+// Отчёт без результатов тестов - для списков
 export function formatReport(report) {
   let percent = null;
   if (report.tests_total) percent = percentOf(report.tests_passed, report.tests_total);
@@ -140,14 +140,14 @@ function formatResult(result) {
     title: result.test_title,
     passed: Boolean(result.passed),
     comment: result.comment,
-    problems: result.problems, // найденные ошибки — строки
+    problems: result.problems, // найденные ошибки - строки
     pages: result.pages, // адреса проверенных страниц
     media,
     durationMs: result.duration_ms,
   };
 }
 
-// Отчёт целиком: результаты тестов по категориям. categories — из groupByCategory.
+// Отчёт целиком: результаты тестов по категориям. categories - из groupByCategory.
 export function formatFullReport(report, categories) {
   const categoryList = [];
   for (const category of categories) {

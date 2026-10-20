@@ -40,7 +40,7 @@ function scenarioTests(scenario) {
   return list;
 }
 
-// Ждёт выполнения promise, но не дольше ms миллисекунд. Не успел — ошибка.
+// Ждёт выполнения promise, но не дольше ms миллисекунд. Не успел - ошибка.
 function withTimeout(promise, ms) {
   let timer;
   const timeout = new Promise((resolve, reject) => {
@@ -80,14 +80,14 @@ async function runTest(test, context) {
   };
 }
 
-// Тип файла по первым байтам: скриншоты бывают JPEG и PNG, видео — WebM
+// Тип файла по первым байтам: скриншоты бывают JPEG и PNG, видео - WebM
 function fileExtension(data) {
   if (data[0] === 0x89) return 'png';
   if (data[0] === 0x1a && data[1] === 0x45) return 'webm';
   return 'jpg';
 }
 
-// Сохраняет медиафайлы теста. Возвращает [{ file, caption }], file — путь внутри папки media.
+// Сохраняет медиафайлы теста. Возвращает [{ file, caption }], file - путь внутри папки media.
 // Тест отдаёт файл просто как Buffer или с подписью: { data: Buffer, caption: 'подпись' }.
 function saveMedia(reportId, testId, media) {
   mkdirSync(join(MEDIA_DIR, 'reports', String(reportId)), { recursive: true });
@@ -108,7 +108,7 @@ function saveMedia(reportId, testId, media) {
   return saved;
 }
 
-// log — куда писать ход проверки: console в терминале или логгер сервера
+// log - куда писать ход проверки: console в терминале или логгер сервера
 export async function runCheck(reportId, log = console) {
   if (!markReportRunning(reportId)) return; // отчёт уже взят в работу
 
@@ -187,19 +187,19 @@ export async function runCheck(reportId, log = console) {
       });
 
       const status = result.passed ? 'успешно' : 'провалено';
-      log.info(`Отчёт #${reportId}: ${status} — ${test.id} (${Math.round(durationMs / 1000)} с)`);
+      log.info(`Отчёт #${reportId}: ${status}: ${test.id} (${Math.round(durationMs / 1000)} с)`);
     }
 
     markReportDone(reportId);
     log.info(`Отчёт #${reportId}: готов`);
   } catch (error) {
-    log.error(`Отчёт #${reportId}: ошибка — ${firstLine(error)}`);
+    log.error(`Отчёт #${reportId}: ошибка: ${firstLine(error)}`);
     markReportError(reportId, firstLine(error));
   } finally {
     if (browser) await browser.close().catch(() => {});
     rmSync(htmlDir, { recursive: true, force: true }); // HTML страниц больше не нужен
   }
 
-  // Итог проверки — по настройкам уведомлений сценария. Об отменённой не сообщаем.
+  // Итог проверки - по настройкам уведомлений сценария. Об отменённой не сообщаем.
   await notifyCheckFinished(reportId, log);
 }

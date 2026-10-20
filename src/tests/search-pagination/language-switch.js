@@ -42,7 +42,7 @@ export default {
 
     return {
       passed: true,
-      comment: `После переключения языка: URL — ${urlAfter}, html[lang] — «${langAfter}».`,
+      comment: `После переключения языка: URL: ${urlAfter}, html[lang]: «${langAfter}».`,
       media,
     };
   },

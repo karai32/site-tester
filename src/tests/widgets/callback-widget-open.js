@@ -4,7 +4,7 @@ import { takeScreenshot } from '../helpers/common.js';
 const selectors = {
   widgetFrame: '#CalltouchWidgetFrame',
 };
-const maxAttempts = 3; // виджет иногда не грузится с первого раза — пробуем перезагрузить страницу
+const maxAttempts = 3; // виджет иногда не грузится с первого раза - пробуем перезагрузить страницу
 
 export default {
   id: 'callback-widget-open',

@@ -44,7 +44,7 @@ export default async function reportsApi(app) {
     return sendData(reply, formatReport(findReportWithNames(report.id)));
   });
 
-  // Отчёт одним HTML-файлом — тот же, что кнопка «Скачать» в сервисе
+  // Отчёт одним HTML-файлом - тот же, что кнопка «Скачать» в сервисе
   app.get('/reports/:id/download', async (request, reply) => {
     const data = loadReport(request.params.id);
     if (!data) return sendError(reply, 404, 'not_found', 'Отчёт не найден');

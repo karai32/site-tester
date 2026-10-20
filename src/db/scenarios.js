@@ -1,10 +1,10 @@
 // Запросы к таблице scenarios.
-// Поля test_ids и page_sets в базе — JSON-текст, наружу отдаются массивами,
-// notifications — объектом настроек (см. src/notifications/settings.js).
+// Поля test_ids и page_sets в базе - JSON-текст, наружу отдаются массивами,
+// notifications - объектом настроек (см. src/notifications/settings.js).
 import { defaultNotifications, parseNotifications } from '../notifications/settings.js';
 import { db } from './database.js';
 
-// Списки хранятся в базе как JSON-текст — превращаем их обратно в массивы
+// Списки хранятся в базе как JSON-текст - превращаем их обратно в массивы
 function parseScenario(row) {
   if (!row) return undefined;
   row.test_ids = JSON.parse(row.test_ids);
@@ -30,8 +30,8 @@ export function getProjectScenarios(projectId) {
     .all(projectId).map(parseScenario);
 }
 
-// Возвращает id нового сценария. schedule — регулярность, см. src/schedule.js
-// (по умолчанию нерегулярный), nextRunAt — когда первый регулярный запуск (UTC-текст).
+// Возвращает id нового сценария. schedule - регулярность, см. src/schedule.js
+// (по умолчанию нерегулярный), nextRunAt - когда первый регулярный запуск (UTC-текст).
 export function createScenario({
   projectId,
   authorId,
@@ -79,7 +79,7 @@ export function setScenarioActive(id, isActive) {
 
 // --- Регулярные и отложенные проверки ---
 
-// Новая регулярность сценария. nextRunAt — когда первый запуск (UTC-текст), у нерегулярного null.
+// Новая регулярность сценария. nextRunAt - когда первый запуск (UTC-текст), у нерегулярного null.
 export function setScenarioSchedule(id, schedule, nextRunAt) {
   db.prepare('UPDATE scenarios SET schedule_type = ?, schedule_time = ?, schedule_number = ?, next_run_at = ? WHERE id = ?')
     .run(schedule.type, schedule.time, schedule.number, nextRunAt, id);

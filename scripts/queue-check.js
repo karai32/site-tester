@@ -1,6 +1,6 @@
 // Ставит проверку по сценарию в очередь. Её выполнит запущенный сервер.
 // Запуск: npm run queue-check -- <id сценария>
-// Проверки по расписанию ставит сам сервер (src/runner/scheduler.js), эта команда — для ручного запуска.
+// Проверки по расписанию ставит сам сервер (src/runner/scheduler.js), эта команда - для ручного запуска.
 import { createReport } from '../src/db/reports.js';
 import { findScenarioById } from '../src/db/scenarios.js';
 

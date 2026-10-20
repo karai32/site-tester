@@ -124,7 +124,7 @@ export default {
 
     return {
       passed: true,
-      comment: `Список новостей пополнился после «Показать еще» (было ${countBefore}, стало ${countAfter}, новых — ${newHrefs.length}), подгруженная новость «${articleTitle}» открывается с полным текстом (${articleTextLength} символов).`,
+      comment: `Список новостей пополнился после «Показать еще» (было ${countBefore}, стало ${countAfter}, новых: ${newHrefs.length}), подгруженная новость «${articleTitle}» открывается с полным текстом (${articleTextLength} символов).`,
       media,
       pages,
     };

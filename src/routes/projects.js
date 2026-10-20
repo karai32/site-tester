@@ -51,7 +51,7 @@ export default async function projectRoutes(app) {
     if (!project) return reply.callNotFound();
     const errorUrl = `/projects/${project.id}?logo=error`;
 
-    // Файл из формы. Больше 2 МБ — toBuffer() выдаст ошибку.
+    // Файл из формы. Больше 2 МБ - toBuffer() выдаст ошибку.
     let data;
     try {
       const file = await request.file();
@@ -65,8 +65,8 @@ export default async function projectRoutes(app) {
     return reply.redirect(`/projects/${project.id}?logo=saved`);
   });
 
-  // Сводка по сценарию для дашборда. Отдаёт кусок HTML — его вставляет в страницу app.js.
-  // ?scenario=5 — первые отчёты, ?scenario=5&offset=10 — следующие.
+  // Сводка по сценарию для дашборда. Отдаёт кусок HTML - его вставляет в страницу app.js.
+  // ?scenario=5 - первые отчёты, ?scenario=5&offset=10 - следующие.
   app.get('/projects/:id/scenario-summary', async (request, reply) => {
     const project = findProjectById(request.params.id);
     const scenario = findScenarioById(request.query.scenario);
@@ -78,12 +78,12 @@ export default async function projectRoutes(app) {
     const batch = reports.slice(offset, offset + SUMMARY_BATCH);
     const remaining = reports.length - offset - batch.length;
 
-    let nextUrl = null; // адрес следующей порции; null — отчёты кончились
+    let nextUrl = null; // адрес следующей порции; null - отчёты кончились
     if (remaining > 0) {
       nextUrl = `/projects/${project.id}/scenario-summary?scenario=${scenario.id}&offset=${offset + SUMMARY_BATCH}`;
     }
 
-    // Следующие порции — только строки отчётов
+    // Следующие порции - только строки отчётов
     if (offset > 0) {
       return reply.view('partials/scenario-summary-rows.ejs', { reports: batch, remaining, nextUrl });
     }
@@ -99,7 +99,7 @@ export default async function projectRoutes(app) {
     // Параметры из адреса: ?q=...&author=...&cat=seo&cat=forms&regular=yes&sort=old&page=2
     const search = String(request.query.q || '').trim();
     const author = String(request.query.author || '');
-    const regular = String(request.query.regular || ''); // 'yes', 'no' или '' — все
+    const regular = String(request.query.regular || ''); // 'yes', 'no' или '' - все
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
@@ -117,7 +117,7 @@ export default async function projectRoutes(app) {
     const archiveUrl = (changes) => listUrl(`/projects/${project.id}/reports`, { ...currentFilters, ...changes });
 
     return reply.view('projects/reports.ejs', {
-      title: `Архив отчётов — ${project.name}`,
+      title: `Архив отчётов - ${project.name}`,
       project,
       search,
       author,

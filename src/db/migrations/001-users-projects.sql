@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Сессии: кто сейчас вошёл в сервис.
--- В cookie браузера лежит случайный токен, здесь — его хеш.
+-- В cookie браузера лежит случайный токен, здесь - его хеш.
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
   user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

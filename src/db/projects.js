@@ -15,7 +15,7 @@ export function createProject({ name, url }) {
   return result.lastInsertRowid;
 }
 
-// file — путь к аватарке внутри папки media
+// file - путь к аватарке внутри папки media
 export function setProjectLogo(id, file) {
   db.prepare('UPDATE projects SET logo = ? WHERE id = ?').run(file, id);
 }

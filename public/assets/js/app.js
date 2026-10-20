@@ -38,7 +38,7 @@ $(function () {
 	});
 
 	// Форма сценария: галочка категории выбирает все её тесты.
-	// Если выбрана только часть тестов, галочка категории — с чёрточкой (indeterminate).
+	// Если выбрана только часть тестов, галочка категории - с чёрточкой (indeterminate).
 	function updatePicker($group) {
 		var $items = $group.find('.tree-items input[type="checkbox"]');
 		var checked = $items.filter(':checked').length;
@@ -59,12 +59,12 @@ $(function () {
 		updatePicker($(this).closest('[data-picker]'));
 	});
 
-	// Выбрали файл — форма отправляется сама (аватарка проекта)
+	// Выбрали файл - форма отправляется сама (аватарка проекта)
 	$(document).on('change', 'input[data-auto-submit]', function () {
 		this.form.submit();
 	});
 
-	// Кнопка «Скопировать»: data-copy — что скопировать (новый API-ключ)
+	// Кнопка «Скопировать»: data-copy - что скопировать (новый API-ключ)
 	$(document).on('click', '[data-copy]', function () {
 		var $button = $(this);
 		navigator.clipboard.writeText($button.data('copy')).then(function () {
@@ -76,12 +76,12 @@ $(function () {
 		this.select();
 	});
 
-	// Формы с подтверждением: data-confirm — текст вопроса
+	// Формы с подтверждением: data-confirm - текст вопроса
 	$(document).on('submit', 'form[data-confirm]', function (event) {
 		if (!window.confirm($(this).data('confirm'))) event.preventDefault();
 	});
 
-	// Пока проверка идёт, страница отчёта обновляется сама (data-auto-refresh — через сколько секунд)
+	// Пока проверка идёт, страница отчёта обновляется сама (data-auto-refresh - через сколько секунд)
 	var $autoRefresh = $('[data-auto-refresh]');
 	if ($autoRefresh.length) {
 		setTimeout(function () {
@@ -108,19 +108,19 @@ $(function () {
 		$modal.find('[data-media-modal-caption]').text($(this).data('media-caption'));
 		bootstrap.Modal.getOrCreateInstance($modal[0]).show();
 	});
-	// Закрыли окно — останавливаем видео
+	// Закрыли окно - останавливаем видео
 	$(document).on('hidden.bs.modal', '#media-modal', function () {
 		$(this).find('[data-media-modal-body]').empty();
 	});
 
-	// Сводка по сценарию на дашборде: выбрали сценарий — берём сводку с сервера и вставляем в страницу
+	// Сводка по сценарию на дашборде: выбрали сценарий - берём сводку с сервера и вставляем в страницу
 	$(document).on('change', '[data-scenario-summary-select]', function () {
 		var $box = $('[data-scenario-summary]');
 		if (!this.value) {
-			$box.empty(); // «Выберите сценарий» — сводку убираем
+			$box.empty(); // «Выберите сценарий» - сводку убираем
 			return;
 		}
-		$box.html('<p class="panel__empty">Загрузка…</p>');
+		$box.html('<p class="panel__empty">Загрузка...</p>');
 		$.get($(this).data('url'), { scenario: this.value })
 			.done(function (html) {
 				$box.html(html);

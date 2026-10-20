@@ -11,11 +11,11 @@ export const DATA_DIR = process.env.DATA_DIR || fileURLToPath(new URL('../data',
 export const DB_PATH = join(DATA_DIR, 'app.db');
 export const MEDIA_DIR = join(DATA_DIR, 'media');
 
-// Адрес сервиса — для ссылок на отчёты в уведомлениях
+// Адрес сервиса - для ссылок на отчёты в уведомлениях
 export const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
 
 // Уведомления. Токены и пароли не хранятся в git: на сервере они лежат в /etc/808-checker.secrets.env.
-// Не заданы — уведомления этим способом не отправляются (в лог пишется, что не настроено).
+// Не заданы - уведомления этим способом не отправляются (в лог пишется, что не настроено).
 export const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 export const TELEGRAM_BOT_NAME = process.env.TELEGRAM_BOT_NAME || ''; // имя бота без @, для подсказок
 export const SMTP_HOST = process.env.SMTP_HOST || '';

@@ -20,7 +20,7 @@
   {
     "section": "Ошибки",
     "title": "Неверные данные",
-    "note": "В fields — какое поле не так.",
+    "note": "В fields указано, какое поле не так.",
     "request": [
       "POST /api/projects",
       "{",
@@ -109,8 +109,7 @@
       "      {",
       "        \"id\": \"started\",",
       "        \"question\": \"Получать уведомления о проверках?\",",
-      "        \"title\": \"Запуск проверки\",",
-      "        \"hint\": \"Сообщение, когда проверка начинается\"",
+      "        \"title\": \"Запуск проверки\"",
       "      }",
       "    ],",
       "    \"notificationChannels\": [",
@@ -310,7 +309,7 @@
       "    \"name\": \"Тестовый сайт\",",
       "    \"url\": \"https://808.ru/\",",
       "    \"logoUrl\": null,",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\"",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
       "  }",
       "}"
     ]
@@ -334,7 +333,7 @@
       "    \"name\": \"Сайт 808\",",
       "    \"url\": \"https://808.ru/\",",
       "    \"logoUrl\": null,",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\"",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
       "  }",
       "}"
     ]
@@ -345,7 +344,7 @@
     "note": "PNG, JPEG или WebP до 2 МБ.",
     "request": [
       "POST /api/projects/2/logo",
-      "multipart/form-data, поле logo — файл картинки"
+      "multipart/form-data, поле logo: файл картинки"
     ],
     "status": 200,
     "response": [
@@ -355,8 +354,8 @@
       "    \"id\": 2,",
       "    \"name\": \"Сайт 808\",",
       "    \"url\": \"https://808.ru/\",",
-      "    \"logoUrl\": \"/api/media/projects/2-1792518203701.png\",",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\"",
+      "    \"logoUrl\": \"/api/media/projects/2-1792520374766.png\",",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
       "  }",
       "}"
     ]
@@ -381,7 +380,7 @@
   {
     "section": "Сценарии",
     "title": "Список сценариев проекта",
-    "note": "Параметры: status=inactive — выключенные; author — значение из meta.authors; categories=seo,forms; regular=yes или no; sort=new, old, tests-desc, tests-asc, categories-desc, categories-asc, pages-desc, pages-asc; page, perPage.",
+    "note": "Параметры: status=inactive (выключенные), author (значение из meta.authors), categories=seo,forms, regular=yes или no, sort=new, old, tests-desc, tests-asc, categories-desc, categories-asc, pages-desc, pages-asc, page, perPage.",
     "request": [
       "GET /api/projects/1/scenarios?sort=old"
     ],
@@ -551,7 +550,7 @@
       "      \"id\": 1,",
       "      \"name\": \"Артем Тепляков\"",
       "    },",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\",",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\",",
       "    \"categoriesCount\": 1,",
       "    \"testsCount\": 2,",
       "    \"testsTotal\": 53,",
@@ -605,7 +604,7 @@
   {
     "section": "Сценарии",
     "title": "Скопировать и изменить (новая редакция)",
-    "note": "Поля те же, что при создании, все необязательные: что не передано, берётся из исходного сценария. Название по умолчанию — «Название #N». Ответ — сценарий целиком, в примере показаны только изменённые поля.",
+    "note": "Поля те же, что при создании, все необязательные: что не передано, берётся из исходного сценария. Название по умолчанию: «Название #N». В ответе сценарий целиком, в примере показаны только изменённые поля.",
     "request": [
       "POST /api/scenarios/4/copy",
       "{",
@@ -632,7 +631,7 @@
   {
     "section": "Сценарии",
     "title": "Выключить или включить",
-    "note": "Выключенный сценарий не запускается, его отложенная проверка отменяется. Ответ — сценарий целиком, в примере показаны только изменённые поля.",
+    "note": "Выключенный сценарий не запускается, его отложенная проверка отменяется. В ответе сценарий целиком, в примере показаны только изменённые поля.",
     "request": [
       "PUT /api/scenarios/4/active",
       "{",
@@ -655,7 +654,7 @@
   {
     "section": "Сценарии",
     "title": "Регулярность",
-    "note": "type — из catalog.scheduleTypes или null (только вручную). time — московское время, number — для вариантов с числом. Ответ — сценарий целиком, в примере показаны только изменённые поля.",
+    "note": "type: из catalog.scheduleTypes или null (только вручную). time: московское время. number: для вариантов с числом. В ответе сценарий целиком, в примере показаны только изменённые поля.",
     "request": [
       "PUT /api/scenarios/4/schedule",
       "{",
@@ -686,7 +685,7 @@
   {
     "section": "Сценарии",
     "title": "Уведомления",
-    "note": "События: started, done, critical, regular, repeated, status. Способ: telegram, email или none. Ответ — сценарий целиком, в примере показаны только изменённые поля.",
+    "note": "События: started, done, critical, regular, repeated, status. Способ: telegram, email или none. В ответе сценарий целиком, в примере показаны только изменённые поля.",
     "request": [
       "PUT /api/scenarios/4/notifications",
       "{",
@@ -735,7 +734,7 @@
   {
     "section": "Сценарии",
     "title": "Отложенная проверка",
-    "note": "Один запуск в указанное время (UTC). Ответ — сценарий целиком, в примере показаны только изменённые поля.",
+    "note": "Один запуск в указанное время (UTC). В ответе сценарий целиком, в примере показаны только изменённые поля.",
     "request": [
       "PUT /api/scenarios/4/deferred",
       "{",
@@ -758,7 +757,7 @@
   {
     "section": "Сценарии",
     "title": "Отменить отложенную проверку",
-    "note": "Ответ — сценарий целиком, в примере показаны только изменённые поля.",
+    "note": "В ответе сценарий целиком, в примере показаны только изменённые поля.",
     "request": [
       "DELETE /api/scenarios/4/deferred"
     ],
@@ -812,7 +811,7 @@
       "    \"testsDone\": 0,",
       "    \"testsPassed\": 0,",
       "    \"percent\": null,",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\",",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\",",
       "    \"startedAt\": null,",
       "    \"finishedAt\": null",
       "  }",
@@ -856,9 +855,9 @@
       "    \"testsDone\": 0,",
       "    \"testsPassed\": 0,",
       "    \"percent\": null,",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\",",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\",",
       "    \"startedAt\": null,",
-      "    \"finishedAt\": \"2026-10-20T17:43:23Z\"",
+      "    \"finishedAt\": \"2026-10-20T18:19:34Z\"",
       "  }",
       "}"
     ]
@@ -866,7 +865,7 @@
   {
     "section": "Проверки и отчёты",
     "title": "Отчёт",
-    "note": "status: queued, running, done, error, cancelled. Прогресс — testsDone из testsTotal. В примере списки сокращены.",
+    "note": "status: queued, running, done, error, cancelled. Прогресс: testsDone из testsTotal. В примере списки сокращены.",
     "request": [
       "GET /api/reports/3"
     ],
@@ -908,7 +907,7 @@
       "            \"testId\": \"custom-404-page\",",
       "            \"title\": \"Отображение кастомной страницы 404 при переходе на несуществующий URL\",",
       "            \"passed\": false,",
-      "            \"comment\": \"HTTP-статус 404 корректный, но блок <main> на странице пуст — кастомное содержимое 404-страницы не выведено.\",",
+      "            \"comment\": \"HTTP-статус 404 корректный, но блок <main> на странице пуст: кастомное содержимое 404-страницы не выведено.\",",
       "            \"problems\": [],",
       "            \"pages\": [",
       "              \"https://hadassah.moscow/qa-test-404/\"",
@@ -932,7 +931,7 @@
   {
     "section": "Проверки и отчёты",
     "title": "Архив отчётов проекта",
-    "note": "Параметры как у списка сценариев, плюс q — поиск.",
+    "note": "Параметры как у списка сценариев, плюс q (поиск).",
     "request": [
       "GET /api/projects/1/reports"
     ],
@@ -1098,9 +1097,9 @@
       "      \"name\": \"Мария Иванова\",",
       "      \"email\": \"maria@808.ru\",",
       "      \"telegramId\": null,",
-      "      \"createdAt\": \"2026-10-20T17:43:23Z\"",
+      "      \"createdAt\": \"2026-10-20T18:19:34Z\"",
       "    },",
-      "    \"password\": \"bR1glO21warZ\"",
+      "    \"password\": \"06jnkX_AJJBM\"",
       "  }",
       "}"
     ]
@@ -1125,7 +1124,7 @@
       "    \"name\": \"Мария Иванова\",",
       "    \"email\": \"maria@808.ru\",",
       "    \"telegramId\": \"123456789\",",
-      "    \"createdAt\": \"2026-10-20T17:43:23Z\"",
+      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
       "  }",
       "}"
     ]
@@ -1142,7 +1141,7 @@
       "{",
       "  \"ok\": true,",
       "  \"data\": {",
-      "    \"password\": \"NxK_7fRkNz-M\"",
+      "    \"password\": \"n12ye-m9cZZC\"",
       "  }",
       "}"
     ]

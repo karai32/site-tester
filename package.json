@@ -2,7 +2,7 @@
   "name": "808-checker",
   "version": "0.1.0",
   "private": true,
-  "description": "808 Checker — сервис проверки сайтов",
+  "description": "808 Checker - сервис проверки сайтов",
   "type": "module",
   "engines": {
     "node": ">=22"

@@ -10,7 +10,7 @@
 			<%= scenarioTitle(scenario) %>
 			<span class="custom-badge status-<%= scenario.is_active ? 'green' : 'grey' %> align-middle"><%= scenario.is_active ? 'Активный' : 'Неактивный' %></span>
 		</h1>
-		<p class="page-subtitle">Создан <%= formatDate(scenario.created_at) %><%= scenario.is_full ? ' · полная проверка: все тесты на всех страницах сайта' : '' %></p>
+		<p class="page-subtitle">Создан: <%= formatDate(scenario.created_at) %></p>
 	</div>
 	<div class="page-subtitle mt-0">Автор сценария: <span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span></div>
 </div>
@@ -58,7 +58,7 @@
 	</div>
 
 	<div class="col-xl-6">
-		<%# Запуск: сейчас (с подтверждением в окне) или отложенный — в выбранные дату и время %>
+		<%# Запуск: сейчас (с подтверждением в окне) или отложенный - в выбранные дату и время %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Запуск проверки</h2>
@@ -74,7 +74,7 @@
 					<% } %>
 				</div>
 
-				<%# Дата и время отложенной проверки — по Москве %>
+				<%# Дата и время отложенной проверки - по Москве %>
 				<div class="collapse <%= deferredErrors.length > 0 ? 'show' : '' %>" id="deferred-form">
 					<form class="soft-box deferred-form" method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/deferred">
 						<% if (deferredErrors.length > 0) { %>
@@ -102,7 +102,7 @@
 				<% } %>
 				<%- include('../partials/launch-modal', { scenario, summary }) %>
 			<% } else { %>
-				<p class="panel__empty">Сценарий неактивен. Чтобы запустить проверку, сначала активируйте его.</p>
+				<p class="panel__empty">Сценарий неактивен</p>
 			<% } %>
 		</section>
 
@@ -140,8 +140,6 @@
 						<span class="schedule-box__value"><%= scheduleText(scenario) %></span>
 						<% if (scenario.schedule_type && scenario.is_active) { %>
 							<span class="schedule-box__next">Следующий запуск: <%= formatDateShort(scenario.next_run_at) %></span>
-						<% } else if (scenario.schedule_type) { %>
-							<span class="schedule-box__next">Сценарий неактивен — по расписанию не запускается</span>
 						<% } %>
 					</div>
 					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>?edit=schedule#schedule" class="btn btn-primary btn-pill">Изменить</a>

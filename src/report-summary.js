@@ -1,4 +1,4 @@
-// Результаты отчёта по категориям — для страницы отчёта и сводки на дашборде
+// Результаты отчёта по категориям - для страницы отчёта и сводки на дашборде
 import { categories as testCategories } from './tests/index.js';
 
 // [{ id, title, shortTitle, icon, results, passedCount }] в порядке запуска тестов
@@ -8,7 +8,7 @@ export function groupByCategory(results) {
   for (const result of results) {
     let group = groups.find((item) => item.id === result.category_id);
 
-    // Первый тест категории — заводим для неё группу
+    // Первый тест категории - заводим для неё группу
     if (!group) {
       // Иконку и короткое название берём из списка тестов. Если категорию с тех пор
       // переименовали или удалили, остаётся название, сохранённое в отчёте.

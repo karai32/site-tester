@@ -12,8 +12,8 @@ export async function takeScreenshot(page, { fullPage = false } = {}) {
   return page.screenshot({ type: 'jpeg', quality: fullPage ? 45 : 60, fullPage });
 }
 
-// HTTP-статусы адресов. Возвращает Map: адрес → { status, error }.
-// Сначала HEAD, а если сервер его не поддерживает (405, 501) — GET.
+// HTTP-статусы адресов. Возвращает Map: адрес -> { status, error }.
+// Сначала HEAD, а если сервер его не поддерживает (405, 501) - GET.
 export async function getStatuses(urls, { batchSize = 8, timeoutMs = 15_000 } = {}) {
   const results = new Map();
   const api = await request.newContext();

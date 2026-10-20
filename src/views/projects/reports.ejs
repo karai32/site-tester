@@ -3,7 +3,7 @@
 <div class="page-head">
 	<div>
 		<h1 class="page-title">Архив отчётов</h1>
-		<p class="page-subtitle"><i class="feather-link"></i><%= displayUrl(project.url) %> — <%= totalReports %> <%= plural(totalReports, ['отчёт', 'отчёта', 'отчётов']) %></p>
+		<p class="page-subtitle"><i class="feather-link"></i><%= displayUrl(project.url) %> · <%= totalReports %> <%= plural(totalReports, ['отчёт', 'отчёта', 'отчётов']) %></p>
 	</div>
 </div>
 
@@ -73,7 +73,7 @@
 	<% } %>
 	<% for (const report of pagination.items) { %>
 		<div class="list-row">
-			<%# Полная проверка — залитая плитка, частичная — контурная %>
+			<%# Полная проверка - залитая плитка, частичная - контурная %>
 			<% if (report.scenario_is_full) { %>
 				<span class="icon-box"><i class="feather-shield"></i></span>
 			<% } else { %>

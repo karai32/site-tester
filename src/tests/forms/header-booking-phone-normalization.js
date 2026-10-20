@@ -42,7 +42,7 @@ export default {
     const media = [];
     const lines = [];
     const problems = [];
-    let expected = null; // результат базового ввода — с ним сравниваются остальные
+    let expected = null; // результат базового ввода - с ним сравниваются остальные
 
     for (const step of steps) {
       await phoneField.fill('');
@@ -53,8 +53,8 @@ export default {
       const result = await phoneField.inputValue();
       if (expected === null) expected = result;
 
-      lines.push(`${lines.length + 1}. ${step.description} → ${result}`);
-      media.push({ data: await phoneField.screenshot({ type: 'jpeg', quality: 60 }), caption: `${step.description} → ${result}` });
+      lines.push(`${lines.length + 1}. ${step.description} -> ${result}`);
+      media.push({ data: await phoneField.screenshot({ type: 'jpeg', quality: 60 }), caption: `${step.description} -> ${result}` });
 
       if (result !== expected) {
         problems.push(`${step.description}: приводится к «${result}», а не к ожидаемому «${expected}»`);

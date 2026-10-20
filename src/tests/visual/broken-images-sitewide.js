@@ -32,7 +32,7 @@ export default {
   title: 'Отсутствие «битых» изображений по всем страницам сайта',
 
   async run({ pages, getHtml }) {
-    // Картинка → страницы, на которых она стоит
+    // Картинка -> страницы, на которых она стоит
     const imagePages = new Map();
     for (const pageUrl of pages) {
       for (const imageUrl of extractImageUrls(getHtml(pageUrl), pageUrl)) {

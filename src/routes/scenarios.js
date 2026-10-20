@@ -37,7 +37,7 @@ const NOTICES = {
 
 // Данные формы сценария. Возвращает { form, errors }: что выбрано и что не так (список текстов).
 function readScenarioForm(body) {
-  if (!body) body = {}; // запрос без формы — как пустая форма
+  if (!body) body = {}; // запрос без формы - как пустая форма
   const { scenario, errors } = cleanScenario({
     name: body.name,
     testIds: toList(body.tests),
@@ -48,10 +48,10 @@ function readScenarioForm(body) {
   return { form: scenario, errors: Object.values(errors) };
 }
 
-// Показать форму сценария. source — исходный сценарий, если это копия; errors — ошибки заполнения.
+// Показать форму сценария. source - исходный сценарий, если это копия; errors - ошибки заполнения.
 function showForm(reply, project, form, source, errors) {
-  let title = `Создание сценария — ${project.name}`;
-  if (source) title = `Обновление сценария — ${project.name}`;
+  let title = `Создание сценария - ${project.name}`;
+  if (source) title = `Обновление сценария - ${project.name}`;
 
   if (errors.length > 0) reply.code(400);
   return reply.view('scenarios/form.ejs', {
@@ -65,14 +65,14 @@ function showForm(reply, project, form, source, errors) {
   }, { layout: 'layouts/app.ejs' });
 }
 
-// Страница сценария. options — что отличается от обычного вида:
+// Страница сценария. options - что отличается от обычного вида:
 // форма регулярности открыта, ошибки, сообщение после сохранения.
 function showScenarioPage(reply, project, scenario, options) {
   // Ошибки передаются, только когда форму прислали с ошибками
   if (options.scheduleErrors || options.deferredErrors || options.notificationErrors) reply.code(400);
 
   return reply.view('scenarios/show.ejs', {
-    title: `${scenarioTitle(scenario)} — ${project.name}`,
+    title: `${scenarioTitle(scenario)} - ${project.name}`,
     project,
     scenario,
     summary: scenarioSummary(scenario),
@@ -89,7 +89,7 @@ function showScenarioPage(reply, project, scenario, options) {
   }, { layout: 'layouts/app.ejs' });
 }
 
-// Проект и сценарий из адреса /projects/:id/scenarios/:sid. null — если чего-то нет
+// Проект и сценарий из адреса /projects/:id/scenarios/:sid. null - если чего-то нет
 // или сценарий из другого проекта.
 function loadScenario(request) {
   const project = findProjectById(request.params.id);
@@ -110,7 +110,7 @@ export default async function scenarioRoutes(app) {
     // Параметры из адреса: ?status=inactive&author=...&cat=seo&regular=yes&sort=tests&page=2
     const showInactive = request.query.status === 'inactive';
     const author = String(request.query.author || '');
-    const regular = String(request.query.regular || ''); // 'yes', 'no' или '' — все
+    const regular = String(request.query.regular || ''); // 'yes', 'no' или '' - все
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
@@ -129,7 +129,7 @@ export default async function scenarioRoutes(app) {
     const scenariosUrl = (changes) => listUrl(`/projects/${project.id}/scenarios`, { ...currentFilters, ...changes });
 
     return reply.view('scenarios/list.ejs', {
-      title: `Сценарии — ${project.name}`,
+      title: `Сценарии - ${project.name}`,
       project,
       showInactive,
       activeCount: result.activeCount,
@@ -157,7 +157,7 @@ export default async function scenarioRoutes(app) {
       testIds: [],
       pageSets: [],
       schedule: { type: null, time: null, number: null },
-      notifications: defaultNotifications(reply.locals.user), // получатели — сам автор
+      notifications: defaultNotifications(reply.locals.user), // получатели - сам автор
     };
     return showForm(reply, project, emptyForm, null, []);
   });
@@ -174,7 +174,7 @@ export default async function scenarioRoutes(app) {
     return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
   });
 
-  // Страница сценария. ?edit=schedule — открыта форма регулярности, ?saved=... — сообщение
+  // Страница сценария. ?edit=schedule - открыта форма регулярности, ?saved=... - сообщение
   app.get('/projects/:id/scenarios/:sid', async (request, reply) => {
     const data = loadScenario(request);
     if (!data) return reply.callNotFound();
@@ -227,7 +227,7 @@ export default async function scenarioRoutes(app) {
     return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=notifications`);
   });
 
-  // Запланировать отложенную проверку. Дата и время в форме — московские.
+  // Запланировать отложенную проверку. Дата и время в форме - московские.
   app.post('/projects/:id/scenarios/:sid/deferred', async (request, reply) => {
     const data = loadScenario(request);
     if (!data) return reply.callNotFound();
@@ -261,7 +261,7 @@ export default async function scenarioRoutes(app) {
     const { project, scenario } = data;
 
     const form = {
-      name: revisionName(scenario), // «Полный аудит #2» → «Полный аудит #3»
+      name: revisionName(scenario), // «Полный аудит #2» -> «Полный аудит #3»
       testIds: scenarioTestIds(scenario),
       pageSets: scenarioPageSetIds(scenario),
       schedule: scenarioSchedule(scenario),
@@ -270,7 +270,7 @@ export default async function scenarioRoutes(app) {
     return showForm(reply, project, form, scenario, []);
   });
 
-  // Сохранение копии — новый сценарий-редакция. Исходный остаётся как был.
+  // Сохранение копии - новый сценарий-редакция. Исходный остаётся как был.
   app.post('/projects/:id/scenarios/:sid/copy', async (request, reply) => {
     const data = loadScenario(request);
     if (!data) return reply.callNotFound();

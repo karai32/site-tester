@@ -1788,3 +1788,72 @@ body {
 	flex: 1 1 320px;
 	margin-top: 0;
 }
+
+/* --- Справка по API (Настройки → Справка по API) --- */
+
+/* Таблица: слева подпись, справа значение или пример */
+.api-table {
+	width: 100%;
+	margin-top: 20px;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+.api-table th,
+.api-table td {
+	padding: 12px 16px;
+	border: 1px solid var(--border);
+	vertical-align: top;
+}
+.api-table th {
+	width: 210px;
+	color: var(--muted);
+	font-weight: 500;
+}
+.api-table code {
+	color: var(--ink);
+	font-size: 13px;
+}
+/* Запрос и ответ: моноширинный текст, длинные строки переносятся */
+.api-table pre {
+	margin: 0;
+	color: var(--ink);
+	font-size: 12.5px;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.api-example {
+	margin-top: 24px;
+}
+.api-example__head {
+	background: var(--muted-bg);
+}
+.api-example__title {
+	display: block;
+	color: var(--ink);
+	font-size: 16px;
+	font-weight: 500;
+}
+.api-example__note {
+	display: block;
+	margin-top: 4px;
+	color: var(--muted);
+	font-size: 13px;
+}
+/* Ссылки на разделы */
+.api-sections {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 24px;
+}
+
+@media (max-width: 767.98px) {
+	.api-table th {
+		width: 90px;
+	}
+	.api-table th,
+	.api-table td {
+		padding: 10px;
+	}
+}

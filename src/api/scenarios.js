@@ -69,7 +69,7 @@ export default async function scenariosApi(app) {
     return sendData(reply, items.map(formatReport), meta);
   });
 
-  // Новый сценарий: { name, testIds, pageSets, schedule?, notifications? } — см. docs/API.txt
+  // Новый сценарий: { name, testIds, pageSets, schedule?, notifications? } — см. справку по API
   app.post('/projects/:id/scenarios', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');

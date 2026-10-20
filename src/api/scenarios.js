@@ -22,7 +22,7 @@ function findScenarioItem(id) {
   const scenario = findScenarioById(id);
   if (!scenario) return undefined;
 
-  // Ищем сценарий среди активных и неактивных его проекта — там уже посчитаны цифры
+  // Ищем сценарий среди активных и неактивных его проекта - там уже посчитаны цифры
   const noFilters = { author: '', categories: [], regular: '', sort: 'new' };
   const active = listScenarios(scenario.project_id, { ...noFilters, inactive: false }).scenarios;
   const inactive = listScenarios(scenario.project_id, { ...noFilters, inactive: true }).scenarios;
@@ -60,7 +60,7 @@ export default async function scenariosApi(app) {
     return sendData(reply, formatScenario(item));
   });
 
-  // Отчёты сценария от самого недавнего до самого первого — для «Сводки по сценарию»
+  // Отчёты сценария от самого недавнего до самого первого - для «Сводки по сценарию»
   app.get('/scenarios/:id/reports', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -69,7 +69,7 @@ export default async function scenariosApi(app) {
     return sendData(reply, items.map(formatReport), meta);
   });
 
-  // Новый сценарий: { name, testIds, pageSets, schedule?, notifications? } — см. справку по API
+  // Новый сценарий: { name, testIds, pageSets, schedule?, notifications? } - см. справку по API
   app.post('/projects/:id/scenarios', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
@@ -83,7 +83,7 @@ export default async function scenariosApi(app) {
   });
 
   // «Скопировать и изменить»: новая редакция сценария, исходный не меняется.
-  // Те же поля, что при создании; непереданные берутся из исходного, название — «… #N».
+  // Те же поля, что при создании; непереданные берутся из исходного, название - «... #N».
   app.post('/scenarios/:id/copy', async (request, reply) => {
     const source = findScenarioById(request.params.id);
     if (!source) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -115,7 +115,7 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Регулярность: { type, time, number }, type = null — нерегулярный
+  // Регулярность: { type, time, number }, type = null - нерегулярный
   app.put('/scenarios/:id/schedule', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -139,11 +139,11 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Отложенная проверка: { runAt: '2026-10-20T06:00:00Z' } — один запуск в это время
+  // Отложенная проверка: { runAt: '2026-10-20T06:00:00Z' } - один запуск в это время
   app.put('/scenarios/:id/deferred', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
-    if (!scenario.is_active) return sendError(reply, 409, 'conflict', 'Сценарий выключен: сначала включите его');
+    if (!scenario.is_active) return sendError(reply, 409, 'conflict', 'Сценарий выключен');
 
     let runAt = new Date(String((request.body || {}).runAt || ''));
     if (Number.isNaN(runAt.getTime())) runAt = null; // не дата
@@ -162,11 +162,11 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Запустить проверку сейчас: она встаёт в очередь, ответ — новый отчёт со статусом queued
+  // Запустить проверку сейчас: она встаёт в очередь, ответ - новый отчёт со статусом queued
   app.post('/scenarios/:id/checks', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
-    if (!scenario.is_active) return sendError(reply, 409, 'conflict', 'Сценарий выключен: сначала включите его');
+    if (!scenario.is_active) return sendError(reply, 409, 'conflict', 'Сценарий выключен');
 
     const reportId = createReport({
       projectId: scenario.project_id,

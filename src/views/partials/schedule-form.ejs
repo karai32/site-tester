@@ -1,7 +1,7 @@
 <%#
 	Поля регулярности: шаг 2 формы сценария и форма на странице сценария.
-	Нужен schedule: { type, time, number } — что выбрано; type = null — нерегулярный.
-	Варианты расписания (SCHEDULE_TYPES) — из src/schedule.js. Сервер читает поля в readScheduleForm.
+	Нужен schedule: { type, time, number } - что выбрано; type = null - нерегулярный.
+	Варианты расписания (SCHEDULE_TYPES) - из src/schedule.js. Сервер читает поля в readScheduleForm.
 %>
 <%
 	const isRegular = Boolean(schedule.type);
@@ -9,7 +9,7 @@
 	if (schedule.type) chosenType = schedule.type;
 %>
 <div class="schedule-fields">
-	<%# «Регулярная / Нерегулярная» — переключатель из радиокнопок Bootstrap (btn-check) %>
+	<%# «Регулярная / Нерегулярная» - переключатель из радиокнопок Bootstrap (btn-check) %>
 	<div class="segmented" role="group" aria-label="Регулярность">
 		<input type="radio" class="btn-check" name="regular" value="1" id="regular-yes" <%= isRegular ? 'checked' : '' %>>
 		<label class="segmented__item" for="regular-yes">Регулярная</label>
@@ -18,7 +18,7 @@
 	</div>
 
 	<%# Пока выбрано «Нерегулярная», варианты скрыты (см. .schedule-fields в app.css) %>
-	<p class="schedule-manual">Сценарий будет запускаться только вручную.</p>
+	<p class="schedule-manual">Запуск только вручную</p>
 
 	<div class="schedule-options">
 		<% for (const type of SCHEDULE_TYPES) { %>

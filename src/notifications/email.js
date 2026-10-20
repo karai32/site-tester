@@ -13,7 +13,7 @@ export async function sendEmail(to, subject, text) {
     transport = nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
-      secure: SMTP_PORT === 465, // порт 465 — сразу шифрованное соединение, 587 — шифрование по ходу
+      secure: SMTP_PORT === 465, // порт 465 - сразу шифрованное соединение, 587 - шифрование по ходу
       auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
   }

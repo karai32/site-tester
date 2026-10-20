@@ -23,13 +23,13 @@ function extractLinks(html, pageUrl, siteOrigin) {
       target.search = '';
       links.add(target.href);
     } catch {
-      // некорректный адрес в href — пропускаем
+      // некорректный адрес в href - пропускаем
     }
   }
   return [...links];
 }
 
-// Скачивает адрес. Возвращает { status, html }: html — null, если это не HTML-страница.
+// Скачивает адрес. Возвращает { status, html }: html - null, если это не HTML-страница.
 async function fetchPage(api, url) {
   // Сначала HEAD: так не скачиваем PDF и картинки целиком
   const head = await api.head(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
@@ -37,7 +37,7 @@ async function fetchPage(api, url) {
   const headType = head.headers()['content-type'] || '';
   await head.dispose();
 
-  // Некоторые серверы не поддерживают HEAD (405, 501) — тогда смотрим GET
+  // Некоторые серверы не поддерживают HEAD (405, 501) - тогда смотрим GET
   const headNotSupported = headStatus === 405 || headStatus === 501;
   const looksLikeHtml = headStatus >= 200 && headStatus < 400 && headType.includes('text/html');
   if (!looksLikeHtml && !headNotSupported) return { status: headStatus, html: null };
@@ -61,12 +61,12 @@ export function readSavedHtml(htmlDir, url) {
 }
 
 /**
- * shouldStop() — если вернёт true, обход прекращается (проверку отменили).
+ * shouldStop() - если вернёт true, обход прекращается (проверку отменили).
  * Возвращает:
- *   htmlPages   — адреса HTML-страниц сайта
- *   linksByPage — Map: адрес страницы → внутренние ссылки на ней (страницы и файлы)
- *   statuses    — Map: адрес → { status, error }, HTTP-статус каждого найденного адреса
- *   truncated   — true, если обход остановлен на MAX_PAGES
+ *   htmlPages   - адреса HTML-страниц сайта
+ *   linksByPage - Map: адрес страницы -> внутренние ссылки на ней (страницы и файлы)
+ *   statuses    - Map: адрес -> { status, error }, HTTP-статус каждого найденного адреса
+ *   truncated   - true, если обход остановлен на MAX_PAGES
  */
 export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
   const start = new URL(siteUrl);

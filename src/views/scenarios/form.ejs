@@ -1,6 +1,6 @@
 <%#
-	Форма сценария: создание нового (source = null) или новая редакция копией (source — исходный сценарий).
-	form: { name, testIds, pageSets, schedule, notifications } — что отмечено.
+	Форма сценария: создание нового (source = null) или новая редакция копией (source - исходный сценарий).
+	form: { name, testIds, pageSets, schedule, notifications } - что отмечено.
 %>
 <% const action = source ? `/projects/${project.id}/scenarios/${source.id}/copy` : `/projects/${project.id}/scenarios`; %>
 <div class="breadcrumbs">
@@ -20,7 +20,7 @@
 <% if (source) { %>
 	<div class="panel info-panel">
 		<i class="feather-info"></i>
-		<p>Предзаполнено из сценария «<%= source.name %>». Все настройки унаследованы из него — измените любой параметр и сохраните как новую редакцию. Исходный сценарий останется без изменений.</p>
+		<p>Предзаполнено из сценария «<%= source.name %>». Все настройки области тестирования, регулярности и уведомлений унаследованы из него - измените любой параметр и сохраните как новую редакцию.</p>
 	</div>
 <% } %>
 
@@ -34,7 +34,7 @@
 	<section class="panel">
 		<div class="field mt-0 scenario-name-field">
 			<label for="scenario-name">Название сценария</label>
-			<input id="scenario-name" name="name" class="form-control" value="<%= form.name %>" placeholder="Например, «SEO главных страниц»" required>
+			<input id="scenario-name" name="name" class="form-control" value="<%= form.name %>" required>
 		</div>
 	</section>
 

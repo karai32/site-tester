@@ -1,5 +1,5 @@
 // Общий тест для разделов-списков с нумерованной пагинацией (статьи, галерея, отзывы...).
-// Каждый такой тест — файл в search-pagination, который вызывает createArchivePagination со своими настройками.
+// Каждый такой тест - файл в search-pagination, который вызывает createArchivePagination со своими настройками.
 import { takeScreenshot } from './common.js';
 
 const selectors = {
@@ -17,7 +17,7 @@ async function collectItemKeys(page, itemSelector) {
 }
 
 /**
- * Клик по странице 2 меняет список, а если карточки ведут на отдельные страницы —
+ * Клик по странице 2 меняет список, а если карточки ведут на отдельные страницы -
  * карточка со страницы 2 открывается.
  *
  * @param {object} config
@@ -26,7 +26,7 @@ async function collectItemKeys(page, itemSelector) {
  * @param {string} config.path          Путь раздела, например '/gallery/'
  * @param {string} config.itemSelector  Карточка списка или ссылка карточки
  * @param {string} config.itemsLabel    Название элементов в родительном падеже («статей», «отзывов»)
- * @param {boolean} [config.opensItem]  Карточки — ссылки на отдельные страницы, которые нужно открыть
+ * @param {boolean} [config.opensItem]  Карточки - ссылки на отдельные страницы, которые нужно открыть
  */
 export function createArchivePagination({ id, title, path, itemSelector, itemsLabel, opensItem = false }) {
   return {
@@ -87,13 +87,13 @@ export function createArchivePagination({ id, title, path, itemSelector, itemsLa
       if (newItems.length === 0) {
         return {
           passed: false,
-          comment: `После перехода на страницу 2 список ${itemsLabel} не изменился за ${switchTimeoutMs / 1000} секунд (на странице 1 — ${page1.length}, на странице 2 — ${page2.length}, новых нет).`,
+          comment: `После перехода на страницу 2 список ${itemsLabel} не изменился за ${switchTimeoutMs / 1000} секунд (на странице 1: ${page1.length}, на странице 2: ${page2.length}, новых нет).`,
           media,
           pages,
         };
       }
 
-      const listSummary = `Страница 2 показывает новый набор ${itemsLabel} (на странице 1 — ${page1.length}, на странице 2 — ${page2.length}, новых — ${newItems.length})`;
+      const listSummary = `Страница 2 показывает новый набор ${itemsLabel} (на странице 1: ${page1.length}, на странице 2: ${page2.length}, новых: ${newItems.length})`;
       if (!opensItem) {
         return { passed: true, comment: `${listSummary}.`, media, pages };
       }

@@ -45,7 +45,7 @@ export default {
             problems.push(`${label} (${target}), ${viewport.label}: горизонтальный скролл есть (ширина контента ${scrollWidth}px больше экрана ${clientWidth}px)`);
           }
 
-          media.push({ data: await takeScreenshot(page, { fullPage: true }), caption: `${label} — ${viewport.label}` });
+          media.push({ data: await takeScreenshot(page, { fullPage: true }), caption: `${label} - ${viewport.label}` });
         } catch (error) {
           problems.push(`${label} (${target}), ${viewport.label}: ${errorMessage(error)}`);
         } finally {

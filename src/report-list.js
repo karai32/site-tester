@@ -6,13 +6,13 @@ import { authorName, formatDateTime } from './helpers.js';
 import { SORTS, uniqueSorted } from './lists.js';
 import { scenarioCategoryIds } from './scenario-info.js';
 
-// filters: { search, author, categories, regular, sort } — как на странице архива:
-//   search — текст: ищется в номере, названии сценария, авторе и дате
-//   author — автор сценария отчёта, как в списке («Тест Т.», «808 Checker»), '' — все
-//   categories — id категорий: сценарий отчёта должен содержать все, [] — любые
-//   regular — 'yes' (проверки по расписанию), 'no' или '' — все
-//   sort — вариант из SORTS
-// Возвращает { reports, authors, total } — total: сколько всего отчётов у проекта.
+// filters: { search, author, categories, regular, sort } - как на странице архива:
+//   search - текст: ищется в номере, названии сценария, авторе и дате
+//   author - автор сценария отчёта, как в списке («Тест Т.», «808 Checker»), '' - все
+//   categories - id категорий: сценарий отчёта должен содержать все, [] - любые
+//   regular - 'yes' (проверки по расписанию), 'no' или '' - все
+//   sort - вариант из SORTS
+// Возвращает { reports, authors, total } - total: сколько всего отчётов у проекта.
 export function listReports(projectId, filters) {
   // Отчёты с цифрами для фильтров и сортировки: категории сценария, число тестов и страниц
   const scenarios = getProjectScenarios(projectId);
@@ -28,7 +28,7 @@ export function listReports(projectId, filters) {
       pagesCount: report.pages_count || 0,
     });
   }
-  // Автор — автор сценария отчёта (по ТЗ), а не тот, кто запустил проверку
+  // Автор - автор сценария отчёта (по ТЗ), а не тот, кто запустил проверку
   const authors = uniqueSorted(allReports.map((report) => authorName(report.scenario_author_name)));
 
   let reports = allReports;

@@ -1,5 +1,5 @@
 // Что входит в сценарий: тесты, категории, выборки страниц.
-// У полного сценария (is_full) — все тесты на всех страницах сайта.
+// У полного сценария (is_full) - все тесты на всех страницах сайта.
 import { PAGE_SETS } from './runner/page-sets.js';
 import { categories as testCategories } from './tests/index.js';
 
@@ -26,7 +26,7 @@ export function scenarioCategoryIds(scenario) {
   return result;
 }
 
-// Категории сценария, в каждой — только выбранные тесты: [{ id, title, icon, tests }]
+// Категории сценария, в каждой - только выбранные тесты: [{ id, title, icon, tests }]
 export function scenarioCategories(scenario) {
   const testIds = scenarioTestIds(scenario);
   const result = [];
@@ -49,7 +49,7 @@ export function scenarioPageSets(scenario) {
   return PAGE_SETS.filter((set) => ids.includes(set.id));
 }
 
-// Всё о составе сценария одним объектом — для страницы сценария и окна запуска:
+// Всё о составе сценария одним объектом - для страницы сценария и окна запуска:
 // { categories: [{ title, icon, tests }], pageSets: [{ id, title }], pageSetsText, testsCount }
 export function scenarioSummary(scenario) {
   const pageSets = scenarioPageSets(scenario);

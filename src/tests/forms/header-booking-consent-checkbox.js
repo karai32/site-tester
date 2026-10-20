@@ -2,7 +2,7 @@
 // рядом рабочая ссылка на политику. Формы ищутся по HTML страниц выборки (data-wpcf7-id).
 import { errorMessage, getStatuses } from '../helpers/common.js';
 
-// Страница → id форм, которые проверяем на ней (каждую форму — на первой странице, где она нашлась)
+// Страница -> id форм, которые проверяем на ней (каждую форму - на первой странице, где она нашлась)
 function findForms(pages, getHtml) {
   const formPage = new Map();
   for (const pageUrl of pages) {
@@ -91,14 +91,14 @@ export default {
             problems.push(`${where}: не найден чекбокс согласия на обработку персональных данных`);
           } else {
             if (consent.checked) {
-              problems.push(`${where}: чекбокс согласия отмечен по умолчанию (checked="checked") — пользователь должен подтвердить согласие сам, а не снимать уже стоящую галочку`);
+              problems.push(`${where}: чекбокс согласия отмечен по умолчанию (checked="checked"), а пользователь должен подтвердить согласие сам, а не снимать уже стоящую галочку`);
             }
             if (!consent.linkHref) {
               problems.push(`${where}: рядом с чекбоксом не найдена ссылка на политику обработки персональных данных`);
             } else {
               const linkUrl = new URL(consent.linkHref, pageUrl).href;
               const { status, error } = (await getStatuses([linkUrl])).get(linkUrl);
-              if (error) problems.push(`${where}: ссылка на политику ПДн (${linkUrl}) — ${error}`);
+              if (error) problems.push(`${where}: ссылка на политику ПДн (${linkUrl}): ${error}`);
               else if (status < 200 || status >= 400) problems.push(`${where}: ссылка на политику ПДн (${linkUrl}) вернула HTTP ${status}`);
             }
           }

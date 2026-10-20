@@ -16,7 +16,7 @@ export default async function usersApi(app) {
   });
 
   // Новый пользователь: { login, name, email?, telegramId? }. Пароль придумывает сервис
-  // и возвращает один раз — передайте его пользователю, больше его нигде не узнать.
+  // и возвращает один раз - передайте его пользователю, больше его нигде не узнать.
   app.post('/users', async (request, reply) => {
     const { user, errors } = cleanUser(request.body || {}, true);
     if (hasErrors(errors)) return sendValidationErrors(reply, errors);
@@ -26,7 +26,7 @@ export default async function usersApi(app) {
     return sendData(reply, { user: formatUser(findUserById(id)), password });
   });
 
-  // Изменение: { name?, email?, telegramId? } — непереданные поля не меняются. Логин не меняется.
+  // Изменение: { name?, email?, telegramId? } - непереданные поля не меняются. Логин не меняется.
   app.patch('/users/:id', async (request, reply) => {
     const current = findUserById(request.params.id);
     if (!current) return sendError(reply, 404, 'not_found', 'Пользователь не найден');

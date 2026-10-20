@@ -29,7 +29,7 @@ export default {
 
     const problems = [];
     if (bodyTextLength < minTextLength) {
-      problems.push(`страница содержит слишком мало текста (${bodyTextLength} символов) — раздел услуг выглядит пустым`);
+      problems.push(`страница содержит слишком мало текста (${bodyTextLength} символов), раздел услуг выглядит пустым`);
     }
     if (doctorCount === 0) problems.push('на странице направления не найдено ни одного врача');
     if (formCount === 0) problems.push('на странице направления не найдено формы записи');

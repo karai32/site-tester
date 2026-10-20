@@ -57,7 +57,7 @@ function collectCategory(tally, category, categoryLabel) {
 
   category.items.forEach((item, itemIndex) => {
     tally.itemCount += 1;
-    const itemLabel = `${categoryLabel} → ${item.name || `позиция №${itemIndex + 1}`}`;
+    const itemLabel = `${categoryLabel} -> ${item.name || `позиция №${itemIndex + 1}`}`;
     if (!item.name) tally.prices.missingName.push(itemLabel);
 
     if (!item.price) {
@@ -127,14 +127,14 @@ export default {
       tally.structure.missingBlocks.push(`${pricePagePath} (${selectors.department})`);
     }
     departments.forEach((department, departmentIndex) => {
-      const departmentLabel = `${pricePagePath} → ${department.title || `направление №${departmentIndex + 1}`}`;
+      const departmentLabel = `${pricePagePath} -> ${department.title || `направление №${departmentIndex + 1}`}`;
       if (!department.title) tally.structure.untitledDepartments.push(departmentLabel);
       if (department.categories.length === 0) tally.structure.emptyDepartments.push(departmentLabel);
       department.categories.forEach((category, categoryIndex) => {
-        collectCategory(tally, category, `${departmentLabel} → ${category.title || `категория №${categoryIndex + 1}`}`);
+        collectCategory(tally, category, `${departmentLabel} -> ${category.title || `категория №${categoryIndex + 1}`}`);
       });
     });
-    pageSummaries.push(`${pricePagePath} — ${tally.itemCount} поз.`);
+    pageSummaries.push(`${pricePagePath}: ${tally.itemCount} поз.`);
 
     // 2. Блоки цен на других страницах
     for (const path of priceBlockPaths) {
@@ -144,19 +144,19 @@ export default {
 
       if (blocks.length === 0) {
         tally.structure.missingBlocks.push(`${path} (${selectors.priceBlock})`);
-        pageSummaries.push(`${path} — блок цен не найден`);
+        pageSummaries.push(`${path}: блок цен не найден`);
         continue;
       }
 
       const itemsBefore = tally.itemCount;
       blocks.forEach(({ categories }, blockIndex) => {
-        const blockLabel = blocks.length > 1 ? `${path} → блок №${blockIndex + 1}` : path;
+        const blockLabel = blocks.length > 1 ? `${path} -> блок №${blockIndex + 1}` : path;
         if (categories.length === 0) tally.structure.emptyBlocks.push(blockLabel);
         categories.forEach((category, categoryIndex) => {
-          collectCategory(tally, category, `${blockLabel} → ${category.title || `категория №${categoryIndex + 1}`}`);
+          collectCategory(tally, category, `${blockLabel} -> ${category.title || `категория №${categoryIndex + 1}`}`);
         });
       });
-      pageSummaries.push(`${path} — ${tally.itemCount - itemsBefore} поз.`);
+      pageSummaries.push(`${path}: ${tally.itemCount - itemsBefore} поз.`);
     }
 
     // 3. Итог
@@ -176,7 +176,7 @@ export default {
       .filter(([list]) => list.length > 0)
       .map(([list, label]) => `${label} (${list.length}): ${formatExamples(list)}`);
 
-    const summary = `страниц — ${pageSummaries.length} (${pageSummaries.join(', ')}), категорий — ${tally.categoryCount}, позиций — ${tally.itemCount}`;
+    const summary = `страниц: ${pageSummaries.length} (${pageSummaries.join(', ')}), категорий: ${tally.categoryCount}, позиций: ${tally.itemCount}`;
 
     if (problems.length > 0) {
       return {

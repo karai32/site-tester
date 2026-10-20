@@ -14,4 +14,4 @@ if (Object.keys(errors).length > 0) {
 
 const projectId = createProjectWithScenario(project);
 console.log(`Проект «${project.name}» создан, его страница: /projects/${projectId}`);
-console.log('Вместе с ним создан сценарий «Полная проверка» — все тесты на всех страницах.');
+console.log('Вместе с ним создан сценарий «Полная проверка»: все тесты на всех страницах.');

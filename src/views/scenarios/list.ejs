@@ -8,7 +8,7 @@
 	<a href="/projects/<%= project.id %>/scenarios/new" class="btn btn-primary btn-pill"><i class="feather-plus"></i> Новый сценарий</a>
 </div>
 
-<%# Переключатель «Активные / Неактивные» — вкладки-«таблетки» кита %>
+<%# Переключатель «Активные / Неактивные» - вкладки-«таблетки» кита %>
 <div class="tabs-pill">
 	<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
 		<li class="nav-item"><a class="nav-link <%= showInactive ? '' : 'active' %>" href="<%= scenariosUrl({ status: '', page: '' }) %>">Активные сценарии · <%= activeCount %></a></li>

@@ -8,7 +8,7 @@ function showProfile(reply, options) {
 }
 
 export default async function profileRoutes(app) {
-  // ?saved=1 — показать «Сохранено»
+  // ?saved=1 - показать «Сохранено»
   app.get('/profile', async (request, reply) => {
     const user = reply.locals.user;
     const contacts = { email: user.email || '', telegramId: user.telegram_id || '' };
@@ -26,7 +26,7 @@ export default async function profileRoutes(app) {
     const errors = [];
     if (contacts.email && !isEmail(contacts.email)) errors.push('Неверная почта');
     if (contacts.telegramId && !isTelegramId(contacts.telegramId)) {
-      errors.push('Telegram ID — это число. Узнать его можно, написав боту');
+      errors.push('Telegram ID должен быть числом');
     }
     if (errors.length > 0) return showProfile(reply, { contacts, errors, saved: false });
 

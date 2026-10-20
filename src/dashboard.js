@@ -5,12 +5,12 @@ import { groupByCategory } from './report-summary.js';
 import { upcomingRuns } from './schedule.js';
 import { scenarioSummary } from './scenario-info.js';
 
-const UPCOMING_COUNT = 5; // сколько ближайших проверок показывать (по ТЗ — 5)
-const RECENT_COUNT = 10; // сколько последних отчётов показывать (по ТЗ — 10)
+const UPCOMING_COUNT = 5; // сколько ближайших проверок показывать (по ТЗ - 5)
+const RECENT_COUNT = 10; // сколько последних отчётов показывать (по ТЗ - 10)
 
 // { allScenarios, scenarios, upcoming, lastFull, lastFullCategories, lastPartial, recentReports }
 export function dashboardData(projectId) {
-  // Активные сценарии и их состав — для запуска проверки
+  // Активные сценарии и их состав - для запуска проверки
   const allScenarios = getProjectScenarios(projectId);
   const scenarios = [];
   for (const scenario of allScenarios) {

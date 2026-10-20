@@ -7,7 +7,7 @@ const selectors = {
   newsLink: '.news-item__img',
 };
 
-// "10.09.2026" → число для сравнения дат, или null
+// "10.09.2026" -> число для сравнения дат, или null
 function parseRuDate(text) {
   const match = text.trim().match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
   if (!match) return null;

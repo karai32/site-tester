@@ -1,11 +1,11 @@
 // Параметры списков в API: страница, фильтры, сортировка.
-// Те же, что в адресах страниц сервиса, только категории — через запятую: ?categories=seo,forms
+// Те же, что в адресах страниц сервиса, только категории - через запятую: ?categories=seo,forms
 import { paginate, sortFromQuery } from '../lists.js';
 
 const DEFAULT_PER_PAGE = 10;
 const MAX_PER_PAGE = 100;
 
-// 'seo,forms' → ['seo', 'forms']; пусто — []
+// 'seo,forms' -> ['seo', 'forms']; пусто - []
 export function splitCategories(value) {
   const ids = [];
   for (const part of String(value || '').split(',')) {
@@ -20,7 +20,7 @@ export function listFilters(query) {
   return {
     author: String(query.author || ''),
     categories: splitCategories(query.categories),
-    regular: String(query.regular || ''), // 'yes', 'no' или '' — все
+    regular: String(query.regular || ''), // 'yes', 'no' или '' - все
     sort: sortFromQuery(query.sort),
   };
 }

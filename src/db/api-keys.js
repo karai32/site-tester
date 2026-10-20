@@ -12,7 +12,7 @@ export function getUserApiKeys(userId) {
   return db.prepare('SELECT * FROM api_keys WHERE user_id = ? ORDER BY id DESC').all(userId);
 }
 
-// Владелец ключа по хешу ключа (или undefined) и id ключа — в поле api_key_id
+// Владелец ключа по хешу ключа (или undefined) и id ключа - в поле api_key_id
 export function findUserByApiKey(keyHash) {
   return db.prepare(`
     SELECT users.*, api_keys.id AS api_key_id

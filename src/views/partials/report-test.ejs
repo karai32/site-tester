@@ -1,5 +1,5 @@
-<%# Один тест в отчёте. Нужен result — строка из report_results. %>
-<% const PROBLEMS_SHOWN = 3; // остальные ошибки — по кнопке «Показать ещё» %>
+<%# Один тест в отчёте. Нужен result - строка из report_results. %>
+<% const PROBLEMS_SHOWN = 3; // остальные ошибки - по кнопке «Показать ещё» %>
 <div class="test-item__head">
 	<% if (result.passed) { %>
 		<i class="feather-check-circle text-success test-item__icon"></i>
@@ -43,8 +43,8 @@
 						// Видео (.webm) и скриншоты открываются в одном окне, отличаются иконкой и подписью
 						const isVideo = item.file.endsWith('.webm');
 						let caption = item.caption;
-						if (!caption && isVideo) caption = `${result.test_title} — видео`;
-						if (!caption && !isVideo) caption = `${result.test_title} — скриншот ${index + 1}`;
+						if (!caption && isVideo) caption = `${result.test_title} - видео`;
+						if (!caption && !isVideo) caption = `${result.test_title} - скриншот ${index + 1}`;
 					%>
 					<button type="button" class="media-tile" title="<%= caption %>"
 						data-media="/media/<%= item.file %>"

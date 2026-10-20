@@ -48,7 +48,7 @@
 
 		</section>
 
-		<%# Окна подтверждения запуска — по одному на сценарий %>
+		<%# Окна подтверждения запуска - по одному на сценарий %>
 		<% for (const scenario of scenarios) { %>
 			<%- include('../partials/launch-modal', { scenario, summary: scenario.summary }) %>
 		<% } %>
@@ -145,7 +145,7 @@
 		data-scenario-summary-select data-url="/projects/<%= project.id %>/scenario-summary">
 		<option value="">Выберите сценарий</option>
 		<% for (const scenario of summaryScenarios) { %>
-			<option value="<%= scenario.id %>"><%= scenario.name %> — <%= authorName(scenario.author_name) %></option>
+			<option value="<%= scenario.id %>"><%= scenario.name %> - <%= authorName(scenario.author_name) %></option>
 		<% } %>
 	</select>
 	<div data-scenario-summary></div>

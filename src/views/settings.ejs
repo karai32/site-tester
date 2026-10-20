@@ -1,23 +1,19 @@
 <div class="page-head">
 	<div>
 		<h1 class="page-title">Настройки</h1>
-		<p class="page-subtitle">Настройки сервиса</p>
 	</div>
 </div>
 
 <%# API-ключи: по ним сторонняя админка работает с сервисом от имени владельца ключа %>
 <section class="panel">
 	<div class="panel__head">
-		<div>
-			<h2 class="panel__title">API-ключи</h2>
-			<p class="page-subtitle mt-2">Запросы к API с ключом выполняются от вашего имени</p>
-		</div>
+		<h2 class="panel__title">API-ключи</h2>
 		<a href="/settings/api" class="btn btn-outline-primary btn-pill btn-pill-sm"><i class="feather-book-open"></i> Справка по API</a>
 	</div>
 
 	<% if (newKey) { %>
 		<div class="api-key-new">
-			<p class="api-key-new__title">Ключ «<%= newKey.name %>» создан. Скопируйте его сейчас — больше он нигде не будет показан.</p>
+			<p class="api-key-new__title">Ключ «<%= newKey.name %>» создан. Скопируйте его: больше он не будет показан.</p>
 			<div class="api-key-new__row">
 				<input type="text" class="form-control" value="<%= newKey.key %>" readonly data-select-on-focus aria-label="Новый API-ключ">
 				<button type="button" class="btn btn-primary btn-pill" data-copy="<%= newKey.key %>">Скопировать</button>
@@ -33,7 +29,7 @@
 			<span class="icon-box icon-box-outline"><i class="feather-lock"></i></span>
 			<div class="list-row__main">
 				<h3 class="list-row__title"><%= apiKey.name %></h3>
-				<div class="list-row__sub"><%= apiKey.key_start %>… · создан <%= formatDateShort(apiKey.created_at) %> · <%= apiKey.last_used_at ? 'использован ' + formatDateShort(apiKey.last_used_at) : 'ещё не использован' %></div>
+				<div class="list-row__sub"><%= apiKey.key_start %>... · создан <%= formatDateShort(apiKey.created_at) %> · <%= apiKey.last_used_at ? 'использован ' + formatDateShort(apiKey.last_used_at) : 'ещё не использован' %></div>
 			</div>
 			<form method="post" action="/settings/api-keys/<%= apiKey.id %>/delete" data-confirm="Удалить ключ «<%= apiKey.name %>»? Запросы с ним сразу перестанут работать.">
 				<button type="submit" class="btn btn-pill btn-pill-sm btn-soft-danger">Удалить</button>
@@ -44,8 +40,8 @@
 	<form class="api-key-form" method="post" action="/settings/api-keys">
 		<% if (error) { %><div class="alert alert-danger w-100" role="alert"><%= error %></div><% } %>
 		<div class="field api-key-form__name">
-			<label for="api-key-name">Новый ключ: для чего он</label>
-			<input id="api-key-name" name="name" class="form-control" placeholder="Например, «Админка 808»" maxlength="100" required>
+			<label for="api-key-name">Новый ключ</label>
+			<input id="api-key-name" name="name" class="form-control" placeholder="Название ключа" maxlength="100" required>
 		</div>
 		<button type="submit" class="btn btn-primary btn-pill">Создать ключ</button>
 	</form>

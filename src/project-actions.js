@@ -1,4 +1,4 @@
-// Действия с проектами — общие для страниц сервиса, API и команды add-project:
+// Действия с проектами - общие для страниц сервиса, API и команды add-project:
 // проверка данных, создание с полным сценарием, аватарка, удаление вместе с файлами.
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -19,14 +19,14 @@ export function cleanProject(input) {
   return { project, errors };
 }
 
-// Новый проект и его «Полная проверка» — все тесты на всех страницах. Возвращает id проекта.
+// Новый проект и его «Полная проверка» - все тесты на всех страницах. Возвращает id проекта.
 export function createProjectWithScenario({ name, url }) {
   const projectId = createProject({ name, url });
   createScenario({ projectId, name: 'Полная проверка', isFull: true });
   return projectId;
 }
 
-// Тип картинки по первым байтам файла: 'png', 'jpg', 'webp' или null — не подходит.
+// Тип картинки по первым байтам файла: 'png', 'jpg', 'webp' или null - не подходит.
 // Смотрим на сам файл, а не на его имя: имя можно подписать любое.
 function imageExtension(data) {
   if (data[0] === 0x89 && data.toString('ascii', 1, 4) === 'PNG') return 'png';
@@ -41,7 +41,7 @@ export function saveProjectLogo(project, data) {
   const extension = imageExtension(data);
   if (!extension) return false;
 
-  // Время в имени файла — чтобы браузер не показывал старую картинку из кэша
+  // Время в имени файла - чтобы браузер не показывал старую картинку из кэша
   const file = `projects/${project.id}-${Date.now()}.${extension}`;
   mkdirSync(join(MEDIA_DIR, 'projects'), { recursive: true });
   writeFileSync(join(MEDIA_DIR, file), data);

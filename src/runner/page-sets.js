@@ -8,7 +8,7 @@ export const PAGE_SETS = [
   { id: 'all', title: 'Все страницы сайта' },
 ];
 
-// Части пути: https://site.ru/doctors/ivanov/ → ['doctors', 'ivanov']
+// Части пути: https://site.ru/doctors/ivanov/ -> ['doctors', 'ivanov']
 function pathParts(url) {
   const path = new URL(url).pathname;
   return path.split('/').filter((part) => part !== '');
@@ -19,7 +19,7 @@ function topPages(pages) {
   return pages.filter((url) => pathParts(url).length <= 1);
 }
 
-// Синглы — страницы глубже первого уровня: /doctors/ivanov/.
+// Синглы - страницы глубже первого уровня: /doctors/ivanov/.
 // Чтобы попали разные разделы, берём страницы по кругу: первую из каждого раздела,
 // потом вторую из каждого и так далее, пока не наберём limit.
 function singlePages(pages, limit) {
@@ -72,11 +72,11 @@ export function selectPages(htmlPages, pageSetIds, siteUrl) {
 // Внутренние ссылки, найденные на выбранных страницах:
 // [{ url, status, error, foundOn: [страницы, где стоит ссылка] }]
 export function collectLinks(pages, linksByPage, statuses) {
-  const links = new Map(); // адрес ссылки → { url, status, error, foundOn }
+  const links = new Map(); // адрес ссылки -> { url, status, error, foundOn }
 
   for (const pageUrl of pages) {
     for (const url of linksByPage.get(pageUrl) || []) {
-      // Первая встреча ссылки — запоминаем её статус из обхода (если обход до неё дошёл)
+      // Первая встреча ссылки - запоминаем её статус из обхода (если обход до неё дошёл)
       if (!links.has(url)) {
         const known = statuses.get(url);
         links.set(url, {

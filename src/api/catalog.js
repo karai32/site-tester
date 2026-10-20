@@ -30,7 +30,7 @@ export default async function catalogApi(app) {
         title: type.title,
         hint: type.hint || null,
         hasTime: type.hasTime,
-        number: type.number || null, // { unit, min, max, default } — у вариантов с числом
+        number: type.number || null, // { unit, min, max, default } - у вариантов с числом
       });
     }
 

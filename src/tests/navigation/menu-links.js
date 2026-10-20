@@ -25,9 +25,9 @@ export default {
       className: link.getAttribute('class') || '',
     })));
 
-    const uniqueLinks = new Map(); // адрес → название пункта меню
+    const uniqueLinks = new Map(); // адрес -> название пункта меню
     for (const link of rawLinks) {
-      // Заголовки колонок мега-меню — не ссылки
+      // Заголовки колонок мега-меню - не ссылки
       const isMegaMenuTitle = link.className.split(/\s+/).includes('mega__title');
       if (isMegaMenuTitle && link.href === '#') continue;
 

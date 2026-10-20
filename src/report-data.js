@@ -1,4 +1,4 @@
-// Отчёт со всеми данными — общий для страницы отчёта, скачивания и API.
+// Отчёт со всеми данными - общий для страницы отчёта, скачивания и API.
 import { readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { MEDIA_DIR } from './config.js';
@@ -6,7 +6,7 @@ import { findProjectById } from './db/projects.js';
 import { findReportWithNames, getReportResults } from './db/reports.js';
 import { groupByCategory } from './report-summary.js';
 
-// Отчёт, проект и результаты, сгруппированные по категориям в порядке запуска. Нет отчёта — null.
+// Отчёт, проект и результаты, сгруппированные по категориям в порядке запуска. Нет отчёта - null.
 export function loadReport(reportId) {
   const report = findReportWithNames(reportId);
   if (!report) return null;
@@ -24,11 +24,11 @@ function mediaDataUrl(file) {
     const data = readFileSync(join(MEDIA_DIR, file));
     return `data:${mimeTypes[extname(file)]};base64,${data.toString('base64')}`;
   } catch {
-    return null; // файл удалили — в отчёте его просто не будет
+    return null; // файл удалили - в отчёте его просто не будет
   }
 }
 
-// Отчёт одним HTML-файлом со встроенными скриншотами — ответ на запрос скачивания
+// Отчёт одним HTML-файлом со встроенными скриншотами - ответ на запрос скачивания
 export function sendReportDownload(reply, data) {
   for (const category of data.categories) {
     for (const result of category.results) {

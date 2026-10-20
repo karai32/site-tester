@@ -1,5 +1,5 @@
 <%#
-	Справка по API. Примеры — настоящие запросы и ответы с тестового сервера (src/api/examples.json).
+	Справка по API. Примеры - настоящие запросы и ответы с тестового сервера (src/api/examples.json).
 	Нужны apiUrl и sections: [{ title, examples: [{ title, note, request, status, response }] }].
 %>
 <div class="breadcrumbs"><a href="/settings">Настройки</a> / <span>Справка по API</span></div>
@@ -7,7 +7,6 @@
 <div class="page-head">
 	<div>
 		<h1 class="page-title">Справка по API</h1>
-		<p class="page-subtitle">Все запросы с примерами настоящих ответов</p>
 	</div>
 </div>
 
@@ -17,16 +16,16 @@
 		<tr><th>Адрес</th><td><code><%= apiUrl %></code></td></tr>
 		<tr><th>Ключ</th><td>Заголовок в каждом запросе: <code>Authorization: Bearer &lt;ключ&gt;</code>. Ключ создаётся в <a href="/settings">Настройках</a>. Запросы выполняются от имени того, кто создал ключ.</td></tr>
 		<tr><th>Тело запроса</th><td>JSON с заголовком <code>Content-Type: application/json</code> (кроме загрузки аватарки). У запросов без тела этот заголовок не передавать.</td></tr>
-		<tr><th>Ответ</th><td>Успех — <code>{"ok": true, "data": ...}</code>, ошибка — <code>{"ok": false, "error": {...}}</code>.</td></tr>
-		<tr><th>Списки</th><td>По страницам: <code>?page=2&amp;perPage=20</code> (по умолчанию 10, максимум 100). В <code>meta</code> — номер страницы и сколько всего.</td></tr>
-		<tr><th>Даты</th><td>В UTC: <code>2026-10-20T06:00:00Z</code>. Время в расписании — московское: <code>"17:00"</code>.</td></tr>
+		<tr><th>Ответ</th><td>Успех: <code>{"ok": true, "data": ...}</code>, ошибка: <code>{"ok": false, "error": {...}}</code>.</td></tr>
+		<tr><th>Списки</th><td>По страницам: <code>?page=2&amp;perPage=20</code> (по умолчанию 10, максимум 100). В <code>meta</code> номер страницы и сколько всего.</td></tr>
+		<tr><th>Даты</th><td>В UTC: <code>2026-10-20T06:00:00Z</code>. Время в расписании московское: <code>"17:00"</code>.</td></tr>
 	</table>
 </section>
 
 <section class="panel">
 	<h2 class="panel__title">Коды ошибок</h2>
 	<table class="api-table">
-		<tr><th><code>400 validation_failed</code></th><td>Неверные данные. В <code>fields</code> — какое поле не так.</td></tr>
+		<tr><th><code>400 validation_failed</code></th><td>Неверные данные. В <code>fields</code> указано, какое поле не так.</td></tr>
 		<tr><th><code>400 bad_request</code></th><td>Запрос не разобран, например неверный JSON.</td></tr>
 		<tr><th><code>401 unauthorized</code></th><td>Нет ключа, ключ неверный или удалён.</td></tr>
 		<tr><th><code>404 not_found</code></th><td>Нет такого объекта.</td></tr>

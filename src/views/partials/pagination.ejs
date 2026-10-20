@@ -1,14 +1,14 @@
-<%# Пагинация: круглые кнопки. Нужны pagination (из src/lists.js), pageUrl(номер) и noun — слово для «из N …». %>
+<%# Пагинация: круглые кнопки. Нужны pagination (из src/lists.js), pageUrl(номер) и noun - слово для «из N ...». %>
 <% if (pagination.pagesCount > 1) { %>
 	<nav class="pager" aria-label="Страницы">
-		<span>Показаны <%= pagination.from %>–<%= pagination.to %> из <%= pagination.total %> <%= noun %></span>
+		<span>Показаны <%= pagination.from %>-<%= pagination.to %> из <%= pagination.total %> <%= noun %></span>
 		<ul class="pagination">
 			<li class="page-item page-arrow <%= pagination.page === 1 ? 'disabled' : '' %>">
 				<a href="<%= pageUrl(pagination.page - 1) %>" class="page-link" aria-label="Назад"><i class="feather-chevron-left"></i></a>
 			</li>
 			<% for (const number of pagination.numbers) { %>
-				<% if (number === '…') { %>
-					<li class="page-item disabled"><span class="page-link">…</span></li>
+				<% if (number === '...') { %>
+					<li class="page-item disabled"><span class="page-link">...</span></li>
 				<% } else { %>
 					<li class="page-item <%= number === pagination.page ? 'active' : '' %>"><a href="<%= pageUrl(number) %>" class="page-link"><%= number %></a></li>
 				<% } %>

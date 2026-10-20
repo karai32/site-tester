@@ -1,5 +1,5 @@
 // Уведомления о проверке: по настройкам сценария решает, что, каким способом и кому отправить.
-// Ошибки отправки только пишутся в лог — на проверку они не влияют.
+// Ошибки отправки только пишутся в лог - на проверку они не влияют.
 import { APP_URL } from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import { findPreviousDoneReport, findReportById, getReportResults } from '../db/reports.js';
@@ -8,15 +8,15 @@ import { percentOf } from '../helpers.js';
 import { isEmailConfigured, sendEmail } from './email.js';
 import { isTelegramConfigured, sendTelegram } from './telegram.js';
 
-const MAX_LIST = 10; // сколько тестов перечислять в сообщении, об остальных — «…и ещё N»
+const MAX_LIST = 10; // сколько тестов перечислять в сообщении, об остальных - «...и ещё N»
 
-// Тесты строками «— название»
+// Тесты строками «- название»
 function testList(results) {
   const lines = [];
   for (const result of results.slice(0, MAX_LIST)) {
-    lines.push(`— ${result.test_title}`);
+    lines.push(`- ${result.test_title}`);
   }
-  if (results.length > MAX_LIST) lines.push(`…и ещё ${results.length - MAX_LIST}`);
+  if (results.length > MAX_LIST) lines.push(`...и ещё ${results.length - MAX_LIST}`);
   return lines.join('\n');
 }
 
@@ -78,19 +78,19 @@ export async function notifyCheckFinished(reportId, log) {
     const link = `Отчёт: ${APP_URL}/reports/${report.id}`;
     const title = `${project.name}, «${scenario.name}»`;
 
-    // Проверка не выполнилась — это критическая ошибка
+    // Проверка не выполнилась - это критическая ошибка
     if (report.status === 'error') {
       await deliver(settings, 'critical', `${title}: проверка не выполнилась`, `${report.error}\n\n${link}`, log);
       return;
     }
-    if (report.status !== 'done') return; // отменённая проверка — без уведомлений
+    if (report.status !== 'done') return; // отменённая проверка - без уведомлений
 
     const results = getReportResults(report.id);
     const failed = results.filter((result) => !result.passed);
     const percent = percentOf(report.tests_passed, report.tests_total);
     const isPassed = percent >= settings.passPercent;
 
-    // Итог. Для проверок по расписанию — отдельная настройка «после регулярных проверок».
+    // Итог. Для проверок по расписанию - отдельная настройка «после регулярных проверок».
     let summaryEvent = 'done';
     if (report.is_regular) summaryEvent = 'regular';
     let verdict = 'пройдена';
@@ -119,7 +119,7 @@ export async function notifyCheckFinished(reportId, log) {
       await deliver(settings, 'repeated', `${title}: тесты провалены второй раз подряд`, `${testList(repeated)}\n\n${link}`, log);
     }
 
-    // Смена статуса: был успешен — стал провален, и наоборот
+    // Смена статуса: был успешен - стал провален, и наоборот
     const broken = results.filter((result) => !result.passed && previousPassed[result.test_id] === 1);
     const fixed = results.filter((result) => result.passed && previousPassed[result.test_id] === 0);
     if (broken.length > 0 || fixed.length > 0) {

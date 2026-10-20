@@ -29,7 +29,7 @@ export default async function projectsApi(app) {
 
     let lastFullReport = null;
     if (data.lastFull) {
-      // Итог по категориям — плитки «2/4 Безопасность»
+      // Итог по категориям - плитки «2/4 Безопасность»
       const categories = data.lastFullCategories.map((category) => ({
         id: category.id,
         title: category.title,
@@ -47,13 +47,13 @@ export default async function projectsApi(app) {
       scenarioId: run.scenario.id,
       scenarioName: run.scenario.name,
       runAt: isoDate(run.runAt),
-      isRegular: run.isRegular, // false — отложенная проверка
+      isRegular: run.isRegular, // false - отложенная проверка
     }));
 
     return sendData(reply, {
       project: formatProject(project),
-      // Активные сценарии в порядке создания — их можно запустить.
-      // Список с фильтрами и неактивными — /projects/:id/scenarios
+      // Активные сценарии в порядке создания - их можно запустить.
+      // Список с фильтрами и неактивными - /projects/:id/scenarios
       scenarios: activeScenarios.map(formatScenarioItem),
       upcoming,
       lastFullReport,
@@ -72,7 +72,7 @@ export default async function projectsApi(app) {
     return sendData(reply, formatProject(findProjectById(projectId)));
   });
 
-  // Изменение: { name?, url? } — непереданные поля не меняются
+  // Изменение: { name?, url? } - непереданные поля не меняются
   app.patch('/projects/:id', async (request, reply) => {
     const current = findProjectById(request.params.id);
     if (!current) return sendError(reply, 404, 'not_found', 'Проект не найден');
@@ -93,7 +93,7 @@ export default async function projectsApi(app) {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
 
-    // Идущая проверка пишет результаты в отчёт проекта — удалять его посреди проверки нельзя
+    // Идущая проверка пишет результаты в отчёт проекта - удалять его посреди проверки нельзя
     const running = getProjectReports(project.id).some((report) => report.status === 'running');
     if (running) {
       return sendError(reply, 409, 'conflict', 'Сейчас идёт проверка этого проекта: отмените её или дождитесь конца');

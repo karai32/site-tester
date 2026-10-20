@@ -1857,3 +1857,33 @@ body {
 		padding: 10px;
 	}
 }
+
+/* Раздел справки: заголовок-кнопка со стрелкой, по нему раздел раскрывается */
+.api-section__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--ink);
+	text-align: left;
+}
+.api-section__head .panel__title {
+	margin: 0;
+}
+.api-section__count {
+	color: var(--muted);
+	font-size: 14px;
+}
+.api-section__arrow {
+	display: inline-block;
+	margin-left: auto;
+	font-size: 20px;
+	transform: rotate(180deg);
+	transition: transform 0.2s;
+}
+.api-section__head.collapsed .api-section__arrow {
+	transform: none;
+}

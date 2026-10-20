@@ -1,5 +1,5 @@
 // Снимает примеры запросов и ответов API для страницы «Справка по API» (Настройки → Справка по API).
-// Отправляет настоящие запросы и сохраняет ответы в docs/api-examples.json.
+// Отправляет настоящие запросы и сохраняет ответы в src/api/examples.json.
 //
 // ВНИМАНИЕ: создаёт и удаляет проект, сценарии и пользователя — запускать только на тестовом сервере!
 // Нужны: проект 1 с готовой полной проверкой (отчёт 3 — со скриншотами), сценарий 2, API-ключ.
@@ -140,5 +140,5 @@ await call('Проекты', 'Удалить проект', 'Удаляет пр
 const SECTIONS = ['Ошибки', 'Справочники', 'Проекты', 'Сценарии', 'Проверки и отчёты', 'Пользователи'];
 examples.sort((a, b) => SECTIONS.indexOf(a.section) - SECTIONS.indexOf(b.section)); // порядок внутри раздела сохраняется
 
-writeFileSync(new URL('../docs/api-examples.json', import.meta.url), JSON.stringify(examples, null, 2) + '\n');
-console.log(`Сохранено примеров: ${examples.length} → docs/api-examples.json`);
+writeFileSync(new URL('../src/api/examples.json', import.meta.url), JSON.stringify(examples, null, 2) + '\n');
+console.log(`Сохранено примеров: ${examples.length} → src/api/examples.json`);

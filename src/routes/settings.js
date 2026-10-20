@@ -5,7 +5,7 @@ import { APP_URL } from '../config.js';
 import { createApiKey, deleteApiKey, getUserApiKeys } from '../db/api-keys.js';
 
 // Примеры запросов и ответов для справки. Снимаются с тестового сервера: scripts/api-examples.js
-const apiExamples = JSON.parse(readFileSync(new URL('../../docs/api-examples.json', import.meta.url), 'utf8'));
+const apiExamples = JSON.parse(readFileSync(new URL('../api/examples.json', import.meta.url), 'utf8'));
 
 // Примеры по разделам: [{ title, examples }] в том порядке, в каком они в файле
 function examplesBySection() {

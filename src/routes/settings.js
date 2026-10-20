@@ -7,7 +7,10 @@ import { createApiKey, deleteApiKey, getUserApiKeys } from '../db/api-keys.js';
 // Примеры запросов и ответов для справки. Снимаются с тестового сервера: scripts/api-examples.js
 const apiExamples = JSON.parse(readFileSync(new URL('../api/examples.json', import.meta.url), 'utf8'));
 
-// Примеры по разделам: [{ title, examples }] в том порядке, в каком они в файле
+// Порядок разделов в справке: самые нужные админке сверху
+const SECTION_ORDER = ['Сценарии', 'Проверки и отчёты', 'Проекты', 'Пользователи', 'Справочники', 'Ошибки'];
+
+// Примеры по разделам: [{ title, examples }] в порядке SECTION_ORDER
 function examplesBySection() {
   const sections = [];
   for (const example of apiExamples) {
@@ -18,6 +21,7 @@ function examplesBySection() {
     }
     section.examples.push(example);
   }
+  sections.sort((a, b) => SECTION_ORDER.indexOf(a.title) - SECTION_ORDER.indexOf(b.title));
   return sections;
 }
 

@@ -142,6 +142,12 @@ $(function () {
 			});
 	});
 
+	// Справка по API: ссылка на раздел сначала раскрывает его, потом браузер к нему прокручивает
+	$(document).on('click', '[data-open-section]', function () {
+		var body = document.querySelector($(this).data('open-section'));
+		bootstrap.Collapse.getOrCreateInstance(body, { toggle: false }).show();
+	});
+
 	// Поиск по отчёту: прячем тесты без совпадений и пустые категории, найденное раскрываем
 	$(document).on('input', '[data-report-search]', function () {
 		var query = $(this).val().trim().toLowerCase();

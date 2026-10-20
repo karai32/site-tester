@@ -34,16 +34,22 @@
 	</table>
 </section>
 
-<%# Разделы: ссылки наверху и таблица на каждый запрос %>
+<%# Разделы: ссылки наверху раскрывают раздел (app.js, data-open-section) %>
 <nav class="api-sections">
 	<% sections.forEach((section, index) => { %>
-		<a href="#api-section-<%= index %>" class="btn btn-outline-primary btn-pill btn-pill-sm"><%= section.title %></a>
+		<a href="#api-section-<%= index %>" class="btn btn-outline-primary btn-pill btn-pill-sm" data-open-section="#api-body-<%= index %>"><%= section.title %></a>
 	<% }) %>
 </nav>
 
+<%# Раздел свёрнут, по заголовку раскрывается: таблица на каждый запрос %>
 <% sections.forEach((section, index) => { %>
 	<section class="panel" id="api-section-<%= index %>">
-		<h2 class="panel__title"><%= section.title %></h2>
+		<button type="button" class="api-section__head collapsed" data-bs-toggle="collapse" data-bs-target="#api-body-<%= index %>" aria-expanded="false">
+			<span class="panel__title"><%= section.title %></span>
+			<span class="api-section__count"><%= section.examples.length %></span>
+			<i class="feather-chevron-down api-section__arrow"></i>
+		</button>
+		<div class="collapse" id="api-body-<%= index %>">
 		<% for (const example of section.examples) { %>
 			<table class="api-table api-example">
 				<tr>
@@ -56,5 +62,6 @@
 				<tr><th>Ответ <%= example.status %></th><td><pre><%= example.response.join('\n') %></pre></td></tr>
 			</table>
 		<% } %>
+		</div>
 	</section>
 <% }) %>

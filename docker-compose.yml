@@ -1,0 +1,12 @@
+services:
+  checker:
+    build: .
+    image: 808-checker
+    container_name: 808-checker
+    ports:
+      - "3002:3001"
+    volumes:
+      - ./docker-data:/app/data
+    environment:
+      APP_URL: http://localhost:3002
+    restart: unless-stopped

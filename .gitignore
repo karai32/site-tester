@@ -8,3 +8,4 @@ test-results/
 __tmp*
 .DS_Store
 npm-debug.log*
+docker-data

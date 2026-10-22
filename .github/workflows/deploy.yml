@@ -1,7 +1,6 @@
 name: Deploy to production
 
-# Выкладка на сервер при каждом пуше в main.
-# Сервис: /opt/808-checker, данные: /var/lib/808-checker, настройки сервера - папка deploy/.
+# При каждом пуше в main: собрать образ, положить в ghcr.io и перезапустить контейнер на сервере.
 
 on:
   push:
@@ -9,17 +8,47 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 concurrency:
   group: production-deploy
   cancel-in-progress: false
 
 jobs:
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/karai32/site-tester:latest
+            ghcr.io/karai32/site-tester:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy:
+    needs: image
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
     env:
       DEPLOY_HOST: 109.235.116.46
       DEPLOY_USER: root
@@ -43,44 +72,20 @@ jobs:
           ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \
             'if curl --silent http://127.0.0.1:3001/health | grep -q "\"checkRunning\":true"; then echo "A check is running. Deployment cancelled, run it again later."; exit 1; fi'
 
-      - name: Upload application
+      - name: Upload docker-compose.yml
         run: |
-          tar -czf release.tgz src public scripts ui-kit deploy package.json package-lock.json
-          scp -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes release.tgz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/808-checker-release.tgz"
+          scp -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes deploy/docker-compose.yml "$DEPLOY_USER@$DEPLOY_HOST:/opt/808-checker-docker/docker-compose.yml"
 
-      - name: Install and restart
+      - name: Pull image and restart
         run: |
           ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" '
             set -eu
+            cd /opt/808-checker-docker
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
 
-            # Новая версия собирается в отдельной папке и потом подменяет текущую
-            rm -rf /opt/808-checker.new
-            mkdir /opt/808-checker.new
-            tar -xzf /tmp/808-checker-release.tgz -C /opt/808-checker.new
-            rm /tmp/808-checker-release.tgz
-            cd /opt/808-checker.new
-            npm ci --omit=dev
-            find src scripts -type f -name "*.js" -print0 | xargs -0 -n1 node --check
-
-            # Браузер для тестов. Скачивается, только если сменилась версия Playwright.
-            runuser -u checker -- env HOME=/var/lib/808-checker PLAYWRIGHT_BROWSERS_PATH=/var/lib/808-checker/pw-browsers \
-              node node_modules/playwright/cli.js install chromium
-
-            # Настройки сервера из папки deploy
-            install -m 644 deploy/808-checker.service /etc/systemd/system/808-checker.service
-            install -m 644 deploy/808-checker.env /etc/808-checker.env
-            # Ночной cron больше не нужен: проверки по расписанию ставит сам сервис
-            rm -f /etc/cron.d/808-checker
-            systemctl daemon-reload
-            systemctl enable 808-checker.service
-
-            # Подмена версии и перезапуск
-            rm -rf /opt/808-checker.old
-            if [ -d /opt/808-checker ]; then mv /opt/808-checker /opt/808-checker.old; fi
-            mv /opt/808-checker.new /opt/808-checker
-            systemctl restart 808-checker.service
-
-            for attempt in $(seq 1 15); do
+            for attempt in $(seq 1 30); do
               if curl --fail --silent http://127.0.0.1:3001/health >/dev/null; then
                 echo "Deployment completed successfully."
                 exit 0
@@ -88,6 +93,6 @@ jobs:
               sleep 1
             done
 
-            systemctl status 808-checker.service --no-pager
+            docker compose logs --tail 50
             exit 1
           '

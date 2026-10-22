@@ -1,0 +1,15 @@
+services:
+  checker:
+    image: ghcr.io/karai32/site-tester:latest
+    container_name: 808-checker
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - /var/lib/808-checker/data:/app/data
+    environment:
+      NODE_ENV: production
+      APP_URL: https://audit.808-test.ru
+    env_file:
+      - path: /etc/808-checker.secrets.env
+        required: false
+    restart: unless-stopped

@@ -64,6 +64,8 @@ import openGraph from './seo-infrastructure/open-graph.js';
 import canonicalUrls from './seo-infrastructure/canonical-urls.js';
 import robotsMeta from './seo-infrastructure/robots-meta.js';
 import breadcrumbSchema from './seo-infrastructure/breadcrumb-schema.js';
+import feedDoctors from './seo-infrastructure/feed-doctors.js';
+import feedAnyQuery from './seo-infrastructure/feed-any-query.js';
 
 import yandexSmartcaptcha from './antispam/yandex-smartcaptcha.js';
 
@@ -156,7 +158,7 @@ export const categories = [
     icon: 'feather-globe',
     title: 'SEO-инфраструктура',
     shortTitle: 'SEO-инфраструктура',
-    tests: [xmlSitemap, openGraph, canonicalUrls, robotsMeta, breadcrumbSchema],
+    tests: [xmlSitemap, openGraph, canonicalUrls, robotsMeta, breadcrumbSchema, feedDoctors, feedAnyQuery],
   },
   {
     id: 'antispam',

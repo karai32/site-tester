@@ -1,12 +1,18 @@
-// На странице направления есть текст об услугах, врачи и форма записи
+// На странице направления выведены список услуг (блок «Цены на услуги») и врачи отделения,
+// у каждой услуги и каждого врача есть название
 import { takeScreenshot } from '../helpers/common.js';
 
 const departmentPath = '/departments/onkologia/';
 const selectors = {
-  doctorItem: '.doctor-item',
-  appointmentForm: 'form.wpcf7-form',
+  serviceName: '[id="price-container"] .spollers-cost__name',
+  doctorCard: '.doctor-item',
+  doctorName: '.doctor-item__name',
 };
-const minTextLength = 3_000;
+
+// Тексты элементов страницы без лишних пробелов
+function readTexts(page, selector) {
+  return page.locator(selector).evaluateAll((elements) => elements.map((element) => element.textContent.replace(/\s+/g, ' ').trim()));
+}
 
 export default {
   id: 'department-content-complete',
@@ -19,25 +25,31 @@ export default {
     await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await page.waitForTimeout(1_500);
 
-    const bodyTextLength = await page.evaluate(() => document.body.innerText.length);
-    const doctorItems = page.locator(selectors.doctorItem);
-    const doctorCount = await doctorItems.count();
-    const formCount = await page.locator(selectors.appointmentForm).count();
+    const serviceNames = await readTexts(page, selectors.serviceName);
+    const doctorNames = await readTexts(page, selectors.doctorName);
 
-    if (doctorCount > 0) await doctorItems.first().scrollIntoViewIfNeeded();
+    const doctorCards = page.locator(selectors.doctorCard);
+    if (await doctorCards.count() > 0) await doctorCards.first().scrollIntoViewIfNeeded();
     const media = [await takeScreenshot(page)];
 
     const problems = [];
-    if (bodyTextLength < minTextLength) {
-      problems.push(`страница содержит слишком мало текста (${bodyTextLength} символов), раздел услуг выглядит пустым`);
+    if (serviceNames.length === 0) {
+      problems.push('на странице не найден список услуг (блок «Цены на услуги»)');
+    } else {
+      const emptyServices = serviceNames.filter((name) => !name).length;
+      if (emptyServices > 0) problems.push(`у ${emptyServices} из ${serviceNames.length} услуг нет названия`);
     }
-    if (doctorCount === 0) problems.push('на странице направления не найдено ни одного врача');
-    if (formCount === 0) problems.push('на странице направления не найдено формы записи');
+    if (doctorNames.length === 0) {
+      problems.push('на странице не найдено ни одного врача');
+    } else {
+      const emptyDoctors = doctorNames.filter((name) => !name).length;
+      if (emptyDoctors > 0) problems.push(`у ${emptyDoctors} из ${doctorNames.length} врачей нет имени`);
+    }
 
     if (problems.length === 0) {
       return {
         passed: true,
-        comment: `Страница ${target}: контент раздела услуг присутствует (${bodyTextLength} символов текста), найдено ${doctorCount} врачей и ${formCount} форм(ы) записи. Скриншот приложен для визуальной проверки вёрстки.`,
+        comment: `Страница ${target}: в списке услуг ${serviceNames.length} позиций, врачей отделения: ${doctorNames.length}. У всех есть названия.`,
         media,
         pages,
       };

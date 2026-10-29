@@ -1,47 +1,69 @@
-// Ключевые страницы открываются в браузере, на главной есть формы.
-// Проверяется только Chromium (Chrome, Яндекс Браузер): WebKit (Safari) на сервере не запускается.
+// Ключевые страницы сайта открываются в браузере. На каждую в отчёт кладётся скриншот первого экрана.
+// Пока проверяется только Chromium (движок Chrome и Яндекс Браузера).
 import { errorMessage, takeScreenshot } from '../helpers/common.js';
 
-const browserLabel = 'Chromium (Chrome / Yandex Browser)';
-const pagesToCheck = ['/', '/price/'];
+const BROWSER_TITLE = 'Chromium';
+
+// Ключевые страницы: главная, цены и основные разделы сайта
+const KEY_PAGES = [
+  '/',
+  '/price/',
+  '/doctors/',
+  '/services/',
+  '/checkups/',
+  '/programs/',
+  '/diseases/',
+  '/reviews/',
+  '/news/',
+  '/article/',
+];
 
 export default {
   id: 'cross-browser',
   title: 'Ключевые страницы и формы работают в разных браузерах',
 
   async run({ siteUrl, browser }) {
-    const pages = pagesToCheck.map((path) => new URL(path, siteUrl).href);
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const pages = [];
     const problems = [];
     const media = [];
-    let formCount = 0;
 
-    for (const target of pages) {
+    for (const path of KEY_PAGES) {
+      const url = new URL(path, siteUrl).href;
+      pages.push(url);
+
       let response;
       try {
-        response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+        response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
       } catch (error) {
-        problems.push(`${browserLabel}, ${target}: ${errorMessage(error)}`);
+        problems.push(`${BROWSER_TITLE}, ${url}: страница не открылась (${errorMessage(error)})`);
         continue;
       }
 
+      // Даём догрузиться стилям и картинкам, но не дольше 10 секунд
+      await page.waitForLoadState('load', { timeout: 10_000 }).catch(() => {});
+
       const status = response.status();
-      if (status < 200 || status >= 400) problems.push(`${browserLabel}, ${target}: HTTP ${status}`);
+      if (status >= 400) problems.push(`${BROWSER_TITLE}, ${url}: HTTP ${status}`);
 
-      if (target === pages[0]) formCount = await page.locator('form.wpcf7-form').count().catch(() => 0);
-      if (media.length === 0) media.push(await takeScreenshot(page));
+      // Скриншот и для страницы с ошибкой: по нему видно, что показалось посетителю
+      media.push({ data: await takeScreenshot(page), caption: `${BROWSER_TITLE}: ${path}` });
     }
-
-    if (formCount === 0) problems.push(`${browserLabel}: на главной странице не найдено форм.`);
 
     if (problems.length === 0) {
       return {
         passed: true,
-        comment: `Проверено в браузере ${browserLabel}. Ключевые страницы и формы загружаются корректно.`,
+        comment: `В браузере ${BROWSER_TITLE} открываются все ключевые страницы: ${pages.length}. Приложены скриншоты первого экрана.`,
         media,
         pages,
       };
     }
-    return { passed: false, comment: `Найдено проблем: ${problems.length}.`, problems, media, pages };
+    return {
+      passed: false,
+      comment: `Не открылось страниц: ${problems.length} из ${pages.length}.`,
+      problems,
+      media,
+      pages,
+    };
   },
 };

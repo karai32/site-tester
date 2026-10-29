@@ -234,7 +234,7 @@ export default {
 | `pages` | адреса страниц из выборки сценария |
 | `getHtml(url)` | HTML страницы из выборки. Он уже скачан при обходе, к сайту запрос не идёт |
 | `links` | внутренние ссылки на страницах выборки: `[{ url, status, error, foundOn }]` |
-| `browser` | браузер Chromium: `const page = await browser.newPage()` |
+| `browser` | браузер Chromium: `const page = await browser.newPage()`. Если тесту нужен Safari, он сам запускает WebKit, как в `src/tests/visual/cross-browser.js`. WebKit работает в Docker, а на обычной Ubuntu ему не хватает системных библиотек |
 
 **Что возвращает `run`:**
 

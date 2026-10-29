@@ -42,28 +42,51 @@ async function openPage(page, url) {
 }
 
 // Открывает ключевые страницы в браузере browser. Ошибки и скриншоты добавляет в problems и media.
-async function checkPages(browser, browserTitle, siteUrl, problems, media) {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-
+// blockCaptcha: не загружать капчу Яндекса (нужно для WebKit, см. ниже).
+// Каждая страница открывается в своей вкладке, и вкладка сразу закрывается: на сервере мало памяти,
+// а если держать одну вкладку, память копится от страницы к странице и браузер падает.
+async function checkPages(browser, browserTitle, siteUrl, problems, media, blockCaptcha) {
   for (const path of KEY_PAGES) {
     const url = new URL(path, siteUrl).href;
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
-    let response;
-    try {
-      response = await openPage(page, url);
-    } catch (error) {
-      problems.push(`${browserTitle}, ${url}: страница не открылась с двух попыток (${errorMessage(error)})`);
-      continue;
+    // Капча Яндекса в WebKit на сервере проверки бесконечно опрашивает свой сервер, и страница
+    // так и не догружается, а без этого не снять скриншот. Так капча ведёт себя с автоматическим
+    // браузером, у посетителей с Safari такого нет. На первом экране капчи не видно, поэтому
+    // в WebKit её просто не загружаем.
+    if (blockCaptcha) {
+      await page.route('https://smartcaptcha.cloud.yandex.ru/**', (route) => route.abort());
     }
 
-    // Даём догрузиться стилям и картинкам, но не дольше 10 секунд
-    await page.waitForLoadState('load', { timeout: 10_000 }).catch(() => {});
+    try {
+      await checkPage(page, url, path, browserTitle, problems, media);
+    } finally {
+      await page.context().close();
+    }
+  }
+}
 
-    const status = response.status();
-    if (status >= 400) problems.push(`${browserTitle}, ${url}: HTTP ${status}`);
+// Одна страница: открыть, дождаться загрузки, проверить ответ, снять скриншот
+async function checkPage(page, url, path, browserTitle, problems, media) {
+  let response;
+  try {
+    response = await openPage(page, url);
+  } catch (error) {
+    problems.push(`${browserTitle}, ${url}: страница не открылась с двух попыток (${errorMessage(error)})`);
+    return;
+  }
 
-    // Скриншот и для страницы с ошибкой: по нему видно, что показалось посетителю
+  // Даём догрузиться стилям и картинкам, но не дольше 10 секунд
+  await page.waitForLoadState('load', { timeout: 10_000 }).catch(() => {});
+
+  const status = response.status();
+  if (status >= 400) problems.push(`${browserTitle}, ${url}: HTTP ${status}`);
+
+  // Скриншот и для страницы с ошибкой: по нему видно, что показалось посетителю
+  try {
     media.push({ data: await takeScreenshot(page), caption: `${browserTitle}: ${path}` });
+  } catch (error) {
+    problems.push(`${browserTitle}, ${url}: не удалось снять скриншот (${errorMessage(error)})`);
   }
 }
 
@@ -76,7 +99,7 @@ export default {
     const media = [];
 
     // Chromium: общий браузер проверки, его закрывает раннер
-    await checkPages(browser, 'Chromium', siteUrl, problems, media);
+    await checkPages(browser, 'Chromium', siteUrl, problems, media, false);
 
     // Safari: WebKit запускаем сами и сами закрываем
     let safari = null;
@@ -87,7 +110,7 @@ export default {
     }
     if (safari) {
       try {
-        await checkPages(safari, 'Safari (WebKit)', siteUrl, problems, media);
+        await checkPages(safari, 'Safari (WebKit)', siteUrl, problems, media, true);
       } finally {
         await safari.close();
       }

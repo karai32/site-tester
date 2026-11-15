@@ -1,3 +1,6 @@
+# Запуск на сервере. Выкладка копирует этот файл в /opt/808-checker-docker/docker-compose.yml,
+# поэтому на сервере его руками не правят: правят здесь и пушат в main.
+# Для запуска у себя на компьютере есть docker-compose.yml в корне проекта, отличия описаны в нём.
 services:
   checker:
     image: ghcr.io/karai32/site-tester:latest

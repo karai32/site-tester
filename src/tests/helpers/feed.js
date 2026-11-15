@@ -1,18 +1,9 @@
-// Проверка фида для тестов категории «SEO-инфраструктура»:
-// фид открывается, отдаётся как XML нужного вида и в нём есть записи.
-
-// Сколько раз в тексте встречается тег: <doctor id="1"> и <doctor> считаются, <doctors> нет
 function countTags(text, tag) {
   const matches = text.match(new RegExp(`<${tag}[\\s>]`, 'g'));
   if (!matches) return 0;
   return matches.length;
 }
 
-// feed: { path, rootTag, itemTag, itemsTitle }
-//   path - адрес фида на сайте: '/yml/doctors.php'
-//   rootTag - главный тег фида: 'shop' или 'yml_catalog'
-//   itemTag - тег одной записи: 'doctor' или 'offer'
-//   itemsTitle - как назвать записи в комментарии: 'врачей'
 export async function checkFeed({ siteUrl, browser }, feed) {
   const url = new URL(feed.path, siteUrl).href;
   const page = await browser.newPage();

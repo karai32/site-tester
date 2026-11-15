@@ -1,11 +1,3 @@
-# Запуск в Docker у себя на компьютере: docker compose up -d --build, сайт на http://localhost:3002
-#
-# На сервере работает другой файл, deploy/docker-compose.yml. Отличия нужны специально:
-# - здесь образ собирается из вашего кода (build), а на сервер скачивается готовый из ghcr.io;
-# - здесь порт 3002, чтобы не мешать npm run dev на 3001;
-# - здесь данные в папке docker-data/ рядом с этим файлом, на сервере в /opt/808-checker-docker/data;
-# - здесь нет NODE_ENV: production, потому что с ним вход работает только по https;
-# - здесь нет файла с паролями для уведомлений.
 services:
   checker:
     build: .
@@ -17,7 +9,6 @@ services:
       - ./docker-data:/app/data
     environment:
       APP_URL: http://localhost:3002
-    # Без дампов памяти: когда браузер падает, дамп занимает сотни мегабайт и копится в контейнере
     ulimits:
       core: 0
     restart: unless-stopped

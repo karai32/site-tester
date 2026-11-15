@@ -1,4 +1,3 @@
-// На каждой странице выборки с формой подключён скрипт Yandex SmartCaptcha
 export default {
   id: 'yandex-smartcaptcha',
   title: 'Yandex SmartCaptcha подключена на всех страницах, где есть формы',

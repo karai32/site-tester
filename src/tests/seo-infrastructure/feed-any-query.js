@@ -1,4 +1,3 @@
-// YML-фид /yml/any-query.php открывается, это XML с тегом <yml_catalog> и в нём есть предложения
 import { checkFeed } from '../helpers/feed.js';
 
 export default {

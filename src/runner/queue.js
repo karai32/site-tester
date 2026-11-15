@@ -1,6 +1,3 @@
-// Очередь проверок. Раз в несколько секунд ставит в очередь проверки по расписанию,
-// берёт самый старый отчёт со статусом queued и запускает его.
-// Проверки идут строго по одной: серверу не хватит памяти на две сразу.
 import { rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { DATA_DIR } from '../config.js';
@@ -12,12 +9,10 @@ const CHECK_EVERY_MS = 5000;
 let busy = false;
 
 export function startQueue(log) {
-  // Проверки, которые шли до перезапуска сервера, уже не продолжатся
   markInterruptedReports();
   rmSync(join(DATA_DIR, 'cache'), { recursive: true, force: true });
 
   setInterval(async () => {
-    // Расписание проверяем, даже пока идёт проверка: новые встанут в очередь за ней
     try {
       queueDueChecks(log);
     } catch (error) {

@@ -1,4 +1,3 @@
-// Кнопка «Показать еще» на странице новостей подгружает новые новости, новость открывается
 import { errorMessage, takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -30,12 +29,9 @@ export default {
       };
     }
 
-    // Ошибки скриптов слушаем только с этого момента, чтобы не приписать кнопке
-    // посторонние ошибки сайта при загрузке страницы (например, Firebase)
     const scriptErrors = [];
     page.on('pageerror', (error) => scriptErrors.push(errorMessage(error)));
 
-    // Кнопка отправляет POST на admin-ajax.php с действием load_more_news
     const [loadMoreResponse] = await Promise.all([
       page.waitForResponse((response) => {
         const request = response.request();
@@ -94,7 +90,6 @@ export default {
       };
     }
 
-    // Открываем первую подгруженную новость
     const articleUrl = newHrefs[0];
     pages.push(articleUrl);
     const articleResponse = await page.goto(articleUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });

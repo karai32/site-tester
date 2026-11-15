@@ -1,4 +1,3 @@
-// Кнопка «наверх» возвращает страницу к началу. К результату прикладывается видео.
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -7,7 +6,6 @@ const selectors = {
   upButton: '.btn--up',
 };
 
-// Прокручивает страницу вниз, нажимает кнопку и смотрит, вернулась ли страница наверх
 async function checkButton(page) {
   if (await page.locator(selectors.upButton).count() === 0) {
     return { passed: false, comment: `Не найдена кнопка «наверх» ${selectors.upButton}.` };
@@ -37,7 +35,6 @@ export default {
   title: 'Кнопка «наверх» работает корректно',
 
   async run({ siteUrl, browser }) {
-    // Видео пишется во временную папку и готово только после закрытия вкладки
     const videoDir = mkdtempSync(join(tmpdir(), 'scroll-to-top-'));
     try {
       const context = await browser.newContext({

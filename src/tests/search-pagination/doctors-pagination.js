@@ -1,6 +1,3 @@
-// Список врачей листается кнопкой под списком: «Показать ещё» добавляет порцию врачей
-// и меняет надпись на «Показать всех», второе нажатие выводит всех оставшихся,
-// после чего кнопка пропадает. Повторов в списке быть не должно.
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -9,16 +6,14 @@ const selectors = {
   moreButton: '.js-doctors-more-btn',
   moreText: '.doctors-more__text',
 };
-const waitMs = 15_000; // сколько ждать новых врачей после нажатия
+const waitMs = 15_000;
 
-// Врачи в списке по порядку: по одной ссылке с каждой карточки
 function collectDoctors(page) {
   return page.locator(selectors.doctorCard).evaluateAll((cards) => cards
     .map((card) => card.querySelector('a[href*="/doctors/"]')?.getAttribute('href'))
     .filter(Boolean));
 }
 
-// Надпись на кнопке или null, если кнопки не видно
 async function readButton(page) {
   const block = page.locator(selectors.moreBlock).first();
   if (!(await block.isVisible().catch(() => false))) return null;
@@ -26,9 +21,7 @@ async function readButton(page) {
   return (text || '').trim();
 }
 
-// Нажимает кнопку и ждёт, пока в списке станет больше врачей. Возвращает новый список.
 async function clickAndWait(page, countBefore) {
-  // Нажимаем скриптом: всплывающее окно сайта может перекрыть кнопку для обычного клика
   await page.locator(selectors.moreButton).first().evaluate((element) => element.click());
 
   const deadline = Date.now() + waitMs;
@@ -54,10 +47,9 @@ export default {
     if (doctors.length === 0) {
       return { passed: false, comment: `На странице ${listUrl} не найдено ни одного врача.`, pages };
     }
-    const counts = [doctors.length]; // сколько врачей в списке после каждого шага
+    const counts = [doctors.length];
     const problems = [];
 
-    // 1. «Показать ещё» добавляет порцию врачей
     const firstText = await readButton(page);
     if (firstText !== 'Показать ещё') {
       problems.push(`под списком нет кнопки «Показать ещё» (видно: ${firstText || 'ничего'})`);
@@ -70,7 +62,6 @@ export default {
       }
     }
 
-    // 2. Кнопка стала «Показать всех» и выводит всех оставшихся
     if (problems.length === 0) {
       const secondText = await readButton(page);
       if (secondText !== 'Показать всех') {
@@ -85,7 +76,6 @@ export default {
       }
     }
 
-    // 3. Все врачи выведены: кнопка пропала, повторов нет
     if (problems.length === 0) {
       const lastText = await readButton(page);
       if (lastText !== null) problems.push(`после «Показать всех» кнопка осталась («${lastText}»)`);
@@ -95,9 +85,8 @@ export default {
       problems.push(`в списке повторы: карточек ${doctors.length}, разных врачей ${uniqueCount}`);
     }
 
-    // Скриншот конца списка: под ним была кнопка
     await page.locator(selectors.doctorCard).last().scrollIntoViewIfNeeded().catch(() => {});
-    await page.waitForTimeout(3_000); // фото врачей грузятся только после прокрутки
+    await page.waitForTimeout(3_000);
     const media = [await takeScreenshot(page)];
 
     if (problems.length === 0) {

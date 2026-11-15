@@ -1,4 +1,3 @@
-// На каждой странице выборки есть <meta name="robots"> и в нём нет noindex (запрета индексации)
 function getRobotsMetaContent(html) {
   const forward = html.match(/<meta[^>]*name=["']robots["'][^>]*content=["']([^"']*)["']/i);
   if (forward) return forward[1].trim();

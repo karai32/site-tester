@@ -26,7 +26,6 @@
 	<% } %>
 </div>
 
-<%# Пока проверка идёт, app.js обновляет страницу каждые 5 секунд %>
 <% if (report.status === 'queued') { %>
 	<section class="panel report-progress" data-auto-refresh="5">
 		<h2 class="panel__title">Проверка в очереди</h2>
@@ -105,7 +104,6 @@
 	</div>
 <% } %>
 
-<!-- Скриншот или видео крупно. Файл и подпись подставляет app.js. -->
 <div class="modal fade" id="media-modal" tabindex="-1" aria-label="Медиафайл" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-xl">
 		<div class="modal-content">

@@ -1,16 +1,12 @@
-/* Поведение интерфейса: меню, вход, форма сценария и страница отчёта.
-   Показ пароля повторяет assets/js/app.js из 808 Utilities. */
 $(function () {
 	'use strict';
 
-	// Подменю «Выбранные проекты»: раскрыть / свернуть
 	$(document).on('click', '[data-submenu-toggle]', function () {
 		var open = !$(this).hasClass('open');
 		$(this).toggleClass('open', open).attr('aria-expanded', open);
 		$(this).next('ul').prop('hidden', !open);
 	});
 
-	// Меню на телефоне: открыть кнопкой, закрыть по затемнению
 	$(document).on('click', '[data-mobile-open]', function () {
 		$('.app').addClass('menu-open');
 	});
@@ -18,7 +14,6 @@ $(function () {
 		$('.app').removeClass('menu-open');
 	});
 
-	// Показать / скрыть пароль
 	$(document).on('click', '.toggle-password', function () {
 		var $input = $(this).siblings('.pass-input');
 		var show = $input.attr('type') === 'password';
@@ -26,7 +21,6 @@ $(function () {
 		$(this).toggleClass('feather-eye-off', !show).toggleClass('feather-eye', show);
 	});
 
-	// Вход: кнопка «Войти» серая, пока логин или пароль пустые
 	$('[data-login-form]').each(function () {
 		var $form = $(this);
 		var update = function () {
@@ -37,8 +31,6 @@ $(function () {
 		update();
 	});
 
-	// Форма сценария: галочка категории выбирает все её тесты.
-	// Если выбрана только часть тестов, галочка категории - с чёрточкой (indeterminate).
 	function updatePicker($group) {
 		var $items = $group.find('.tree-items input[type="checkbox"]');
 		var checked = $items.filter(':checked').length;
@@ -59,29 +51,24 @@ $(function () {
 		updatePicker($(this).closest('[data-picker]'));
 	});
 
-	// Выбрали файл - форма отправляется сама (аватарка проекта)
 	$(document).on('change', 'input[data-auto-submit]', function () {
 		this.form.submit();
 	});
 
-	// Кнопка «Скопировать»: data-copy - что скопировать (новый API-ключ)
 	$(document).on('click', '[data-copy]', function () {
 		var $button = $(this);
 		navigator.clipboard.writeText($button.data('copy')).then(function () {
 			$button.text('Скопировано');
 		});
 	});
-	// Поле с ключом: при нажатии выделяется целиком, чтобы скопировать вручную
 	$(document).on('focus', '[data-select-on-focus]', function () {
 		this.select();
 	});
 
-	// Формы с подтверждением: data-confirm - текст вопроса
 	$(document).on('submit', 'form[data-confirm]', function (event) {
 		if (!window.confirm($(this).data('confirm'))) event.preventDefault();
 	});
 
-	// Пока проверка идёт, страница отчёта обновляется сама (data-auto-refresh - через сколько секунд)
 	var $autoRefresh = $('[data-auto-refresh]');
 	if ($autoRefresh.length) {
 		setTimeout(function () {
@@ -89,13 +76,11 @@ $(function () {
 		}, Number($autoRefresh.data('auto-refresh')) * 1000);
 	}
 
-	// «Показать ещё» в списке ошибок теста
 	$(document).on('click', '[data-show-more]', function () {
 		$(this).closest('.report-test').find('[data-more-item]').removeClass('d-none');
 		$(this).remove();
 	});
 
-	// Скриншот или видео крупно в модальном окне
 	$(document).on('click', '[data-media]', function () {
 		var $modal = $('#media-modal');
 		var src = $(this).data('media');
@@ -108,16 +93,14 @@ $(function () {
 		$modal.find('[data-media-modal-caption]').text($(this).data('media-caption'));
 		bootstrap.Modal.getOrCreateInstance($modal[0]).show();
 	});
-	// Закрыли окно - останавливаем видео
 	$(document).on('hidden.bs.modal', '#media-modal', function () {
 		$(this).find('[data-media-modal-body]').empty();
 	});
 
-	// Сводка по сценарию на дашборде: выбрали сценарий - берём сводку с сервера и вставляем в страницу
 	$(document).on('change', '[data-scenario-summary-select]', function () {
 		var $box = $('[data-scenario-summary]');
 		if (!this.value) {
-			$box.empty(); // «Выберите сценарий» - сводку убираем
+			$box.empty();
 			return;
 		}
 		$box.html('<p class="panel__empty">Загрузка...</p>');
@@ -130,7 +113,6 @@ $(function () {
 			});
 	});
 
-	// «Показать ещё»: следующие отчёты сводки встают на место кнопки (с новой кнопкой, если отчёты ещё есть)
 	$(document).on('click', '[data-load-more]', function () {
 		var $button = $(this).prop('disabled', true);
 		$.get($button.data('load-more'))
@@ -142,13 +124,11 @@ $(function () {
 			});
 	});
 
-	// Справка по API: ссылка на раздел сначала раскрывает его, потом браузер к нему прокручивает
 	$(document).on('click', '[data-open-section]', function () {
 		var body = document.querySelector($(this).data('open-section'));
 		bootstrap.Collapse.getOrCreateInstance(body, { toggle: false }).show();
 	});
 
-	// Поиск по отчёту: прячем тесты без совпадений и пустые категории, найденное раскрываем
 	$(document).on('input', '[data-report-search]', function () {
 		var query = $(this).val().trim().toLowerCase();
 		var found = 0;

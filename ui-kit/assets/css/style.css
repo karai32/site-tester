@@ -1,22 +1,3 @@
-/* ==========================================================
-   Компоненты 808 Utilities в цветах макета «Аудит»
-   ----------------------------------------------------------
-   Источник: 808-utilities-admin-dashboard-ui-kit/assets/css/style.css
-   (шаблон Preclinic, Bootstrap 5.3.3).
-
-   Взяты только компоненты, которые нужны платформе. Имена классов,
-   размеры, отступы, радиусы и шрифт Poppins оставлены как в 808,
-   поэтому разметку можно переносить со страниц 808 без изменений.
-   Все цвета заменены на токены из theme.css (палитра Figma).
-
-   Номера разделов совпадают с оригинальным style.css 808.
-   Раздел «Дополнения» в конце — то, чего в 808 нет.
-   ========================================================== */
-
-/*-----------------
-	1. General
------------------------*/
-
 html {
 	height: 100%;
 }
@@ -108,10 +89,6 @@ input[type=password] {
 .login-danger {
 	color: var(--error);
 }
-
-/*-----------------
-	2. Table
------------------------*/
 
 .table {
 	--bs-table-color: var(--ink);
@@ -302,10 +279,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	color: var(--muted-2);
 }
 
-/*-----------------
-	3. Helper Class
------------------------*/
-
 .m-r-5 { margin-right: 5px !important; }
 .m-r-10 { margin-right: 10px !important; }
 .m-l-5 { margin-left: 5px !important; }
@@ -351,8 +324,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	font-weight: normal;
 	margin-bottom: 20px;
 }
-/* В 808 значки — фоновые картинки calendar-icon.svg и clock.png;
-   здесь те же места занимают глифы Font Awesome (как .calendar-icon в 808) */
 .cal-icon,
 .time-icon {
 	position: relative;
@@ -388,10 +359,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	border-right: 1px solid var(--border);
 }
 
-/*-----------------
-	4. Bootstrap Classes
------------------------*/
-
 .btn {
 	font-size: 0.875rem;
 }
@@ -418,7 +385,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	border-radius: 50px;
 }
 
-/* Цвета кнопок: переменные Bootstrap 5.3 */
 .btn-primary {
 	--bs-btn-color: var(--paper);
 	--bs-btn-bg: var(--primary);
@@ -633,7 +599,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 .badge-primary {
 	color: var(--paper);
 }
-/* В 808 .text-primary — второй (бирюзовый) цвет темы */
 .text-primary,
 .dropdown-menu > li > a.text-primary {
 	color: var(--accent) !important;
@@ -753,7 +718,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	border-color: var(--border);
 }
 
-/* Флажки и переключатели Bootstrap: выбранное состояние — цвет --ink, как в макете */
 .form-check-input {
 	border-color: var(--muted-2);
 }
@@ -807,7 +771,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	--bs-modal-header-border-color: var(--border);
 	--bs-modal-footer-border-color: var(--border);
 }
-/* В 808 подложка белая (opacity .9); в макете страница затемняется */
 .modal-backdrop {
 	background-color: var(--primary);
 }
@@ -823,10 +786,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 .modal-body label {
 	font-size: 13px;
 }
-
-/*-----------------
-	5. Header
------------------------*/
 
 .header {
 	left: 0;
@@ -1010,10 +969,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	}
 }
 
-/*-----------------
-	6. Sidebar
------------------------*/
-
 .sidebar {
 	top: 90px;
 	width: 250px;
@@ -1028,8 +983,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	box-shadow: var(--shadow-sidebar);
 	overflow-x: hidden;
 	overflow-y: hidden;
-	/* В 808 height: 100vh при top: 90px — низ меню (90 px) уходит за экран.
-	   Высота уменьшена, чтобы внизу поместился блок пользователя */
 	height: calc(100vh - 90px);
 }
 .sidebar-inner {
@@ -1078,14 +1031,12 @@ div.dataTables_wrapper div.dataTables_paginate {
 	color: var(--text-2);
 	font-weight: 500;
 }
-/* Место под стрелку подменю: русские подписи длиннее, чем в 808 */
 .sidebar-menu > ul > li.submenu > a {
 	padding-right: 30px;
 }
 .sidebar-menu > ul > li.submenu > a .menu-arrow {
 	right: 10px;
 }
-/* «Выбранные проекты» не помещается в меню 808 шириной 250 px — переносим */
 .sidebar .sidebar-menu > ul > li > a span:not(.menu-side):not(.menu-arrow) {
 	white-space: normal;
 	line-height: 1.25;
@@ -1164,7 +1115,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	color: var(--ink);
 	font-weight: 500;
 }
-/* В 808 у активного пункта подменю стрелка-картинка right-icon.svg */
 .sidebar-menu ul .submenu ul .active:before {
 	content: "\f105";
 	font-family: "FontAwesome";
@@ -1203,10 +1153,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	justify-content: center;
 	flex-shrink: 0;
 }
-
-/*-----------------
-	7. Content
------------------------*/
 
 .page-wrapper {
 	left: 0;
@@ -1247,10 +1193,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	color: var(--ink);
 	font-size: 14px;
 }
-
-/*-----------------
-	12. Login
------------------------*/
 
 .login-wrapper {
 	width: 100%;
@@ -1386,10 +1328,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 	justify-content: space-between;
 }
 
-/*-----------------
-	9. Dashboard
------------------------*/
-
 .dash-widget {
 	background-color: var(--paper);
 	border-radius: 12px;
@@ -1472,7 +1410,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 .patient-views:hover {
 	color: var(--accent);
 }
-/* Hero: в 808 белый блок с картинкой, в макете hero-блоки тёмные */
 .good-morning-blk {
 	background: var(--hero-gradient);
 	border-radius: 12px;
@@ -1595,14 +1532,11 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	color: var(--ink);
 	font-size: 16px;
 	line-height: 1;
-	/* У Poppins высокий верхний вынос — без отступа цифры стоят выше центра */
 	padding-top: 2px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
-/* В 808 кольцо рисует плагин circle-progress в <canvas> 100×100;
-   здесь то же кольцо — SVG, длина дуги задаётся атрибутом data-value */
 .wallet-widget .circle-bar > div svg {
 	width: 100px;
 	height: 100px;
@@ -1646,10 +1580,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	border-radius: 50px;
 	z-index: 9;
 }
-
-/*-----------------
-	10. Activity
------------------------*/
 
 .activity-box {
 	position: relative;
@@ -1748,10 +1678,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	border-radius: 8px;
 }
 
-/*-----------------
-	11. Select2
------------------------*/
-
 .select2-container .select2-selection--single {
 	border: 2px solid var(--border);
 	border-radius: 10px;
@@ -1826,10 +1752,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	border-radius: 10px;
 	min-height: 40px;
 }
-
-/*-----------------
-	12. Nav tabs
------------------------*/
 
 .nav-tabs {
 	--bs-nav-tabs-border-color: var(--border);
@@ -1918,7 +1840,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 .nav-tabs.nav-tabs-top > li > a.active:focus {
 	border-top-color: var(--primary);
 }
-/* Вкладки с иконкой — страница профиля врача (doctor-profile.html) */
 .tab-content-set {
 	border-bottom: 4px solid var(--muted-bg);
 	padding-bottom: 25px;
@@ -1964,7 +1885,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 .tab-content-set ul li a:hover .set-about-icon {
 	color: var(--ink);
 }
-/* Кнопки-вкладки настроек (settings.html) */
 .settings-menu-links .nav-tabs.menu-tabs {
 	border: none;
 	margin-bottom: 20px;
@@ -1997,10 +1917,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	color: var(--paper);
 	background: var(--primary);
 }
-
-/*-----------------
-	16. Focus Label
------------------------*/
 
 .local-forms.input-block {
 	position: relative;
@@ -2060,11 +1976,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	text-transform: uppercase;
 }
 
-/*-----------------
-	20. Profile
------------------------*/
-
-/* В 808 шапка профиля светлая (подложка 5%); в макете hero-блок тёмный */
 .doctor-profile-head {
 	background: var(--hero-gradient);
 	border-radius: 10px;
@@ -2180,7 +2091,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	background: var(--accent-dark);
 	border: 1px solid var(--accent-dark);
 }
-/* На тёмной шапке: основная кнопка белая, вторая — контурная белая */
 .doctor-profile-head .follow-btn-group .follow-btns {
 	background: var(--paper);
 	border-color: var(--paper);
@@ -2231,7 +2141,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 .personal-icons i {
 	color: var(--ink);
 }
-/* Глиф Telegram в Font Awesome стоит выше центра своего квадрата */
 .personal-icons .fa-telegram {
 	margin-top: 2px;
 }
@@ -2333,10 +2242,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	margin-bottom: 30px;
 }
 
-/*-----------------
-	21. Notifications
------------------------*/
-
 .notifications {
 	padding: 0;
 }
@@ -2416,17 +2321,12 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	color: var(--ink);
 	font-weight: 500;
 }
-/* 39. Notification settings: список настроек с переключателем */
 .notification-list .list-group-item {
 	padding: 15px;
 }
 .notification-list .status-toggle {
 	float: right;
 }
-
-/*-----------------
-	24. Invoice: флажки, радиокнопки, «Загрузить ещё»
------------------------*/
 
 .custom_check {
 	color: var(--ink);
@@ -2457,8 +2357,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	border-radius: 0;
 	transition: all 0.3s ease-in-out;
 }
-/* В 808 галочка сдвинута на подобранные пиксели (left: 5px; top: 2px) и съезжает
-   при другом размере квадрата. Здесь она центрируется по квадрату */
 .custom_check .checkmark::after {
 	content: "\f00c";
 	font-family: "Font Awesome 5 Free";
@@ -2570,10 +2468,6 @@ ul.chat-user-total li i.old-users { color: var(--accent); }
 	border-right-color: var(--paper);
 }
 
-/*-----------------
-	25. Doctors: статусы и модалка удаления
------------------------*/
-
 .custom-badge {
 	border-radius: 8px;
 	display: inline-block;
@@ -2603,8 +2497,6 @@ a.status-blue {
 	background-color: var(--info-bg);
 	color: var(--info);
 }
-/* В 808 фиолетовый и розовый — дополнительные цвета; в макете их нет,
-   поэтому они переведены на акцентный и цвет ошибки */
 .status-purple,
 a.status-purple {
 	background-color: var(--accent-soft);
@@ -2624,7 +2516,6 @@ a.status-grey {
 	background-color: var(--muted-2);
 	border: 1px solid var(--muted-2);
 }
-/* В 808 ширина ровно 90 px под «Close / Delete»; для русских слов — минимальная */
 .delete-modal .modal-body .btn {
 	font-size: 16px;
 	font-weight: bold;
@@ -2647,10 +2538,6 @@ a.status-grey {
 .custom-modal .modal-body {
 	padding: 30px;
 }
-
-/*-----------------
-	33. UI Kit: бейджи и аватары
------------------------*/
 
 .badge-soft-primary {
 	color: var(--ink);
@@ -2794,10 +2681,6 @@ a.status-grey {
 .avatar-group .avatar:first-child {
 	margin-left: 0;
 }
-
-/*-----------------
-	42. Settings: загрузка файла и переключатель
------------------------*/
 
 .settings-form {
 	margin-top: 20px;
@@ -2944,10 +2827,6 @@ a.status-grey {
 	transform: translate(calc(-100% - 5px), -50%);
 }
 
-/*-----------------
-	Мастер по шагам (form-wizard.html)
------------------------*/
-
 .wizard .nav-tabs {
 	flex-wrap: nowrap;
 	position: relative;
@@ -2993,10 +2872,6 @@ a.status-grey {
 	display: none;
 }
 
-/*-----------------
-	Bootstrap Tagsinput (seo-settings.html)
------------------------*/
-
 .bootstrap-tagsinput {
 	display: block;
 	width: 100%;
@@ -3026,7 +2901,6 @@ a.status-grey {
 	font-size: 14px;
 	color: var(--muted-2);
 }
-/* Плагин вешает на тег .badge.badge-primary — как в 808, перекрываем фон через !important */
 .bootstrap-tagsinput .tag {
 	margin-right: 5px;
 	color: var(--ink);
@@ -3050,10 +2924,6 @@ a.status-grey {
 	color: var(--error);
 }
 
-/*-----------------
-	Toastr (toastr.html)
------------------------*/
-
 #toast-container > div,
 .toast-container > div {
 	opacity: 1;
@@ -3068,10 +2938,6 @@ a.status-grey {
 .toast-error { background-color: var(--error); }
 .toast-info { background-color: var(--info); }
 .toast-warning { background-color: var(--warning); }
-
-/*-----------------
-	43. Responsive (шапка и меню)
------------------------*/
 
 @media only screen and (min-width: 992px) {
 	.mini-sidebar .header-left .logo span {
@@ -3183,20 +3049,11 @@ a.status-grey {
 	}
 }
 
-/*-----------------
-	Дополнения платформы «Аудит»
-	Элементы макета, которых в 808 нет в готовом виде.
-	Собраны из тех же примитивов, размеров и цветов 808.
------------------------*/
-
-/* Иконка внутри статусного бейджа: «Регулярно», «Отложено» */
 .custom-badge i {
 	margin-right: 6px;
 	vertical-align: -1px;
 }
 
-/* Плитка категории: в 808 есть контурная .dash-boxs и залитая .doctor-box-icon.
-   В макете плитки категорий — акцентного цвета проекта. */
 .dash-boxs.dash-boxs-accent {
 	background: var(--accent-bg);
 	border-color: var(--accent);
@@ -3214,8 +3071,6 @@ a.status-grey {
 	margin: 0;
 }
 
-/* Цвета проекта: в 808 .theme-colors li span — квадраты 28×28 в настройке темы.
-   В макете выбранный цвет отмечен галочкой. */
 .theme-colors {
 	display: flex;
 	flex-wrap: wrap;
@@ -3255,7 +3110,6 @@ a.status-grey {
 	border-color: var(--border);
 }
 
-/* Шаги мастера: пройденный шаг (в 808 есть только «текущий») */
 .wizard .nav-item .nav-link.done {
 	background: var(--success);
 	border-color: var(--success);
@@ -3274,8 +3128,6 @@ a.status-grey {
 	color: var(--ink);
 }
 
-/* Аккордеон категорий: в 808 (accordions.html) заголовок — просто текст-ссылка.
-   В макете в строке ещё плитка категории, счётчик тестов и шеврон. */
 .custom-faq .card {
 	margin-bottom: 8px;
 }
@@ -3322,19 +3174,15 @@ a.status-grey {
 	display: none;
 }
 
-/* Отступ сверху в .circle-bar b нужен цифрам; иконку возвращаем в центр */
 .wallet-widget .circle-bar > div b > i {
 	margin-top: -2px;
 }
 
-/* Кольцо прогресса на тёмном hero */
 .good-morning-blk .wallet-widget .circle-bar > div b {
 	background: rgba(255, 255, 255, 0.08);
 	color: var(--paper);
 }
 
-/* Нижнее меню мобильной версии: в 808 на телефоне меню выезжает слева,
-   в макете — панель снизу. Пункты собраны из квадратов .menu-side. */
 .mobile-tabbar {
 	display: flex;
 	justify-content: space-around;
@@ -3370,8 +3218,6 @@ a.status-grey {
 	color: var(--paper);
 }
 
-/* Пользователь внизу меню: разделитель + аватар и имя.
-   Ссылка оформлена как .logout-btn из 808 (у него там «Logout») */
 .sidebar-user {
 	position: absolute;
 	left: 20px;
@@ -3395,15 +3241,11 @@ a.status-grey {
 		left: 10px;
 		right: 10px;
 	}
-	/* Правило 808 прячет подписи только внутри .sidebar-menu,
-	   а блок пользователя лежит вне его — прячем имя отдельно */
 	.mini-sidebar .sidebar-user .logout-btn a span:not(.avatar) {
 		display: none;
 	}
 }
 
-/* Заголовок страницы: в 808 вместо него только хлебные крошки.
-   Начертание — как у заголовков 808 (.morning-user h2), справа — кнопки */
 .page-heading {
 	display: flex;
 	align-items: flex-start;
@@ -3447,8 +3289,6 @@ a.status-grey {
 	gap: 10px;
 }
 
-/* Кнопка-иконка: квадрат 40 из .add-group 808, с .btn-rounded — круг.
-   Контурный вариант — для стрелки «Открыть» */
 .btn-icon-only {
 	width: 40px;
 	height: 40px;
@@ -3468,8 +3308,6 @@ a.status-grey {
 	border-radius: 50%;
 }
 
-/* Фильтр-выпадашка с флажками: выглядит как select2 из 808
-   (рамка 2 px, радиус 10, высота 40, уголок-стрелка) */
 .dropdown-select {
 	display: inline-flex;
 	align-items: center;
@@ -3512,7 +3350,6 @@ a.status-grey {
 	padding: 15px;
 	min-width: 100%;
 }
-/* Маленький фильтр (в попапе «Все действия»): серая подложка, как .add-group */
 .dropdown-select.dropdown-select-sm {
 	height: 30px;
 	width: auto;
@@ -3525,15 +3362,12 @@ a.status-grey {
 	border-radius: 8px;
 }
 
-/* Пароль скрыт точками + кнопка «Изменить» (страница профиля) */
 .form-control.pass-hidden {
 	letter-spacing: 3px;
 	background: var(--muted-bg);
 	border-color: var(--muted-bg);
 }
 
-/* Подложка внутри карточки: панели «Дата / Время / Подтвердить»,
-   «Время проверки 17:00 / Изменить». Цвет и радиус — как у .comman-activitys 808 */
 .card-box.card-box-tint {
 	background: var(--muted-bg);
 	border-radius: 16px;
@@ -3551,8 +3385,6 @@ a.status-grey {
 	color: var(--muted);
 }
 
-/* Мастер с номерами шагов, как в макете: пройден — зелёный с галочкой,
-   текущий — с обводкой, следующий — серый */
 .wizard .nav-item .nav-link {
 	font-weight: 600;
 	font-size: 18px;
@@ -3591,7 +3423,6 @@ a.status-grey {
 	line-height: 1.3;
 }
 
-/* Hero профиля как в макете: аватар с инициалами, имя, почта, кнопки справа */
 .doctor-profile-head.profile-head-row {
 	display: flex;
 	align-items: center;
@@ -3611,8 +3442,6 @@ a.status-grey {
 	width: auto;
 }
 
-/* Форма входа как в макете: карточка по центру страницы, заголовок по центру,
-   «Я не робот» в рамке поля. Детали — из login.html 808 */
 .login-wrapper.login-center {
 	min-height: 100vh;
 	padding: 30px 15px;
@@ -3652,8 +3481,6 @@ a.status-grey {
 	margin-bottom: 0;
 }
 
-/* Мобильная версия по макету: шапка с логотипом слева, навигация — панель снизу.
-   Меню 808, выезжающее слева, остаётся для экранов без панели */
 @media only screen and (max-width: 991.98px) {
 	.has-tabbar .mobile_btn {
 		display: none;
@@ -3688,13 +3515,6 @@ a.status-grey {
 	}
 }
 
-/*-----------------
-	Тема «808 Checker»: основной градиент и тёмное меню
-	Правила ниже перекрывают цвета разделов выше там, где макет
-	заливает элемент градиентом, а не одним цветом.
------------------------*/
-
-/* Кнопки */
 .btn-primary,
 .btn-secondary {
 	background-image: var(--primary-gradient);
@@ -3717,7 +3537,6 @@ a.status-grey {
 .btn-secondary.disabled {
 	background-image: none;
 }
-/* Кнопки на основе .btn-primary, у которых в 808 своя светлая заливка */
 .add-group .btn-primary,
 .doctor-submit .cancel-form {
 	background-image: none;
@@ -3726,7 +3545,6 @@ a.status-grey {
 .doctor-submit .cancel-form:hover {
 	background-image: var(--primary-gradient);
 }
-/* Контурная кнопка макета: серая рамка #A4AAB7, тёмный текст */
 .btn-outline-primary {
 	--bs-btn-color: var(--ink);
 	--bs-btn-border-color: var(--muted-2);
@@ -3740,7 +3558,6 @@ a.status-grey {
 .btn-outline-primary:hover {
 	background-image: var(--primary-gradient);
 }
-/* «Активировать сценарий» в макете — сплошной тёмный #12182A */
 .btn-dark {
 	--bs-btn-bg: var(--ink);
 	--bs-btn-border-color: var(--ink);
@@ -3750,7 +3567,6 @@ a.status-grey {
 	--bs-btn-active-border-color: var(--primary-press);
 }
 
-/* Активные вкладки, страница, шаг, тумблер, плитки */
 .nav-tabs.nav-tabs-solid > li > a.active,
 .nav-tabs.nav-tabs-solid > li > a.active:hover,
 .nav-tabs.nav-tabs-solid > li > a.active:focus,
@@ -3769,7 +3585,6 @@ a.status-grey {
 .check:checked + .checktoggle {
 	border-color: var(--primary);
 }
-/* Выключенный тумблер в макете — серая дорожка #A8AFB9 и белый кружок */
 .checktoggle {
 	background-color: var(--toggle-off);
 	border-color: var(--toggle-off);
@@ -3778,7 +3593,6 @@ a.status-grey {
 	background-color: var(--paper);
 }
 
-/* Плитки категорий: залитая — градиент, контурная — рамка основного цвета */
 .dash-boxs.dash-boxs-accent {
 	background: var(--paper);
 	border-color: var(--primary);
@@ -3788,14 +3602,12 @@ a.status-grey {
 	background-color: var(--primary);
 }
 
-/* Статус «Не регулярно» */
 .status-grey,
 a.status-grey {
 	background-color: var(--neutral-bg);
 	color: var(--text-3);
 }
 
-/* Хлебные крошки: путь серый, текущая страница тёмная */
 .breadcrumb-item a {
 	color: var(--muted);
 }
@@ -3809,8 +3621,6 @@ a.status-grey {
 	color: var(--muted);
 }
 
-/* Боковое меню: в макете залито градиентом, пункты белые,
-   неактивные — с прозрачностью 60% */
 .sidebar {
 	background: var(--primary-gradient);
 	box-shadow: none;
@@ -3858,7 +3668,6 @@ a.status-grey {
 	background-color: rgba(254, 254, 254, 0.2);
 }
 
-/* Hero сводки: градиент; подзаголовок — вторичный цвет макета */
 .morning-user h2 span {
 	color: var(--paper);
 }
@@ -3866,7 +3675,6 @@ a.status-grey {
 	color: var(--muted);
 }
 
-/* Шапка профиля: в новом макете это белая карточка с тёмной кнопкой */
 .doctor-profile-head {
 	background: var(--paper);
 	color: var(--ink);
@@ -3906,7 +3714,6 @@ a.status-grey {
 	box-shadow: 0 0 0 2px var(--primary);
 }
 
-/* Карточки макета — с мягкой тенью */
 .card,
 .card-box,
 .dash-widget,

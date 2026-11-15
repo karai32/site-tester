@@ -1,8 +1,3 @@
-<%#
-	Поля уведомлений: шаг 3 формы сценария и форма на странице сценария.
-	Нужен notifications: { events, passPercent, emails, telegramIds } - см. src/notifications/settings.js.
-	Сервер читает поля в readNotificationsForm.
-%>
 <div class="notify-fields">
 	<div class="notice-box notice-box-info">
 		<i class="feather-info"></i>
@@ -13,7 +8,6 @@
 		<% } %>
 	</div>
 
-	<%# Событие и способ: Тг, Почта или Нет - выбирается один %>
 	<% for (const event of NOTIFICATION_EVENTS) { %>
 		<div class="notify-row">
 			<div class="notify-row__text">
@@ -36,7 +30,6 @@
 		</div>
 	<% } %>
 
-	<%# Получатели. Плагин bootstrap-tagsinput из кита показывает их «чипами», на сервер уходит строка через запятую %>
 	<div class="field">
 		<label for="notify-emails">Почты для отправки уведомлений</label>
 		<input id="notify-emails" name="emails" class="form-control" data-role="tagsinput" value="<%= notifications.emails.join(',') %>" placeholder="Почта и Enter">

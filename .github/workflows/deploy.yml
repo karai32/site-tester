@@ -1,7 +1,5 @@
 name: Deploy to production
 
-# При каждом пуше в main: собрать образ, положить в ghcr.io и перезапустить контейнер на сервере.
-
 on:
   push:
     branches:
@@ -66,7 +64,6 @@ jobs:
           chmod 600 "$HOME/.ssh/deploy_key"
           ssh-keyscan -H -T 10 "$DEPLOY_HOST" >> "$HOME/.ssh/known_hosts"
 
-      # Перезапуск прервал бы идущую проверку
       - name: Check that no check is running
         run: |
           ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes "$DEPLOY_USER@$DEPLOY_HOST" \

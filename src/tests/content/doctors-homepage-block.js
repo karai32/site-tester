@@ -1,4 +1,3 @@
-// В блоке врачей на главной у карточек есть фото, должность и рабочая кнопка записи
 import { getStatuses, takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -30,7 +29,6 @@ export default {
       const card = cards.nth(index);
       const name = (await card.locator('h3').first().textContent().catch(() => '') || `№${index + 1}`).trim();
 
-      // Фото в карусели грузятся лениво, поэтому берём src из разметки и проверяем HTTP-статус
       const photoSrc = await card.locator(selectors.photo).first().getAttribute('src').catch(() => null);
       if (!photoSrc) {
         problems.push(`«${name}»: у фото нет src`);

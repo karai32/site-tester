@@ -1,4 +1,3 @@
-// Телефон в форме записи, введённый в разных форматах, приводится к одному виду
 const selectors = {
   trigger: 'header [data-modal="call"]',
   phone: '#call form.wpcf7-form input[name="phone"]',
@@ -8,7 +7,6 @@ const baselineFormat = '1234567890';
 const typedFormats = ['123-456-78-90', '123 456 78 90', '(123) 456-78-90'];
 const pastedFormats = ['+71234567890', '81234567890', '+7 (123) 456-78-90', '8 123 456 78 90'];
 
-// Вставка текста целиком, как из буфера обмена
 async function pasteValue(field, value) {
   await field.evaluate((el, val) => {
     const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
@@ -42,7 +40,7 @@ export default {
     const media = [];
     const lines = [];
     const problems = [];
-    let expected = null; // результат базового ввода - с ним сравниваются остальные
+    let expected = null;
 
     for (const step of steps) {
       await phoneField.fill('');

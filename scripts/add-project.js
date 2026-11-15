@@ -1,6 +1,3 @@
-// Создаёт проект (сайт для проверок) и его полный сценарий.
-// Запуск: npm run add-project -- "<Название>" <адрес сайта>
-// Пример: npm run add-project -- Hadassah https://hadassah.moscow/
 import { cleanProject, createProjectWithScenario } from '../src/project-actions.js';
 
 const [name, url] = process.argv.slice(2);

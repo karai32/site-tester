@@ -1,11 +1,9 @@
-// Иконка онлайн-чата (Carrot quest) появляется на странице
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
   chatWidget: '#carrotquest-messenger-collapsed-container',
 };
 const maxWaitMs = 8_000;
-// Чат не показывается браузерам-роботам, поэтому представляемся обычным Chrome
 const desktopUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
 export default {

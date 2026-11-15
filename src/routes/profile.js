@@ -1,4 +1,3 @@
-// Профиль вошедшего пользователя: данные аккаунта и контакты для уведомлений
 import { updateUserContacts } from '../db/users.js';
 import { isEmail, isTelegramId } from '../notifications/settings.js';
 
@@ -8,14 +7,12 @@ function showProfile(reply, options) {
 }
 
 export default async function profileRoutes(app) {
-  // ?saved=1 - показать «Сохранено»
   app.get('/profile', async (request, reply) => {
     const user = reply.locals.user;
     const contacts = { email: user.email || '', telegramId: user.telegram_id || '' };
     return showProfile(reply, { contacts, errors: [], saved: request.query.saved === '1' });
   });
 
-  // Сохранить почту и Telegram ID
   app.post('/profile', async (request, reply) => {
     const body = request.body || {};
     const contacts = {

@@ -1,4 +1,3 @@
-// Все пункты главного меню ведут на существующие страницы
 import { getStatuses } from '../helpers/common.js';
 
 const selectors = {
@@ -25,9 +24,8 @@ export default {
       className: link.getAttribute('class') || '',
     })));
 
-    const uniqueLinks = new Map(); // адрес -> название пункта меню
+    const uniqueLinks = new Map();
     for (const link of rawLinks) {
-      // Заголовки колонок мега-меню - не ссылки
       const isMegaMenuTitle = link.className.split(/\s+/).includes('mega__title');
       if (isMegaMenuTitle && link.href === '#') continue;
 

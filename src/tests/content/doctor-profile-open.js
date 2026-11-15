@@ -1,4 +1,3 @@
-// Из карточки врача на главной открывается его страница со всеми данными
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -10,7 +9,6 @@ const selectors = {
   heroButton: '.doctor-hero__button',
 };
 
-// Поля страницы врача, которые должны быть заполнены
 const requiredFields = [
   [selectors.heroName, 'имя врача'],
   [selectors.heroPosition, 'должность'],

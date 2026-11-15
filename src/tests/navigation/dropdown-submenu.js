@@ -1,4 +1,3 @@
-// Выпадающие подменю в шапке открываются и закрываются
 const selectors = {
   dropdownButtons: '.nav > .nav-item.menu-item-has-children > .nav-button',
 };
@@ -30,7 +29,7 @@ export default {
         await button.click();
         const panel = button.locator('xpath=..').locator(':scope > .mega, :scope > .mega-mini');
         await panel.waitFor({ state: 'visible', timeout: 2_000 });
-        await panel.locator('a[href]:visible').first().click({ trial: true }); // ссылка в подменю кликабельна
+        await panel.locator('a[href]:visible').first().click({ trial: true });
         await button.click();
         await panel.waitFor({ state: 'hidden', timeout: 2_000 });
       } catch {

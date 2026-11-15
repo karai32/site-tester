@@ -1,5 +1,3 @@
-// Вход и выход. Браузер хранит случайный токен в cookie,
-// сервер по хешу токена находит сессию в базе.
 import { createHash, randomBytes } from 'node:crypto';
 import { createSession, deleteExpiredSessions, deleteSession, findUserBySession } from '../db/sessions.js';
 
@@ -18,9 +16,9 @@ export function logIn(reply, userId) {
 
   reply.setCookie(COOKIE_NAME, token, {
     path: '/',
-    httpOnly: true, // JS на странице не может прочитать cookie
-    sameSite: 'lax', // cookie не отправляется с форм чужих сайтов
-    secure: process.env.NODE_ENV === 'production', // только по https на сервере
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
     maxAge: SESSION_DAYS * 24 * 60 * 60,
   });
 }
@@ -31,7 +29,6 @@ export function logOut(request, reply) {
   reply.clearCookie(COOKIE_NAME, { path: '/' });
 }
 
-// Вошедший пользователь или undefined
 export function getCurrentUser(request) {
   const token = request.cookies[COOKIE_NAME];
   if (!token) return undefined;

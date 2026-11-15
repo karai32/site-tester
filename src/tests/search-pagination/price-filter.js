@@ -1,4 +1,3 @@
-// Поиск по прайсу на странице «Цены» сужает список услуг
 import { takeScreenshot } from '../helpers/common.js';
 
 const query = 'Аллергология';
@@ -32,7 +31,6 @@ export default {
     const bodyText = await page.evaluate(() => document.body.innerText);
     const media = [await takeScreenshot(page)];
 
-    // После поиска список короче, а на странице есть заголовок с запросом
     const hasQueryHeading = bodyText.toUpperCase().includes(query.toUpperCase());
     const isNarrowed = itemsAfter > 0 && itemsAfter < itemsBefore;
 

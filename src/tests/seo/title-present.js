@@ -1,4 +1,3 @@
-// На каждой странице выборки заполнен <title>
 function getTitle(html) {
   return html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() || '';
 }

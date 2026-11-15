@@ -1,6 +1,4 @@
 <%
-	// Скачиваемый отчёт: один HTML-файл без внешних стилей и картинок, открывается без сервера.
-	// Скриншоты встроены как data:-адреса (item.dataUrl готовит routes/reports.js).
 	const percent = percentOf(report.tests_passed, report.tests_total);
 %><!doctype html>
 <html lang="ru">
@@ -9,7 +7,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><%= report.scenario_name %> - отчёт #<%= report.id %></title>
 	<style>
-		/* Цвета повторяют theme.css: скачанный файл открывается без сервера и не видит его стилей */
 		:root { --ink: #12182a; --muted: #8593a4; --border: #dae0e7; --page: #f1f4f7; --paper: #fefefe; --success: #3f8f5f; --success-bg: #e7f2ec; --error: #cc3220; --error-bg: #f8e9e7; --primary: #33414e; }
 		* { box-sizing: border-box; }
 		body { margin: 0; padding: 32px 16px; font: 15px/1.5 "Montserrat", "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--page); }

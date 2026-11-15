@@ -1,4 +1,3 @@
-// Кнопка записи в шапке открывает форму целиком на страницах разных типов
 import { takeScreenshot } from '../helpers/common.js';
 
 const pagesToCheck = [
@@ -44,7 +43,6 @@ export default {
       if (!phoneVisible || !submitVisible || !checkboxVisible) {
         problems.push(`${label}: форма записи открылась не полностью (телефон: ${phoneVisible}, кнопка: ${submitVisible}, чекбокс: ${checkboxVisible})`);
       } else {
-        // Поле телефона не должно заезжать на кнопку «Отправить»
         const phoneBox = await phoneField.boundingBox();
         const submitBox = await submitButton.boundingBox();
         if (phoneBox && submitBox && phoneBox.y + phoneBox.height > submitBox.y + 5) {

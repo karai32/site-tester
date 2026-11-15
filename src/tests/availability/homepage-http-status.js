@@ -1,4 +1,3 @@
-// Главная страница отвечает без ошибок 4xx/5xx
 export default {
   id: 'homepage-http-status',
   title: 'Главная страница загружается без ошибок 4xx/5xx',

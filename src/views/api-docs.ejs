@@ -1,7 +1,3 @@
-<%#
-	Справка по API. Примеры - настоящие запросы и ответы с тестового сервера (src/api/examples.json).
-	Нужны apiUrl и sections: [{ title, examples: [{ title, note, request, status, response }] }].
-%>
 <div class="breadcrumbs"><a href="/settings">Настройки</a> / <span>Справка по API</span></div>
 
 <div class="page-head">
@@ -34,14 +30,12 @@
 	</table>
 </section>
 
-<%# Разделы: ссылки наверху раскрывают раздел (app.js, data-open-section) %>
 <nav class="api-sections">
 	<% sections.forEach((section, index) => { %>
 		<a href="#api-section-<%= index %>" class="btn btn-outline-primary btn-pill btn-pill-sm" data-open-section="#api-body-<%= index %>"><%= section.title %></a>
 	<% }) %>
 </nav>
 
-<%# Раздел свёрнут, по заголовку раскрывается: таблица на каждый запрос %>
 <% sections.forEach((section, index) => { %>
 	<section class="panel" id="api-section-<%= index %>">
 		<button type="button" class="api-section__head collapsed" data-bs-toggle="collapse" data-bs-target="#api-body-<%= index %>" aria-expanded="false">

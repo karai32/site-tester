@@ -1,44 +1,12 @@
-/* =========================================================
-   Тема «808 Checker» для компонентов 808 Utilities
-   ---------------------------------------------------------
-   Компоненты, размеры, радиусы и шрифт (Poppins) взяты из
-   UI-кита 808 Utilities (Preclinic, Bootstrap 5.3.3).
-   Цвета заменены палитрой из Figma-макета «808 Checker».
-
-   Основной цвет макета — градиент
-   linear-gradient(90deg, #33414E 0%, #2C3B49 100%).
-   Им залиты меню, кнопки, активные вкладки, плитки и hero.
-   Там, где нужен один цвет (рамки, галочки, иконки), — #33414E.
-
-   Как заменены цвета 808 → Figma:
-     #2E37A4  основной (индиго)        → --primary    #33414E (+ градиент)
-     #00D3C7  второй (бирюзовый)       → --accent     = основной (второго цвета в макете нет)
-     #009EFB  синий (hover, info)      → --info       #3D78B0
-     #333448  текст                    → --ink        #12182A
-     rgba(51,52,72,.5) вторичный текст → --muted      #8593A4
-     rgba(46,55,164,.5) текст подменю  → --text-2     #8593A4
-     rgba(46,55,164,.05) подложки      → --muted-bg   #F0F3F6
-     rgba(46,55,164,.1) рамки полей    → --border     #DAE0E7
-     rgba(46,55,164,.3) плейсхолдеры   → --muted-2    #A4AAB7
-     #55CE63 / #00D3C7 успех           → --success    #3F8F5F
-     #F62D51 / #FE0000 / #FF3667 ошибка → --error     #CC3220
-     #FFBC34 / #FF9B01 предупреждение  → --warning    #C08A34
-     фон страницы (серо-голубой)       → --page-bg    #F1F4F7
-     градиент кнопки входа             → --primary-gradient
-   ========================================================= */
-
 :root {
-  /* --- Основной цвет (Figma) --- */
   --primary: #33414e;
   --primary-dark: #2c3b49;
   --primary-gradient: linear-gradient(90deg, #33414e 0%, #2c3b49 100%);
-  /* Наведения и нажатия в макете нет: чуть светлее и чуть темнее основного */
   --primary-hover: #3d4c5a;
   --primary-hover-gradient: linear-gradient(90deg, #3d4c5a 0%, #34434f 100%);
   --primary-press: #222e3a;
   --primary-soft: rgba(51, 65, 78, 0.1);
 
-  /* --- Neutral / Surface / Border (Figma) --- */
   --page-bg: #f1f4f7;
   --paper: #fefefe;
   --ink: #12182a;
@@ -48,22 +16,18 @@
   --muted-bg: #f0f3f6;
   --toggle-off: #a8afb9;
 
-  /* --- Hero: в макете hero-блоки залиты основным градиентом --- */
   --hero-gradient: var(--primary-gradient);
 
-  /* Старые имена из первой версии кита — на основной цвет */
   --dark-1: var(--primary);
   --dark-2: var(--primary-dark);
   --ink-hover: var(--primary-hover);
   --ink-press: var(--primary-press);
 
-  /* --- Дополнительный текст (Figma) --- */
   --ink-2: #12182a;
   --text-2: #8593a4;
   --text-3: #444444;
-  --neutral-bg: #ececea; /* фон статуса «Не регулярно» */
+  --neutral-bg: #ececea;
 
-  /* --- Статусы (Figma) --- */
   --success: #3f8f5f;
   --success-bg: #e7f2ec;
   --warning: #c08a34;
@@ -73,26 +37,21 @@
   --info: #3d78b0;
   --info-bg: #e6eef7;
 
-  /* --- Акцент: в новом макете отдельного цвета нет, это основной цвет --- */
   --accent: var(--primary);
   --accent-dark: var(--primary-dark);
   --accent-bg: var(--muted-bg);
   --accent-soft: var(--primary-soft);
 
-  /* --- Тени --- */
   --shadow-soft: 0 0 3px var(--border);
   --shadow-card: 0 15px 16px rgba(130, 126, 126, 0.1);
   --shadow-sidebar: 5px 20px 14px rgba(18, 24, 42, 0.05);
   --shadow-header: 0 0 14px rgba(164, 170, 183, 0.25);
 
-  /* --- Bootstrap 5.3: переменные темы --- */
-  /* В Poppins нет кириллицы: русские буквы берутся из Montserrat (тоже геометрический) */
   --font-main: "Poppins", "Montserrat", sans-serif;
   --bs-font-sans-serif: var(--font-main);
   --bs-body-font-family: var(--font-main);
   --bs-body-color: #12182a;
   --bs-body-color-rgb: 18, 24, 42;
-  /* Фон body задаётся в style.css; эта переменная — фон полей, списков и модалок */
   --bs-body-bg: #fefefe;
   --bs-body-bg-rgb: 254, 254, 254;
   --bs-emphasis-color: #12182a;

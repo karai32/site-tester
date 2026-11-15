@@ -7,7 +7,6 @@
 	</div>
 </div>
 
-<%# Поиск: остальные фильтры передаются вместе с ним %>
 <form class="search-pill" method="get" action="/projects/<%= project.id %>/reports">
 	<i class="feather-search"></i>
 	<input type="search" name="q" class="form-control" placeholder="Найти отчёт: сценарий, автор или дата" value="<%= search %>">
@@ -18,7 +17,6 @@
 </form>
 
 <div class="filters">
-	<%# Автор %>
 	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 			Автор сценария: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
@@ -31,7 +29,6 @@
 		</div>
 	</div>
 
-	<%# Категории: сценарий отчёта содержит все отмеченные %>
 	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 			Категории: <%= selectedCategories.length === 0 ? 'Все' : selectedCategories.length %> <i class="feather-chevron-down"></i>
@@ -51,10 +48,8 @@
 		</form>
 	</div>
 
-	<%# Регулярность %>
 	<%- include('../partials/regular-filter', { regular, filterUrl: archiveUrl }) %>
 
-	<%# Сортировка %>
 	<div class="dropdown filters__sort">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 			Сортировка: <%= sorts[sort].title %> <i class="feather-chevron-down"></i>
@@ -73,7 +68,6 @@
 	<% } %>
 	<% for (const report of pagination.items) { %>
 		<div class="list-row">
-			<%# Полная проверка - залитая плитка, частичная - контурная %>
 			<% if (report.scenario_is_full) { %>
 				<span class="icon-box"><i class="feather-shield"></i></span>
 			<% } else { %>

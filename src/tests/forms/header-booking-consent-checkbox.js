@@ -1,8 +1,5 @@
-// У каждой формы сайта есть чекбокс согласия на обработку ПДн: он не отмечен заранее,
-// рядом рабочая ссылка на политику. Формы ищутся по HTML страниц выборки (data-wpcf7-id).
 import { errorMessage, getStatuses } from '../helpers/common.js';
 
-// Страница -> id форм, которые проверяем на ней (каждую форму - на первой странице, где она нашлась)
 function findForms(pages, getHtml) {
   const formPage = new Map();
   for (const pageUrl of pages) {
@@ -19,7 +16,6 @@ function findForms(pages, getHtml) {
   return formsByPage;
 }
 
-// Где стоит форма: в модалке (её открываем), в секции страницы или просто на странице
 function revealForm(page, formId) {
   return page.evaluate((id) => {
     const wrapper = document.querySelector(`.wpcf7[data-wpcf7-id="${id}"]`);
@@ -33,7 +29,6 @@ function revealForm(page, formId) {
   }, formId);
 }
 
-// Чекбокс, в подписи которого есть слово «персональн», и ссылка рядом с ним
 function readConsent(page, formId) {
   return page.evaluate((id) => {
     const wrapper = document.querySelector(`.wpcf7[data-wpcf7-id="${id}"]`);
@@ -47,7 +42,6 @@ function readConsent(page, formId) {
   }, formId);
 }
 
-// Что снимать на скриншот для формы
 async function screenshotTarget(page, formId, info) {
   if (info.kind === 'modal') {
     const modal = page.locator(`#${info.modalId}`);

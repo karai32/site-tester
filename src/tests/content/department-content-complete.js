@@ -1,5 +1,3 @@
-// На странице направления выведены список услуг (блок «Цены на услуги») и врачи отделения,
-// у каждой услуги и каждого врача есть название
 import { takeScreenshot } from '../helpers/common.js';
 
 const departmentPath = '/departments/onkologia/';
@@ -9,7 +7,6 @@ const selectors = {
   doctorName: '.doctor-item__name',
 };
 
-// Тексты элементов страницы без лишних пробелов
 function readTexts(page, selector) {
   return page.locator(selector).evaluateAll((elements) => elements.map((element) => element.textContent.replace(/\s+/g, ' ').trim()));
 }

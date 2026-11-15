@@ -1,7 +1,3 @@
-<%#
-	Отчёты в сводке по сценарию (порция) и кнопка «Показать ещё» для следующей.
-	Нужны reports, remaining (сколько отчётов ещё не показано) и nextUrl (null - больше нет).
-%>
 <% for (const report of reports) { %>
 	<% const status = reportStatus(report); %>
 	<a class="report-link-row" href="/reports/<%= report.id %>">

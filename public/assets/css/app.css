@@ -1,9 +1,3 @@
-/* Стили сервиса по макету Figma.
-   Компоненты (кнопки, бейджи, поля, выпадающие списки, пагинация, модалки) - из UI-кита
-   808 Utilities (style.css), здесь их размеры подогнаны под макет. Каркас страницы,
-   карточки и строки списков - свои: в ките их аналогов с таким видом нет.
-   Цвета - только переменные из theme.css. */
-
 body {
 	background: var(--page-bg);
 	color: var(--ink);
@@ -13,10 +7,6 @@ body {
 .text-muted-2 {
 	color: var(--muted);
 }
-
-/* ==========================================================
-   1. Каркас: боковое меню + содержимое
-   ========================================================== */
 
 .app-logo {
 	display: flex;
@@ -49,11 +39,10 @@ body {
 	transition: transform 0.3s ease;
 }
 
-/* Пункты меню: белые, неактивные - с прозрачностью 60% */
 .app-menu {
 	margin-top: 44px;
 	overflow-y: auto;
-	overflow-x: hidden; /* стрелка подменю, пока крутится, чуть вылезает вбок - без этого мелькает прокрутка */
+	overflow-x: hidden;
 }
 .app-menu ul {
 	list-style: none;
@@ -95,13 +84,11 @@ body {
 .app-menu button.open .app-menu__arrow {
 	transform: rotate(180deg);
 }
-/* Проекты в «Выбранных проектах» - без иконок, с отступом под текст пунктов */
 .app-menu__submenu ul a {
 	min-height: 34px;
 	padding-left: 32px;
 }
 
-/* Пользователь внизу меню */
 .app-user {
 	margin-top: auto;
 	padding-top: 16px;
@@ -145,7 +132,6 @@ body {
 	padding: 40px 56px 56px;
 }
 
-/* Полоса с логотипом на телефоне */
 .app-topbar {
 	display: none;
 }
@@ -188,10 +174,6 @@ body {
 		padding: 24px 16px 40px;
 	}
 }
-
-/* ==========================================================
-   2. Заголовок страницы: крошки, название, подпись
-   ========================================================== */
 
 .breadcrumbs {
 	margin-bottom: 24px;
@@ -241,7 +223,6 @@ body {
 	font-size: 18px;
 }
 
-/* Проект: квадрат с первой буквой вместо логотипа */
 .project-head {
 	display: flex;
 	align-items: center;
@@ -264,11 +245,6 @@ body {
 	margin-top: 8px;
 }
 
-/* ==========================================================
-   3. Кнопки и бейджи кита в размерах макета
-   ========================================================== */
-
-/* «Таблетка»: основная - градиент, контурная - серая рамка */
 .btn-pill {
 	display: inline-flex;
 	align-items: center;
@@ -290,7 +266,6 @@ body {
 .btn-pill-sm {
 	padding: 7px 24px;
 }
-/* Круглая кнопка с иконкой (скачать) */
 .btn-circle {
 	display: inline-flex;
 	align-items: center;
@@ -302,9 +277,8 @@ body {
 	font-size: 18px;
 }
 
-/* Бейдж-«таблетка» макета: мелкий текст, мягкий фон статуса */
 .custom-badge {
-	flex-shrink: 0; /* в строке рядом с длинным текстом бейдж не сжимается */
+	flex-shrink: 0;
 	min-width: 0;
 	padding: 4px 9px;
 	border-radius: 514px;
@@ -312,10 +286,6 @@ body {
 	line-height: 1.3;
 	white-space: nowrap;
 }
-
-/* ==========================================================
-   4. Карточки и строки
-   ========================================================== */
 
 .panel {
 	margin-bottom: 24px;
@@ -360,7 +330,6 @@ body {
 	margin-top: 24px;
 }
 
-/* Строка «параметр - значение» */
 .info-row {
 	display: flex;
 	align-items: center;
@@ -379,7 +348,6 @@ body {
 	text-align: right;
 }
 
-/* Строка списка: название и подпись слева, действия справа */
 .list-row {
 	display: flex;
 	align-items: center;
@@ -418,7 +386,6 @@ body {
 	white-space: nowrap;
 }
 
-/* Плитка с иконкой: залитая - градиент, контурная - рамка основного цвета */
 .icon-box {
 	display: flex;
 	align-items: center;
@@ -443,7 +410,6 @@ body {
 	font-size: 18px;
 }
 
-/* Автор: аватар и имя в серой «таблетке» */
 .author-chip {
 	display: inline-flex;
 	align-items: center;
@@ -460,10 +426,6 @@ body {
 	margin: 0;
 	font-size: 8px;
 }
-
-/* ==========================================================
-   5. Поиск, фильтры, пагинация
-   ========================================================== */
 
 .search-pill {
 	position: relative;
@@ -497,7 +459,6 @@ body {
 .filters__sort {
 	margin-left: auto;
 }
-/* Кнопка фильтра - белая «таблетка» со стрелкой; меню - dropdown-menu кита */
 .filter-pill {
 	display: inline-flex;
 	align-items: center;
@@ -533,7 +494,6 @@ body {
 	padding: 8px 16px 4px;
 }
 
-/* Пагинация кита: круглые кнопки, активная - градиент */
 .pager {
 	display: flex;
 	flex-wrap: wrap;
@@ -577,18 +537,12 @@ body {
 	color: var(--muted);
 }
 
-/* ==========================================================
-   6. Дашборд проекта
-   ========================================================== */
-
-/* Сценарий в списке */
 .scenario-row__title {
 	margin: 0 0 8px;
 	font-size: 18px;
 	font-weight: 500;
 }
 
-/* Окно подтверждения запуска (модальное окно кита): шаги сценария */
 .launch-modal__hint {
 	margin: 6px 0 0;
 	color: var(--muted);
@@ -648,7 +602,6 @@ body {
 	gap: 8px;
 }
 
-/* Плитки категорий в сводке */
 .stat-tiles {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -678,7 +631,6 @@ body {
 	font-size: 11px;
 }
 
-/* Последние отчёты: строка - ссылка на отчёт */
 .report-link-row {
 	display: flex;
 	align-items: center;
@@ -702,11 +654,6 @@ body {
 	font-weight: 400;
 }
 
-/* ==========================================================
-   7. Отчёт
-   ========================================================== */
-
-/* Сводка: тёмная плашка с кольцом процента */
 .report-hero {
 	display: flex;
 	align-items: center;
@@ -747,7 +694,6 @@ body {
 	font-size: 14px;
 }
 
-/* Карточки категорий в две колонки */
 .test-groups {
 	columns: 2 400px;
 	column-gap: 33px;
@@ -791,7 +737,6 @@ body {
 	transform: none;
 }
 
-/* Один тест */
 .test-item {
 	padding: 22px 0;
 	border-bottom: 1px solid var(--border);
@@ -813,7 +758,7 @@ body {
 .test-item__body {
 	flex-grow: 1;
 	min-width: 0;
-	overflow-wrap: anywhere; /* длинные адреса без пробелов переносятся, а не растягивают страницу */
+	overflow-wrap: anywhere;
 }
 .test-item__title {
 	color: var(--ink);
@@ -824,7 +769,7 @@ body {
 	margin-top: 6px;
 	color: var(--muted);
 	font-size: 13px;
-	white-space: pre-line; /* у некоторых тестов комментарий в несколько строк */
+	white-space: pre-line;
 }
 .test-item__problems {
 	margin: 12px 0 0;
@@ -845,7 +790,6 @@ body {
 .test-item__pages a {
 	color: var(--ink);
 }
-/* «Показать ещё» - серая «таблетка» со стрелкой */
 .more-chip {
 	display: inline-flex;
 	align-items: center;
@@ -858,7 +802,6 @@ body {
 	color: var(--ink);
 	font-size: 13px;
 }
-/* Медиафайлы - серые плитки с иконкой, по клику открываются крупно */
 .media-tiles {
 	display: flex;
 	flex-wrap: wrap;
@@ -890,7 +833,6 @@ body {
 	border-radius: 8px;
 }
 
-/* Прогресс идущей проверки */
 .report-progress .progress {
 	height: 8px;
 	margin-top: 16px;
@@ -898,10 +840,6 @@ body {
 .report-progress .progress-bar {
 	background: var(--primary-gradient);
 }
-
-/* ==========================================================
-   8. Профиль
-   ========================================================== */
 
 .profile-head {
 	display: flex;
@@ -974,23 +912,14 @@ body {
 	font-size: 16px;
 }
 
-/* ==========================================================
-   9. Вход
-   ========================================================== */
-
 .login-center .btn-primary {
 	border-radius: 560px;
 }
-/* Пока поля пустые, кнопка серая (макет) */
 .login-center .btn-primary:disabled {
 	background: var(--muted-2);
 	border-color: var(--muted-2);
 	opacity: 1;
 }
-
-/* ==========================================================
-   10. Телефон
-   ========================================================== */
 
 @media (max-width: 767.98px) {
 	.page-head {
@@ -1033,12 +962,6 @@ body {
 	}
 }
 
-/* ==========================================================
-   11. Сценарии
-   ========================================================== */
-
-/* Галочка кита рисуется значком Font Awesome, а сервис его не подключает -
-   берём ту же галочку из Feather. Чёрточка - часть тестов категории выбрана */
 .custom_check .checkmark::after {
 	content: "\e92b";
 	font-family: "feather";
@@ -1054,7 +977,6 @@ body {
 	display: flex;
 }
 
-/* Переключатель «Активные / Неактивные» - вкладки кита в белой «таблетке» */
 .tabs-pill {
 	display: inline-block;
 	margin-bottom: 24px;
@@ -1077,7 +999,6 @@ body {
 	color: var(--paper);
 }
 
-/* Строка сценария: название со статусом и параметры мелким текстом */
 .scenario-row__title a {
 	color: var(--ink);
 }
@@ -1105,7 +1026,6 @@ body {
 .meta-items b {
 	font-weight: 500;
 }
-/* Крупный бейдж с иконкой - статус регулярности */
 .custom-badge-lg {
 	display: inline-flex;
 	align-items: center;
@@ -1118,7 +1038,6 @@ body {
 	font-size: 16px;
 }
 
-/* Категория с тестами: шапка со стрелкой и список под ней */
 .tree-group {
 	border-bottom: 1px solid var(--border);
 }
@@ -1164,7 +1083,7 @@ body {
 	color: var(--ink);
 }
 .tree-group__arrow {
-	display: inline-block; /* transform не действует на строчные элементы */
+	display: inline-block;
 	font-size: 18px;
 	transform: rotate(180deg);
 	transition: transform 0.2s;
@@ -1173,7 +1092,6 @@ body {
 .tree-group__toggle.collapsed .tree-group__arrow {
 	transform: none;
 }
-/* Тесты - с отступом под иконку категории и линией слева */
 .tree-items {
 	display: flex;
 	flex-direction: column;
@@ -1198,7 +1116,6 @@ body {
 	margin: 0;
 	font-weight: 500;
 }
-/* Строка с галочкой (выборки на странице сценария) */
 .check-row {
 	display: flex;
 	align-items: center;
@@ -1219,7 +1136,6 @@ body {
 	gap: 16px;
 	margin-top: 24px;
 }
-/* Кнопки внизу страницы по центру */
 .actions-bar {
 	display: flex;
 	flex-wrap: wrap;
@@ -1230,7 +1146,6 @@ body {
 .actions-bar form {
 	margin: 0;
 }
-/* «Деактивировать», «Отменить проверку» - красный текст на мягком красном фоне */
 .btn-soft-danger {
 	border: 0;
 	background: var(--error-bg);
@@ -1241,7 +1156,6 @@ body {
 	color: var(--paper);
 }
 
-/* Подсказка вверху формы обновления */
 .info-panel {
 	display: flex;
 	align-items: flex-start;
@@ -1263,7 +1177,6 @@ body {
 	background: var(--muted-bg);
 }
 
-/* Шаги создания сценария */
 .stepper {
 	display: inline-flex;
 	flex-wrap: wrap;
@@ -1308,7 +1221,6 @@ body {
 	height: 1px;
 	background: var(--muted-2);
 }
-/* Номер шага в заголовке карточки */
 .step-badge {
 	display: inline-flex;
 	align-items: center;
@@ -1328,7 +1240,6 @@ body {
 }
 
 @media (max-width: 767.98px) {
-	/* Вкладки шире экрана - прокручиваются внутри «таблетки», а не растягивают страницу */
 	.tabs-pill {
 		display: block;
 		max-width: 100%;
@@ -1348,9 +1259,6 @@ body {
 	}
 }
 
-/* --- Регулярные и отложенные проверки --- */
-
-/* Подпись под названием в строке сводки: «По расписанию», «Отложенная» */
 .info-row__label a {
 	color: inherit;
 }
@@ -1365,7 +1273,6 @@ body {
 	font-weight: 400;
 }
 
-/* «Отложенная проверка» - жёлтый текст на мягком жёлтом фоне */
 .btn-soft-warning {
 	border: 0;
 	background: var(--warning-bg);
@@ -1380,7 +1287,6 @@ body {
 	margin: 0;
 }
 
-/* Серая плашка внутри карточки: форма отложенной проверки, расписание */
 .soft-box {
 	margin-top: 24px;
 	padding: 24px 32px;
@@ -1388,7 +1294,6 @@ body {
 	background: var(--muted-bg);
 }
 
-/* Дата и время отложенной проверки */
 .deferred-form {
 	display: flex;
 	flex-wrap: wrap;
@@ -1411,7 +1316,6 @@ body {
 	font-size: 14px;
 }
 
-/* Сообщение в карточке: «Отложенная проверка запланирована на ...» */
 .notice-box {
 	display: flex;
 	align-items: center;
@@ -1430,7 +1334,6 @@ body {
 	color: var(--warning);
 }
 
-/* Расписание на странице сценария: подпись, крупный текст и кнопка «Изменить» */
 .schedule-box {
 	display: flex;
 	flex-wrap: wrap;
@@ -1459,7 +1362,6 @@ body {
 	font-size: 13px;
 }
 
-/* Переключатель «Регулярная / Нерегулярная»: радиокнопки btn-check в серой «таблетке» */
 .segmented {
 	display: inline-flex;
 	padding: 3px;
@@ -1482,7 +1384,6 @@ body {
 	outline: 2px solid var(--muted-2);
 }
 
-/* Варианты расписания: пока выбрано «Нерегулярная», они скрыты */
 .schedule-manual {
 	display: none;
 	margin: 24px 0 0;
@@ -1547,9 +1448,6 @@ body {
 	width: 72px;
 }
 
-/* --- Уведомления --- */
-
-/* Синяя подсказка про Telegram-бота */
 .notice-box-info {
 	margin-top: 0;
 	margin-bottom: 8px;
@@ -1562,7 +1460,6 @@ body {
 	text-decoration: underline;
 }
 
-/* Вопрос формы и выбор способа: Тг / Почта / Нет */
 .notify-row {
 	display: flex;
 	flex-wrap: wrap;
@@ -1609,8 +1506,6 @@ body {
 	margin-top: 24px;
 }
 
-/* Получатели «чипами»: серое поле, белые «таблетки» с крестиком.
-   Плагин прячет исходное поле классом sr-only из Bootstrap 4 - в Bootstrap 5 его нет, задаём сами. */
 .sr-only {
 	position: absolute !important;
 	width: 1px !important;
@@ -1630,7 +1525,7 @@ body {
 	margin-right: 6px;
 	padding: 2px 10px;
 	border-radius: 669px;
-	background: var(--paper) !important; /* плагин ставит класс badge-info, у которого в ките !important */
+	background: var(--paper) !important;
 	color: var(--ink);
 	font-size: 13px;
 	font-weight: 400;
@@ -1646,7 +1541,6 @@ body {
 	color: var(--error);
 }
 
-/* Включённое уведомление на странице сценария: событие, значок способа, получатели */
 .notify-item {
 	display: flex;
 	flex-wrap: wrap;
@@ -1694,9 +1588,6 @@ body {
 	overflow-wrap: anywhere;
 }
 
-/* --- Сводка по сценарию на дашборде --- */
-
-/* Список сценариев: серое поле со стрелкой, как в макете */
 .summary-select.form-select {
 	height: 44px;
 	padding-left: 32px;
@@ -1710,8 +1601,6 @@ body {
 	margin-top: 16px;
 }
 
-/* --- Аватарка проекта --- */
-
 .project-logo-image {
 	overflow: hidden;
 	background: var(--paper);
@@ -1721,7 +1610,6 @@ body {
 	height: 100%;
 	object-fit: cover;
 }
-/* На дашборде аватарка - кнопка: при наведении поверх появляется значок камеры */
 .project-logo-change {
 	position: relative;
 	display: block;
@@ -1745,9 +1633,6 @@ body {
 	opacity: 1;
 }
 
-/* --- API-ключи (Настройки) --- */
-
-/* Только что созданный ключ: показывается один раз */
 .api-key-new {
 	margin-top: 24px;
 	padding: 24px 32px;
@@ -1776,7 +1661,6 @@ body {
 .list-row form {
 	margin: 0;
 }
-/* Создание ключа: поле с названием и кнопка в одну строку */
 .api-key-form {
 	display: flex;
 	flex-wrap: wrap;
@@ -1789,9 +1673,6 @@ body {
 	margin-top: 0;
 }
 
-/* --- Справка по API (Настройки -> Справка по API) --- */
-
-/* Таблица: слева подпись, справа значение или пример */
 .api-table {
 	width: 100%;
 	margin-top: 20px;
@@ -1813,7 +1694,6 @@ body {
 	color: var(--ink);
 	font-size: 13px;
 }
-/* Запрос и ответ: моноширинный текст, длинные строки переносятся */
 .api-table pre {
 	margin: 0;
 	color: var(--ink);
@@ -1840,7 +1720,6 @@ body {
 	color: var(--muted);
 	font-size: 13px;
 }
-/* Ссылки на разделы */
 .api-sections {
 	display: flex;
 	flex-wrap: wrap;
@@ -1858,7 +1737,6 @@ body {
 	}
 }
 
-/* Раздел справки: заголовок-кнопка со стрелкой, по нему раздел раскрывается */
 .api-section__head {
 	display: flex;
 	align-items: center;

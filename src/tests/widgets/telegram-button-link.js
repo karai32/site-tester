@@ -1,4 +1,3 @@
-// Кнопка Telegram в шапке ведёт на бот клиники, ссылка открывается
 const selectors = {
   telegramLink: '.header__socials-item.--tg',
 };

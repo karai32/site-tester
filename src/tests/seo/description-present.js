@@ -1,4 +1,3 @@
-// На каждой странице выборки заполнен <meta name="description">
 function getMetaDescription(html) {
   for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
     const tag = match[0];

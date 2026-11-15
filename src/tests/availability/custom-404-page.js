@@ -1,4 +1,3 @@
-// Несуществующий адрес отдаёт 404 и показывает свою страницу со ссылкой на главную
 import { takeScreenshot } from '../helpers/common.js';
 
 const testPath = '/qa-test-404/';

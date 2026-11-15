@@ -1,7 +1,5 @@
 <%
-	// Пункт меню активен, если текущий адрес начинается с его ссылки
 	const isActive = (href) => currentPath === href || currentPath.startsWith(href + '/');
-	// Подменю «Выбранные проекты» открыто, когда открыта страница одного из проектов
 	const projectOpen = Boolean(locals.project);
 %>
 <aside class="app-sidebar">
@@ -29,7 +27,6 @@
 		</ul>
 	</nav>
 
-	<%# Пользователь внизу меню; по клику - профиль и выход %>
 	<div class="app-user dropup">
 		<button type="button" class="app-user__button" data-bs-toggle="dropdown" aria-expanded="false">
 			<span class="avatar app-user__avatar"><%= initials(user.name) %></span><span><%= shortName(user.name) %></span>

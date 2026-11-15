@@ -1,7 +1,5 @@
-// На каждой странице выборки заполнены основные теги Open Graph (превью ссылки в соцсетях)
 const requiredOgTags = ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'];
 
-// Значение <meta property="og:..." content="...">; атрибуты могут идти в любом порядке
 function getOgTagContent(html, property) {
   const forward = html.match(new RegExp(`<meta[^>]*property=["']${property}["'][^>]*content=["']([^"']*)["']`, 'i'));
   if (forward) return forward[1].trim();

@@ -1,7 +1,3 @@
-<%#
-	Форма сценария: создание нового (source = null) или новая редакция копией (source - исходный сценарий).
-	form: { name, testIds, pageSets, schedule, notifications } - что отмечено.
-%>
 <% const action = source ? `/projects/${project.id}/scenarios/${source.id}/copy` : `/projects/${project.id}/scenarios`; %>
 <div class="breadcrumbs">
 	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
@@ -38,7 +34,6 @@
 		</div>
 	</section>
 
-	<%# Шаги по ТЗ %>
 	<div class="stepper">
 		<span class="stepper__step is-current"><span class="stepper__num">1</span>Область тестирования</span>
 		<span class="stepper__line"></span>
@@ -55,7 +50,6 @@
 					<span class="panel__meta"><%= categories.length %> <%= plural(categories.length, ['категория', 'категории', 'категорий']) %></span>
 				</div>
 
-				<%# Категория: галочка выбирает все её тесты, стрелка раскрывает список %>
 				<% for (const category of categories) { %>
 					<div class="tree-group" data-picker>
 						<div class="tree-group__head">
@@ -80,7 +74,6 @@
 					</div>
 				<% } %>
 
-				<%# Выборки страниц %>
 				<div class="tree-group" data-picker>
 					<div class="tree-group__head">
 						<span class="icon-box icon-box-sm icon-box-outline"><i class="feather-clock"></i></span>

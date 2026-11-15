@@ -1,4 +1,3 @@
-// Одна проверка: обходит сайт, запускает тесты сценария и записывает результаты в отчёт.
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
@@ -20,15 +19,13 @@ import { categories } from '../tests/index.js';
 import { crawlSite, MAX_PAGES, readSavedHtml } from './crawl.js';
 import { collectLinks, selectPages } from './page-sets.js';
 
-const TEST_TIMEOUT_MS = 10 * 60 * 1000; // тест, который идёт дольше 10 минут, считается проваленным
+const TEST_TIMEOUT_MS = 10 * 60 * 1000;
 
-// Первая строка текста ошибки
 function firstLine(error) {
   const text = error instanceof Error ? error.message : String(error);
   return text.split('\n')[0];
 }
 
-// Тесты сценария в порядке категорий: [{ category, test }]
 function scenarioTests(scenario) {
   const testIds = scenarioTestIds(scenario);
   const list = [];
@@ -40,28 +37,23 @@ function scenarioTests(scenario) {
   return list;
 }
 
-// Ждёт выполнения promise, но не дольше ms миллисекунд. Не успел - ошибка.
 function withTimeout(promise, ms) {
   let timer;
   const timeout = new Promise((resolve, reject) => {
     timer = setTimeout(() => reject(new Error(`тест не уложился в ${ms / 60_000} минут`)), ms);
   });
-  // Promise.race ждёт того, кто закончит первым: тест или таймер
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
-// Результат проваленного теста с комментарием
 function failedResult(comment) {
   return { passed: false, comment, problems: [], pages: [], media: [] };
 }
 
-// Запускает тест и приводит его ответ к одному виду.
-// Если тест упал с ошибкой, завис или вернул что-то не то, он считается проваленным.
 async function runTest(test, context) {
   let result;
   try {
     const running = test.run(context);
-    running.catch(() => {}); // если тест упадёт уже после тайм-аута, эта ошибка никому не нужна
+    running.catch(() => {});
     result = await withTimeout(running, TEST_TIMEOUT_MS);
   } catch (error) {
     return failedResult(`Тест не выполнен: ${firstLine(error)}`);
@@ -80,15 +72,12 @@ async function runTest(test, context) {
   };
 }
 
-// Тип файла по первым байтам: скриншоты бывают JPEG и PNG, видео - WebM
 function fileExtension(data) {
   if (data[0] === 0x89) return 'png';
   if (data[0] === 0x1a && data[1] === 0x45) return 'webm';
   return 'jpg';
 }
 
-// Сохраняет медиафайлы теста. Возвращает [{ file, caption }], file - путь внутри папки media.
-// Тест отдаёт файл просто как Buffer или с подписью: { data: Buffer, caption: 'подпись' }.
 function saveMedia(reportId, testId, media) {
   mkdirSync(join(MEDIA_DIR, 'reports', String(reportId)), { recursive: true });
 
@@ -108,9 +97,8 @@ function saveMedia(reportId, testId, media) {
   return saved;
 }
 
-// log - куда писать ход проверки: console в терминале или логгер сервера
 export async function runCheck(reportId, log = console) {
-  if (!markReportRunning(reportId)) return; // отчёт уже взят в работу
+  if (!markReportRunning(reportId)) return;
 
   const report = findReportById(reportId);
   const scenario = findScenarioById(report.scenario_id);
@@ -121,7 +109,6 @@ export async function runCheck(reportId, log = console) {
   await notifyCheckStarted(reportId, log);
 
   try {
-    // 1. Обход сайта
     mkdirSync(htmlDir, { recursive: true });
     log.info(`Отчёт #${reportId}: обход сайта ${project.url}`);
     const cancelled = () => isReportCancelled(reportId);
@@ -134,7 +121,6 @@ export async function runCheck(reportId, log = console) {
       throw new Error(`Сайт ${project.url} недоступен: не найдено ни одной страницы`);
     }
 
-    // 2. Страницы и тесты по сценарию
     const pages = selectPages(site.htmlPages, scenarioPageSetIds(scenario), project.url);
     const links = collectLinks(pages, site.linksByPage, site.statuses);
     const tests = scenarioTests(scenario);
@@ -150,14 +136,13 @@ export async function runCheck(reportId, log = console) {
     });
     log.info(`Отчёт #${reportId}: найдено ${site.htmlPages.length} страниц, в выборке ${pages.length}, тестов ${tests.length}`);
 
-    // 3. Тесты по одному
     browser = await chromium.launch();
     for (const { category, test } of tests) {
       if (cancelled()) {
         log.info(`Отчёт #${reportId}: отменён`);
         return;
       }
-      if (!browser.isConnected()) browser = await chromium.launch(); // браузер мог упасть в прошлом тесте
+      if (!browser.isConnected()) browser = await chromium.launch();
 
       const startedAt = Date.now();
       const result = await runTest(test, {
@@ -167,7 +152,6 @@ export async function runCheck(reportId, log = console) {
         browser,
         getHtml: (url) => readSavedHtml(htmlDir, url),
       });
-      // Закрываем вкладки, которые открыл тест
       for (const openedContext of browser.contexts()) {
         await openedContext.close().catch(() => {});
       }
@@ -197,9 +181,8 @@ export async function runCheck(reportId, log = console) {
     markReportError(reportId, firstLine(error));
   } finally {
     if (browser) await browser.close().catch(() => {});
-    rmSync(htmlDir, { recursive: true, force: true }); // HTML страниц больше не нужен
+    rmSync(htmlDir, { recursive: true, force: true });
   }
 
-  // Итог проверки - по настройкам уведомлений сценария. Об отменённой не сообщаем.
   await notifyCheckFinished(reportId, log);
 }

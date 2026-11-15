@@ -1,5 +1,3 @@
-// Общий тест для разделов-списков с нумерованной пагинацией (статьи, галерея, отзывы...).
-// Каждый такой тест - файл в search-pagination, который вызывает createArchivePagination со своими настройками.
 import { takeScreenshot } from './common.js';
 
 const selectors = {
@@ -8,7 +6,6 @@ const selectors = {
 };
 const switchTimeoutMs = 15_000;
 
-// Ключ карточки: ссылка, data-href (видео открываются в модалке) или начало текста (отзывы без ссылок)
 async function collectItemKeys(page, itemSelector) {
   const keys = await page.locator(itemSelector).evaluateAll((els) => els.map((el) => el.href
     || el.dataset.href
@@ -16,18 +13,6 @@ async function collectItemKeys(page, itemSelector) {
   return [...new Set(keys.filter(Boolean))];
 }
 
-/**
- * Клик по странице 2 меняет список, а если карточки ведут на отдельные страницы -
- * карточка со страницы 2 открывается.
- *
- * @param {object} config
- * @param {string} config.id
- * @param {string} config.title
- * @param {string} config.path          Путь раздела, например '/gallery/'
- * @param {string} config.itemSelector  Карточка списка или ссылка карточки
- * @param {string} config.itemsLabel    Название элементов в родительном падеже («статей», «отзывов»)
- * @param {boolean} [config.opensItem]  Карточки - ссылки на отдельные страницы, которые нужно открыть
- */
 export function createArchivePagination({ id, title, path, itemSelector, itemsLabel, opensItem = false }) {
   return {
     id,
@@ -58,8 +43,6 @@ export function createArchivePagination({ id, title, path, itemSelector, itemsLa
         };
       }
 
-      // Страница 2 может открываться переходом по ссылке или подгружаться скриптом без перехода,
-      // поэтому ждём не переход, а смену набора карточек.
       await secondPageLink.evaluate((el) => el.click());
       let page2 = [];
       const deadline = Date.now() + switchTimeoutMs;
@@ -98,7 +81,6 @@ export function createArchivePagination({ id, title, path, itemSelector, itemsLa
         return { passed: true, comment: `${listSummary}.`, media, pages };
       }
 
-      // Открываем первую новую карточку со страницы 2
       const itemUrl = newItems[0];
       pages.push(itemUrl);
       const itemResponse = await page.goto(itemUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });

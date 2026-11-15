@@ -1,4 +1,3 @@
-// Ключевые страницы на смартфоне, планшете и десктопе без горизонтальной прокрутки
 import { errorMessage, takeScreenshot } from '../helpers/common.js';
 
 const viewports = [

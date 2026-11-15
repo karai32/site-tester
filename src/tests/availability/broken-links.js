@@ -1,5 +1,3 @@
-// Внутренние ссылки на страницах выборки не ведут на ошибки 4xx/5xx.
-// Статусы ссылок уже известны: их собрал обход сайта.
 const maxSourcesShown = 5;
 
 function formatSources(foundOn) {
@@ -17,7 +15,7 @@ export default {
     let checkedCount = 0;
 
     for (const link of links) {
-      if (link.status === null) continue; // обход до этого адреса не дошёл
+      if (link.status === null) continue;
       checkedCount += 1;
 
       const isBroken = link.error || link.status < 200 || link.status >= 400;

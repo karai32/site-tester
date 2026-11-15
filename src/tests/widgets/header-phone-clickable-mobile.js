@@ -1,4 +1,3 @@
-// На телефоне номер в мобильном меню виден и звонит по клику (ссылка tel:)
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {

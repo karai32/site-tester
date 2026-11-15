@@ -1,4 +1,3 @@
-// Логотип в шапке ведёт на главную на всех страницах выборки
 function findLogoHref(html) {
   for (const match of html.matchAll(/<a\b[^>]*>/gi)) {
     const tag = match[0];

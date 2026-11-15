@@ -1,4 +1,3 @@
-// Галерея: страница 2 пагинации показывает новые материалы, материал открывается
 import { createArchivePagination } from '../helpers/archive-pagination.js';
 
 export default createArchivePagination({

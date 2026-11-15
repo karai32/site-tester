@@ -1,16 +1,12 @@
-// Настройки сервиса: API-ключи вошедшего пользователя и справка по API
 import { readFileSync } from 'node:fs';
 import { generateApiKey } from '../auth/api-keys.js';
 import { APP_URL } from '../config.js';
 import { createApiKey, deleteApiKey, getUserApiKeys } from '../db/api-keys.js';
 
-// Примеры запросов и ответов для справки. Снимаются с тестового сервера: scripts/api-examples.js
 const apiExamples = JSON.parse(readFileSync(new URL('../api/examples.json', import.meta.url), 'utf8'));
 
-// Порядок разделов в справке: самые нужные админке сверху
 const SECTION_ORDER = ['Сценарии', 'Проверки и отчёты', 'Проекты', 'Пользователи', 'Справочники', 'Ошибки'];
 
-// Примеры по разделам: [{ title, examples }] в порядке SECTION_ORDER
 function examplesBySection() {
   const sections = [];
   for (const example of apiExamples) {
@@ -25,7 +21,6 @@ function examplesBySection() {
   return sections;
 }
 
-// options: newKey - только что созданный ключ (показывается один раз), error - ошибка формы
 function showSettings(reply, options) {
   if (options.error) reply.code(400);
   return reply.view('settings.ejs', {
@@ -42,7 +37,6 @@ export default async function settingsRoutes(app) {
     return showSettings(reply, {});
   });
 
-  // Новый ключ. Показываем его сразу на странице, без перехода: больше он нигде не появится.
   app.post('/settings/api-keys', async (request, reply) => {
     const name = String((request.body && request.body.name) || '').trim();
     if (!name) return showSettings(reply, { error: 'Укажите название ключа' });
@@ -52,7 +46,6 @@ export default async function settingsRoutes(app) {
     return showSettings(reply, { newKey: { name, key } });
   });
 
-  // Справка по API: как подключиться и примеры всех запросов
   app.get('/settings/api', async (_request, reply) => {
     return reply.view('api-docs.ejs', {
       title: 'Справка по API',
@@ -61,7 +54,6 @@ export default async function settingsRoutes(app) {
     }, { layout: 'layouts/app.ejs' });
   });
 
-  // Удалить ключ: запросы с ним сразу перестают работать
   app.post('/settings/api-keys/:keyId/delete', async (request, reply) => {
     deleteApiKey(Number(request.params.keyId), reply.locals.user.id);
     return reply.redirect('/settings');

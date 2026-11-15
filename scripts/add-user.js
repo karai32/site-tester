@@ -1,6 +1,3 @@
-// Создаёт пользователя. Пароль придумывается сам и показывается один раз.
-// Запуск: npm run add-user -- <логин> "<Имя Фамилия>" [почта]
-// Пример: npm run add-user -- artem "Артем Тепляков" artem@808group.ru
 import { cleanUser, createUserWithPassword } from '../src/user-actions.js';
 
 const [login, name, email] = process.argv.slice(2);

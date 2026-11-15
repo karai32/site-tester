@@ -1,7 +1,5 @@
-// Поиск по пустому и по бессмысленному запросу пишет «Ничего не найдено»
 import { takeScreenshot } from '../helpers/common.js';
 
-// Пустой запрос: форма поиска на сайте не запрещает отправить пустое поле
 const queries = [
   { text: '', label: 'Пустой запрос' },
   { text: 'asdkjhqwe123zzz', label: 'Бессмысленный запрос' },
@@ -27,7 +25,6 @@ export default {
       media.push({ data: await takeScreenshot(page), caption: query.label });
 
       if (!/ничего не найдено/i.test(bodyText)) {
-        // Сколько результатов показал поиск вместо сообщения: «1792 результатов»
         const countMatch = bodyText.match(/(\d+)\s*результат/i);
         let shown = 'сообщения нет';
         if (countMatch) shown = `показано результатов: ${countMatch[1]}`;

@@ -1,5 +1,3 @@
-// Справочники и владелец ключа. Справочники нужны админке, чтобы собрать формы:
-// какие есть тесты, выборки страниц, варианты расписания и события уведомлений.
 import { CHANNELS, NOTIFICATION_EVENTS } from '../notifications/settings.js';
 import { PAGE_SETS } from '../runner/page-sets.js';
 import { SCHEDULE_TYPES } from '../schedule.js';
@@ -8,7 +6,6 @@ import { formatUser } from './format.js';
 import { sendData } from './response.js';
 
 export default async function catalogApi(app) {
-  // Чей ключ: от имени этого пользователя идут все запросы
   app.get('/me', async (request, reply) => {
     return sendData(reply, formatUser(request.apiUser));
   });
@@ -30,7 +27,7 @@ export default async function catalogApi(app) {
         title: type.title,
         hint: type.hint || null,
         hasTime: type.hasTime,
-        number: type.number || null, // { unit, min, max, default } - у вариантов с числом
+        number: type.number || null,
       });
     }
 

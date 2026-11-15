@@ -1,11 +1,9 @@
-// Мобильное меню открывается и закрывается кнопкой-бургером
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
   burger: '.nav-bottom__burger',
 };
 
-// Открытое меню блокирует прокрутку страницы классом no-scroll на body
 function isScrollLocked(page) {
   return page.evaluate(() => document.body.classList.contains('no-scroll'));
 }

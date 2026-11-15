@@ -1,4 +1,3 @@
-// На каждой странице выборки ровно один <link rel="canonical"> с полным адресом (https://...)
 function getCanonicalHrefs(html) {
   const hrefs = [];
   for (const match of html.matchAll(/<link\b[^>]*>/gi)) {

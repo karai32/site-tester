@@ -1,4 +1,3 @@
-// Переключатель языка в шапке меняет язык сайта на английский
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {

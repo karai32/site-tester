@@ -1,4 +1,3 @@
-// На телефоне виджет обратного звонка не закрывает кнопки сайта
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -10,7 +9,6 @@ const ctaSelectors = [
   { selector: 'header', label: 'шапка сайта' },
 ];
 
-// Пересекаются ли два прямоугольника
 function boxesOverlap(a, b) {
   return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
@@ -23,7 +21,7 @@ export default {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
     await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await page.waitForTimeout(4_000);
-    await page.mouse.wheel(0, 1_500); // после прокрутки появляется кнопка «наверх»
+    await page.mouse.wheel(0, 1_500);
     await page.waitForTimeout(1_000);
 
     const widget = page.locator(selectors.widget);

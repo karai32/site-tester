@@ -1,4 +1,3 @@
-// Кнопка WhatsApp в шапке ведёт на номер клиники, ссылка открывается
 const selectors = {
   whatsappLink: '.header__socials-item.--wa',
 };

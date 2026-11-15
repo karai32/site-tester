@@ -1,9 +1,3 @@
-// Все тесты сервиса по категориям.
-// Новый тест: создайте файл в папке категории (по образцу соседних) и добавьте его в список ниже.
-// Порядок здесь - порядок запуска тестов и вывода в отчёте.
-// icon - иконка категории из набора Feather (см. раздел «Иконки» в UI-ките),
-// shortTitle - короткое название для плиток сводки на дашборде.
-
 import httpsAndSsl from './availability/https-and-ssl.js';
 import homepageHttpStatus from './availability/homepage-http-status.js';
 import custom404Page from './availability/custom-404-page.js';

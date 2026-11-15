@@ -1,4 +1,3 @@
-// Картинки на страницах выборки загружаются без ошибок
 import { getStatuses } from '../helpers/common.js';
 
 const maxSourcesShown = 5;
@@ -9,7 +8,6 @@ function formatSources(sources) {
   return `найдена на: ${shown.join(', ')}${rest > 0 ? ` и ещё ${rest} стр.` : ''}`;
 }
 
-// Адреса картинок из <img src> и первого варианта <source srcset>
 function extractImageUrls(html, pageUrl) {
   const sources = [];
   for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
@@ -32,7 +30,6 @@ export default {
   title: 'Отсутствие «битых» изображений по всем страницам сайта',
 
   async run({ pages, getHtml }) {
-    // Картинка -> страницы, на которых она стоит
     const imagePages = new Map();
     for (const pageUrl of pages) {
       for (const imageUrl of extractImageUrls(getHtml(pageUrl), pageUrl)) {

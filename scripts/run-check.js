@@ -1,6 +1,3 @@
-// Запускает проверку по сценарию прямо в терминале и печатает итог.
-// Запуск: npm run check -- <id сценария>
-// Пока идёт проверка, не запускайте сервер: он сочтёт её прерванной.
 import { createReport, findReportById, getReportResults, markReportError } from '../src/db/reports.js';
 import { findScenarioById } from '../src/db/scenarios.js';
 import { runCheck } from '../src/runner/run-check.js';
@@ -14,7 +11,6 @@ if (!scenario) {
 
 const reportId = createReport({ projectId: scenario.project_id, scenarioId });
 
-// Ctrl+C: отмечаем отчёт прерванным и выходим
 process.on('SIGINT', () => {
   markReportError(reportId, 'Проверка прервана из терминала');
   process.exit(1);

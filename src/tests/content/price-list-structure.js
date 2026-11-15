@@ -1,9 +1,6 @@
-// Прайс-лист разбит по направлениям и категориям, у каждой позиции есть название и цена.
-// Проверяются страница «Цены» и блоки цен на страницах направления и заболевания.
 import { takeScreenshot } from '../helpers/common.js';
 
 const pricePagePath = '/price/';
-// Страницы с блоком цен из конструктора: направление и заболевание
 const priceBlockPaths = ['/departments/himioterapiia/', '/diseases/angina/'];
 
 const selectors = {
@@ -17,7 +14,6 @@ const selectors = {
   itemPrice: '.spollers-cost__price',
 };
 
-// Сайт выводит цену либо как «12 345 ₽», либо текстом без цифр («по запросу»)
 const numericPricePattern = /^(\d{1,3}(?: \d{3})*) ₽$/;
 const onRequestPattern = /по\s+запросу/i;
 const maxExamples = 3;
@@ -27,7 +23,6 @@ function formatExamples(list) {
   return list.length > maxExamples ? `${shown} и ещё ${list.length - maxExamples}` : shown;
 }
 
-// Счётчики и списки найденных проблем
 function createTally() {
   return {
     structure: {
@@ -77,7 +72,6 @@ function collectCategory(tally, category, categoryLabel) {
   });
 }
 
-// Выполняется в браузере через evaluateAll, поэтому не может обращаться к переменным этого файла
 function readPriceGroups(els, sel) {
   const clean = (el) => (el?.textContent ?? '').replace(/\s+/g, ' ').trim();
   return els.map((root) => ({
@@ -109,11 +103,9 @@ export default {
     const tally = createTally();
     const pageSummaries = [];
 
-    // 1. Страница «Цены»
     const page = await openPage(browser, priceUrl);
     const departments = await page.locator(selectors.department).evaluateAll(readPriceGroups, selectors);
 
-    // Для скриншота раскрываем первую категорию
     const firstSpoller = page.locator(selectors.category).first();
     if (await firstSpoller.count() > 0) {
       await firstSpoller.evaluate((el) => { el.open = true; });
@@ -136,7 +128,6 @@ export default {
     });
     pageSummaries.push(`${pricePagePath}: ${tally.itemCount} поз.`);
 
-    // 2. Блоки цен на других страницах
     for (const path of priceBlockPaths) {
       const blockPage = await openPage(browser, new URL(path, siteUrl).href);
       const blocks = await blockPage.locator(selectors.priceBlock).evaluateAll(readPriceGroups, selectors);
@@ -159,7 +150,6 @@ export default {
       pageSummaries.push(`${path}: ${tally.itemCount - itemsBefore} поз.`);
     }
 
-    // 3. Итог
     const problemLabels = [
       [tally.structure.missingBlocks, 'страницы без прайса'],
       [tally.structure.untitledDepartments, 'направления без заголовка'],

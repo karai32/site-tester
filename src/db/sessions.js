@@ -1,4 +1,3 @@
-// Запросы к таблице sessions
 import { db } from './database.js';
 
 export function createSession({ tokenHash, userId, days }) {
@@ -6,7 +5,6 @@ export function createSession({ tokenHash, userId, days }) {
     .run(tokenHash, userId, `+${days} days`);
 }
 
-// Пользователь, которому принадлежит сессия, если она ещё не истекла
 export function findUserBySession(tokenHash) {
   return db.prepare(`
     SELECT users.*

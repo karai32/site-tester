@@ -1,4 +1,3 @@
-// Ссылки на соцсети и мессенджеры в футере открываются
 import { errorMessage } from '../helpers/common.js';
 
 const selectors = {
@@ -24,7 +23,6 @@ export default {
       return { passed: false, comment: `В футере не найдено ссылок ${selectors.socialLinks}.` };
     }
 
-    // Соцсети часто не отвечают на HEAD, поэтому сразу GET
     const problems = [];
     for (const href of links) {
       if (!href) {

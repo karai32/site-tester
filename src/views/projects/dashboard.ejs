@@ -2,7 +2,6 @@
 
 <div class="page-head">
 	<div class="project-head">
-		<%# Аватарка: нажатие открывает выбор файла, выбранный файл сразу отправляется (app.js, data-auto-submit) %>
 		<form method="post" action="/projects/<%= project.id %>/logo" enctype="multipart/form-data">
 			<label class="project-logo-change" title="Сменить аватарку">
 				<%- include('../partials/project-logo', { project }) %>
@@ -23,7 +22,6 @@
 
 <div class="row g-4">
 	<div class="col-xl-8">
-		<%# Сценарии и запуск проверки %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Сценарии проверки</h2>
@@ -48,12 +46,10 @@
 
 		</section>
 
-		<%# Окна подтверждения запуска - по одному на сценарий %>
 		<% for (const scenario of scenarios) { %>
 			<%- include('../partials/launch-modal', { scenario, summary: scenario.summary }) %>
 		<% } %>
 
-		<%# Сводка по последней полной проверке %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Сводка по последней полной проверке сайта<br><%= displayUrl(project.url) %></h2>
@@ -78,7 +74,6 @@
 	</div>
 
 	<div class="col-xl-4">
-		<%# Сводка по последней частичной проверке %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Последняя частичная проверка</h2>
@@ -94,7 +89,6 @@
 			<% } %>
 		</section>
 
-		<%# Ближайшие проверки: отложенные и по расписанию %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Ближайшие проверки</h2>
@@ -115,7 +109,6 @@
 	</div>
 </div>
 
-<%# Последние отчёты %>
 <section class="panel">
 	<div class="panel__head">
 		<h2 class="panel__title">Последние отчёты</h2>
@@ -136,7 +129,6 @@
 	<% } %>
 </section>
 
-<%# Сводка по сценарию (ТЗ, п. 9): по умолчанию пустая, появляется после выбора сценария в списке %>
 <section class="panel">
 	<div class="panel__head">
 		<h2 class="panel__title">Сводка по сценарию</h2>

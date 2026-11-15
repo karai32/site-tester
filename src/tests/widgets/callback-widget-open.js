@@ -1,10 +1,9 @@
-// Виджет обратного звонка (Calltouch) открывается и показывает поле телефона
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
   widgetFrame: '#CalltouchWidgetFrame',
 };
-const maxAttempts = 3; // виджет иногда не грузится с первого раза - пробуем перезагрузить страницу
+const maxAttempts = 3;
 
 export default {
   id: 'callback-widget-open',
@@ -26,7 +25,6 @@ export default {
       };
     }
 
-    // Виджет живёт во фрейме: кнопка и поле ищутся внутри него
     const frame = page.frameLocator(selectors.widgetFrame);
     const button = frame.locator('button').first();
     const buttonAppeared = await button.waitFor({ state: 'visible', timeout: 8_000 }).then(() => true).catch(() => false);

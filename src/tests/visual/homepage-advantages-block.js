@@ -1,4 +1,3 @@
-// В блоке преимуществ и лицензий на главной у карточек есть текст и иконки загрузились
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -37,7 +36,6 @@ export default {
       const title = (await card.locator(selectors.title).first().textContent().catch(() => '') || '').trim();
       if (!title) problems.push(`карточка №${index + 1}: не заполнен текст`);
 
-      // Картинка не загрузилась, если у неё нулевая ширина
       const iconBroken = await card.locator(selectors.icon).first().evaluate((img) => !img.complete || img.naturalWidth === 0).catch(() => true);
       if (iconBroken) problems.push(`карточка «${title || `№${index + 1}`}»: иконка не загрузилась`);
     }

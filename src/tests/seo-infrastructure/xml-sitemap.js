@@ -1,4 +1,3 @@
-// Карта сайта указана в robots.txt, открывается и содержит рабочие вложенные карты
 import { getStatuses } from '../helpers/common.js';
 
 export default {
@@ -10,7 +9,6 @@ export default {
     const siteOrigin = new URL(siteUrl).origin;
     const problems = [];
 
-    // 1. robots.txt и строка Sitemap: в нём
     const robotsUrl = `${siteOrigin}/robots.txt`;
     const robotsResponse = await page.request.get(robotsUrl, { failOnStatusCode: false, timeout: 15_000 });
     const robotsStatus = robotsResponse.status();
@@ -21,7 +19,6 @@ export default {
     const sitemapLine = robotsText.match(/^Sitemap:\s*(\S+)/im);
     if (!sitemapLine) problems.push('в robots.txt отсутствует строка "Sitemap:" со ссылкой на карту сайта');
 
-    // 2. Сама карта сайта
     const sitemapUrl = sitemapLine ? sitemapLine[1] : `${siteOrigin}/sitemap.xml`;
     const sitemapResponse = await page.request.get(sitemapUrl, { failOnStatusCode: false, timeout: 15_000 });
     const sitemapStatus = sitemapResponse.status();
@@ -36,7 +33,6 @@ export default {
     } else if (!/<sitemapindex\b|<urlset\b/i.test(sitemapText)) {
       problems.push(`${sitemapUrl}: в содержимом нет тега <sitemapindex> или <urlset>`);
     } else if (/<sitemapindex\b/i.test(sitemapText)) {
-      // 3. Индекс карт: каждая вложенная карта должна открываться
       const subSitemapUrls = [...sitemapText.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => match[1].trim());
       if (subSitemapUrls.length === 0) problems.push(`${sitemapUrl}: индекс карт сайта пуст`);
 

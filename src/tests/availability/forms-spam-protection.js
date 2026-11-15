@@ -1,4 +1,3 @@
-// У всех форм на главной включается капча SmartCaptcha
 const captchaInitTimeoutMs = 8_000;
 
 function describeForm({ wpcf7Id, modalId, actionPath }) {
@@ -21,7 +20,6 @@ export default {
       return { passed: false, comment: 'На странице не найдено ни одной формы wpcf7-form для проверки.' };
     }
 
-    // Капча подгружается, когда посетитель начинает заполнять форму
     await page.evaluate(() => {
       const firstField = document.querySelector('form.wpcf7-form input, form.wpcf7-form textarea');
       firstField?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));

@@ -1,4 +1,3 @@
-// Чек-ап программы: у первых трёх есть описание состава и цена
 import { takeScreenshot } from '../helpers/common.js';
 
 const selectors = {
@@ -37,7 +36,6 @@ export default {
       await page.waitForTimeout(500);
       const bodyText = await page.evaluate(() => document.body.innerText);
 
-      // Скриншот первой программы, прокрученный к цене
       if (media.length === 0) {
         const priceElement = page.getByText(pricePattern).first();
         if (await priceElement.count() > 0) await priceElement.scrollIntoViewIfNeeded().catch(() => {});

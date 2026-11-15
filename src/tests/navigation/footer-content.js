@@ -1,11 +1,9 @@
-// В футере правильные телефон, почта, реквизиты и ссылка на политику ПДн
 import { getStatuses } from '../helpers/common.js';
 
 const selectors = {
   footer: 'footer.footer',
 };
 
-// Что должно быть в футере
 const expectedFooter = {
   phoneText: '+7 495 186 42 13',
   phoneHref: 'tel:+74951864213',

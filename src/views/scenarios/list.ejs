@@ -8,7 +8,6 @@
 	<a href="/projects/<%= project.id %>/scenarios/new" class="btn btn-primary btn-pill"><i class="feather-plus"></i> Новый сценарий</a>
 </div>
 
-<%# Переключатель «Активные / Неактивные» - вкладки-«таблетки» кита %>
 <div class="tabs-pill">
 	<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
 		<li class="nav-item"><a class="nav-link <%= showInactive ? '' : 'active' %>" href="<%= scenariosUrl({ status: '', page: '' }) %>">Активные сценарии · <%= activeCount %></a></li>
@@ -17,7 +16,6 @@
 </div>
 
 <div class="filters">
-	<%# Автор %>
 	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 			Автор: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
@@ -30,7 +28,6 @@
 		</div>
 	</div>
 
-	<%# Категории: сценарий содержит все отмеченные %>
 	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 			Категории: <%= selectedCategories.length === 0 ? 'Все' : selectedCategories.length %> <i class="feather-chevron-down"></i>
@@ -50,10 +47,8 @@
 		</form>
 	</div>
 
-	<%# Регулярность %>
 	<%- include('../partials/regular-filter', { regular, filterUrl: scenariosUrl }) %>
 
-	<%# Сортировка %>
 	<div class="dropdown filters__sort">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 			Сортировка: <%= sorts[sort].title %> <i class="feather-chevron-down"></i>

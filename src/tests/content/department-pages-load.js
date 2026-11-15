@@ -1,4 +1,3 @@
-// Страницы основных направлений открываются без ошибок
 import { errorMessage, takeScreenshot } from '../helpers/common.js';
 
 const departmentPaths = [
@@ -34,7 +33,6 @@ export default {
         problems.push(`${target}: HTTP ${status}`);
         continue;
       }
-      // Скриншот первой открывшейся страницы
       if (media.length === 0) media.push(await takeScreenshot(page));
     }
 

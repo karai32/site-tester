@@ -1,5 +1,3 @@
-// Сценарии: список проекта с фильтрами, один сценарий, его отчёты, создание, новая редакция,
-// включение и выключение, регулярность, уведомления, отложенная проверка, запуск проверки
 import { findProjectById } from '../db/projects.js';
 import { createReport, findReportWithNames, getScenarioReports } from '../db/reports.js';
 import {
@@ -17,26 +15,21 @@ import { formatReport, formatScenario, formatScenarioItem } from './format.js';
 import { listFilters, pageOf } from './lists.js';
 import { hasErrors, sendData, sendError, sendValidationErrors, valueOrCurrent } from './response.js';
 
-// Сценарий с цифрами для списка (категории, тесты, страницы) или undefined
 function findScenarioItem(id) {
   const scenario = findScenarioById(id);
   if (!scenario) return undefined;
 
-  // Ищем сценарий среди активных и неактивных его проекта - там уже посчитаны цифры
   const noFilters = { author: '', categories: [], regular: '', sort: 'new' };
   const active = listScenarios(scenario.project_id, { ...noFilters, inactive: false }).scenarios;
   const inactive = listScenarios(scenario.project_id, { ...noFilters, inactive: true }).scenarios;
   return [...active, ...inactive].find((item) => item.id === scenario.id);
 }
 
-// Ответ «сценарий целиком» по id
 function sendScenario(reply, scenarioId) {
   return sendData(reply, formatScenario(findScenarioItem(scenarioId)));
 }
 
 export default async function scenariosApi(app) {
-  // Сценарии проекта, как на странице «Сценарии»:
-  // ?status=inactive&author=...&categories=seo,forms&regular=yes&sort=tests-desc&page=1&perPage=10
   app.get('/projects/:id/scenarios', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
@@ -49,18 +42,16 @@ export default async function scenariosApi(app) {
       ...meta,
       activeCount: result.activeCount,
       inactiveCount: result.inactiveCount,
-      authors: result.authors, // значения для фильтра author
+      authors: result.authors,
     });
   });
 
-  // Сценарий целиком: тесты по категориям, выборки, регулярность, уведомления
   app.get('/scenarios/:id', async (request, reply) => {
     const item = findScenarioItem(request.params.id);
     if (!item) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
     return sendData(reply, formatScenario(item));
   });
 
-  // Отчёты сценария от самого недавнего до самого первого - для «Сводки по сценарию»
   app.get('/scenarios/:id/reports', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -69,7 +60,6 @@ export default async function scenariosApi(app) {
     return sendData(reply, items.map(formatReport), meta);
   });
 
-  // Новый сценарий: { name, testIds, pageSets, schedule?, notifications? } - см. справку по API
   app.post('/projects/:id/scenarios', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
@@ -82,8 +72,6 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenarioId);
   });
 
-  // «Скопировать и изменить»: новая редакция сценария, исходный не меняется.
-  // Те же поля, что при создании; непереданные берутся из исходного, название - «... #N».
   app.post('/scenarios/:id/copy', async (request, reply) => {
     const source = findScenarioById(request.params.id);
     if (!source) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -103,7 +91,6 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenarioId);
   });
 
-  // Включить или выключить: { isActive: true | false }
   app.put('/scenarios/:id/active', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -115,7 +102,6 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Регулярность: { type, time, number }, type = null - нерегулярный
   app.put('/scenarios/:id/schedule', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -127,7 +113,6 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Уведомления: { events, passPercent, emails, telegramIds }
   app.put('/scenarios/:id/notifications', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -139,21 +124,19 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Отложенная проверка: { runAt: '2026-10-20T06:00:00Z' } - один запуск в это время
   app.put('/scenarios/:id/deferred', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
     if (!scenario.is_active) return sendError(reply, 409, 'conflict', 'Сценарий выключен');
 
     let runAt = new Date(String((request.body || {}).runAt || ''));
-    if (Number.isNaN(runAt.getTime())) runAt = null; // не дата
+    if (Number.isNaN(runAt.getTime())) runAt = null;
 
     const error = planDeferredCheck(scenario, runAt, request.apiUser.id);
     if (error) return sendValidationErrors(reply, { runAt: error });
     return sendScenario(reply, scenario.id);
   });
 
-  // Отменить отложенную проверку
   app.delete('/scenarios/:id/deferred', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');
@@ -162,7 +145,6 @@ export default async function scenariosApi(app) {
     return sendScenario(reply, scenario.id);
   });
 
-  // Запустить проверку сейчас: она встаёт в очередь, ответ - новый отчёт со статусом queued
   app.post('/scenarios/:id/checks', async (request, reply) => {
     const scenario = findScenarioById(request.params.id);
     if (!scenario) return sendError(reply, 404, 'not_found', 'Сценарий не найден');

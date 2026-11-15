@@ -1,6 +1,3 @@
-// Выдаёт пользователю новый пароль (например, если он забыл старый) и показывает его один раз.
-// Пользователя выкидывает из всех сессий.
-// Запуск: npm run set-password -- <логин>
 import { findUserByLogin } from '../src/db/users.js';
 import { resetPassword } from '../src/user-actions.js';
 

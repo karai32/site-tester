@@ -21,7 +21,6 @@
 
 <div class="row g-4">
 	<div class="col-xl-6">
-		<%# Категории и тесты %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Категории и тесты</h2>
@@ -46,7 +45,6 @@
 			<% }) %>
 		</section>
 
-		<%# Выборки страниц %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Выборки тестирования</h2>
@@ -58,7 +56,6 @@
 	</div>
 
 	<div class="col-xl-6">
-		<%# Запуск: сейчас (с подтверждением в окне) или отложенный - в выбранные дату и время %>
 		<section class="panel">
 			<div class="panel__head">
 				<h2 class="panel__title">Запуск проверки</h2>
@@ -74,7 +71,6 @@
 					<% } %>
 				</div>
 
-				<%# Дата и время отложенной проверки - по Москве %>
 				<div class="collapse <%= deferredErrors.length > 0 ? 'show' : '' %>" id="deferred-form">
 					<form class="soft-box deferred-form" method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/deferred">
 						<% if (deferredErrors.length > 0) { %>
@@ -106,7 +102,6 @@
 			<% } %>
 		</section>
 
-		<%# Регулярность: расписание и кнопка «Изменить», по ней открывается форма %>
 		<section class="panel" id="schedule">
 			<div class="panel__head">
 				<div>
@@ -147,7 +142,6 @@
 			<% } %>
 		</section>
 
-		<%# Уведомления: включённые события и получатели, «Изменить» открывает форму %>
 		<section class="panel" id="notifications">
 			<div class="panel__head">
 				<h2 class="panel__title">Уведомления</h2>
@@ -209,6 +203,5 @@
 			<button type="submit" class="btn btn-dark btn-pill">Активировать сценарий</button>
 		<% } %>
 	</form>
-	<%# По ТЗ форма редакции открывается в новой вкладке %>
 	<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/copy" target="_blank" class="btn btn-outline-primary btn-pill">Скопировать и изменить сценарий</a>
 </div>

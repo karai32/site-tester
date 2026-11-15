@@ -262,12 +262,11 @@ export default {
 | Сервер | 109.235.116.46, Ubuntu |
 | Файл запуска | `/opt/808-checker-docker/docker-compose.yml`, это копия `deploy/docker-compose.yml` |
 | Контейнер | `808-checker`, слушает порт 3001 только внутри сервера |
-| База и скриншоты | `/var/lib/808-checker/data`, подключена к контейнеру как папка `/app/data` |
+| База и скриншоты | `/opt/808-checker-docker/data`, рядом с файлом запуска. В контейнере это папка `/app/data` |
 | Пароли для уведомлений | `/etc/808-checker.secrets.env`, в git его нет |
 | nginx | `/etc/nginx/sites-available/audit.808-test.ru`, передаёт запросы в контейнер. Копия настроек лежит в `deploy/nginx.conf` |
 | Образы сервиса | `ghcr.io/karai32/site-tester` |
 | Ночная проверка | расписание сценария «Полная проверка», каждый день в 03:00 по Москве |
-| Архив старого сервиса | `/var/backups/site-checker/`, база проверок до переезда |
 
 Node.js и браузер на сервер не ставятся: всё нужное уже внутри образа.
 

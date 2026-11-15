@@ -5,11 +5,14 @@ services:
     ports:
       - "127.0.0.1:3001:3001"
     volumes:
-      - /var/lib/808-checker/data:/app/data
+      - /opt/808-checker-docker/data:/app/data
     environment:
       NODE_ENV: production
       APP_URL: https://audit.808-test.ru
     env_file:
       - path: /etc/808-checker.secrets.env
         required: false
+    # Без дампов памяти: когда браузер падает, дамп занимает сотни мегабайт и копится в контейнере
+    ulimits:
+      core: 0
     restart: unless-stopped

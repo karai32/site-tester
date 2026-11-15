@@ -19,16 +19,6 @@ npm run queue-check -- 1                                        # постави
 `npm run check` нужен, чтобы отлаживать тесты. Не запускайте его, пока работает
 сервер: при старте сервер считает все идущие проверки прерванными.
 
-Можно запустить и в Docker, так же, как на сервере:
-
-```bash
-docker compose up -d --build    # собрать образ и запустить, сайт на http://localhost:3002
-docker compose exec checker node scripts/add-user.js test "Тест"
-docker compose down             # остановить
-```
-
-В Docker база лежит в папке `docker-data/`, отдельно от `data/`.
-
 Настройки задаются переменными окружения:
 
 | Переменная | По умолчанию | Что это |
@@ -90,9 +80,8 @@ public/assets/         CSS, JS, шрифты и картинки из UI-кит�
 ui-kit/                UI-кит интерфейса, открывается по адресу /ui.html
 deploy/                файлы для сервера: docker-compose.yml и настройки nginx
 Dockerfile             как собрать образ сервиса
-docker-compose.yml     запуск в Docker у себя на компьютере
 .github/workflows/     выкладка на сервер
-data/, docker-data/    базы и скриншоты, в git не попадают
+data/                  база и скриншоты, в git не попадают
 ```
 
 ## Как идёт проверка

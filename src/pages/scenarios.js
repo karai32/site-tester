@@ -41,6 +41,12 @@ const NOTICES = {
   'deferred-cancelled': 'Отложенная проверка отменена',
 };
 
+function scenarioUrl(projectId, scenarioId, saved) {
+  const url = `/projects/${projectId}/scenarios/${scenarioId}`;
+  if (saved) return `${url}?saved=${saved}`;
+  return url;
+}
+
 function readScenarioForm(body, projectId) {
   if (!body) body = {};
   const { scenario, errors } = cleanScenario({
@@ -165,7 +171,7 @@ export default async function scenarioPages(app) {
     if (errors.length > 0) return showForm(reply, project, form, null, errors);
 
     const scenarioId = saveScenario({ projectId: project.id, authorId: reply.locals.user.id, scenario: form });
-    return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
+    return reply.redirect(scenarioUrl(project.id, scenarioId));
   });
 
   app.get('/projects/:id/scenarios/:sid', async (request, reply) => {
@@ -186,7 +192,7 @@ export default async function scenarioPages(app) {
 
     const makeActive = request.body && request.body.active === '1';
     setActive(scenario, makeActive);
-    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
+    return reply.redirect(scenarioUrl(project.id, scenario.id));
   });
 
   app.post('/projects/:id/scenarios/:sid/schedule', async (request, reply) => {
@@ -200,7 +206,7 @@ export default async function scenarioPages(app) {
     }
 
     setScenarioSchedule(scenario.id, schedule, firstRunText(schedule));
-    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=schedule`);
+    return reply.redirect(scenarioUrl(project.id, scenario.id, 'schedule'));
   });
 
   app.post('/projects/:id/scenarios/:sid/notifications', async (request, reply) => {
@@ -214,14 +220,14 @@ export default async function scenarioPages(app) {
     }
 
     setScenarioNotifications(scenario.id, notifications);
-    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=notifications`);
+    return reply.redirect(scenarioUrl(project.id, scenario.id, 'notifications'));
   });
 
   app.post('/projects/:id/scenarios/:sid/deferred', async (request, reply) => {
     const data = loadScenario(request);
     if (!data) return reply.callNotFound();
     const { project, scenario } = data;
-    if (!scenario.is_active) return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
+    if (!scenario.is_active) return reply.redirect(scenarioUrl(project.id, scenario.id));
 
     const body = request.body || {};
     const deferredForm = { date: String(body.date || ''), time: String(body.time || '') };
@@ -231,7 +237,7 @@ export default async function scenarioPages(app) {
     if (error) {
       return showScenarioPage(reply, project, scenario, { deferredForm, deferredErrors: [error] });
     }
-    return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}?saved=deferred`);
+    return reply.redirect(scenarioUrl(project.id, scenario.id, 'deferred'));
   });
 
   app.post('/projects/:id/scenarios/:sid/deferred/cancel', async (request, reply) => {
@@ -239,7 +245,7 @@ export default async function scenarioPages(app) {
     if (!data) return reply.callNotFound();
 
     cancelDeferredCheck(data.scenario.id);
-    return reply.redirect(`/projects/${data.project.id}/scenarios/${data.scenario.id}?saved=deferred-cancelled`);
+    return reply.redirect(scenarioUrl(data.project.id, data.scenario.id, 'deferred-cancelled'));
   });
 
   app.get('/projects/:id/scenarios/:sid/copy', async (request, reply) => {
@@ -271,6 +277,6 @@ export default async function scenarioPages(app) {
       scenario: form,
       source: scenario,
     });
-    return reply.redirect(`/projects/${project.id}/scenarios/${scenarioId}`);
+    return reply.redirect(scenarioUrl(project.id, scenarioId));
   });
 }

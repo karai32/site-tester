@@ -29,12 +29,7 @@ export default async function projectPages(app) {
     return reply.view('projects/dashboard.ejs', {
       title: project.name,
       project,
-      scenarios: data.scenarios,
-      upcoming: data.upcoming,
-      lastFull: data.lastFull,
-      lastFullCategories: data.lastFullCategories,
-      lastPartial: data.lastPartial,
-      recentReports: data.recentReports,
+      ...data,
       logoNotice: LOGO_NOTICES[request.query.logo],
       summaryScenarios: [...data.allScenarios].reverse(),
     }, { layout: 'layouts/app.ejs' });
@@ -43,18 +38,9 @@ export default async function projectPages(app) {
   app.post('/projects/:id/logo', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
-    const errorUrl = `/projects/${project.id}?logo=error`;
 
-    let data;
-    try {
-      const file = await request.file();
-      if (!file) return reply.redirect(errorUrl);
-      data = await file.toBuffer();
-    } catch {
-      return reply.redirect(errorUrl);
-    }
-
-    if (!saveProjectLogo(project, data)) return reply.redirect(errorUrl);
+    const saved = await saveProjectLogo(project, request);
+    if (!saved) return reply.redirect(`/projects/${project.id}?logo=error`);
     return reply.redirect(`/projects/${project.id}?logo=saved`);
   });
 

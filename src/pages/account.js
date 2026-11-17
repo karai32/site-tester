@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { APP_URL } from '../config.js';
 import { createApiKey, deleteApiKey, getUserApiKeys, updateUser } from '../db/users.js';
-import { isEmail, isTelegramId } from '../logic/notifications.js';
-import { generateApiKey } from '../logic/users.js';
+import { cleanUser, generateApiKey } from '../logic/users.js';
 
 const apiExamples = JSON.parse(readFileSync(new URL('../api/examples.json', import.meta.url), 'utf8'));
 
@@ -47,19 +46,16 @@ export default async function accountPages(app) {
 
   app.post('/profile', async (request, reply) => {
     const body = request.body || {};
-    const contacts = {
-      email: String(body.email || '').trim(),
-      telegramId: String(body.telegram_id || '').trim(),
-    };
-
-    const errors = [];
-    if (contacts.email && !isEmail(contacts.email)) errors.push('Неверная почта');
-    if (contacts.telegramId && !isTelegramId(contacts.telegramId)) {
-      errors.push('Telegram ID должен быть числом');
+    const { user, errors } = cleanUser({
+      name: reply.locals.user.name,
+      email: body.email,
+      telegramId: body.telegram_id,
+    }, false);
+    if (Object.keys(errors).length > 0) {
+      return showProfile(reply, { contacts: user, errors: Object.values(errors), saved: false });
     }
-    if (errors.length > 0) return showProfile(reply, { contacts, errors, saved: false });
 
-    updateUser(reply.locals.user.id, { name: reply.locals.user.name, ...contacts });
+    updateUser(reply.locals.user.id, user);
     return reply.redirect('/profile?saved=1');
   });
 

@@ -110,18 +110,13 @@ export default async function projectsApi(app) {
   app.post('/projects/:id/logo', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
-    const error = { logo: 'Нужна картинка PNG, JPEG или WebP не больше 2 МБ, отправленная как multipart/form-data' };
 
-    let data;
-    try {
-      const file = await request.file();
-      if (!file) return sendValidationErrors(reply, error);
-      data = await file.toBuffer();
-    } catch {
-      return sendValidationErrors(reply, error);
+    const saved = await saveProjectLogo(project, request);
+    if (!saved) {
+      return sendValidationErrors(reply, {
+        logo: 'Нужна картинка PNG, JPEG или WebP не больше 2 МБ, отправленная как multipart/form-data',
+      });
     }
-
-    if (!saveProjectLogo(project, data)) return sendValidationErrors(reply, error);
     return sendData(reply, formatProject(findProjectById(project.id)));
   });
 }

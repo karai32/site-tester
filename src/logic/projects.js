@@ -32,7 +32,20 @@ function imageExtension(data) {
   return null;
 }
 
-export function saveProjectLogo(project, data) {
+async function readUploadedFile(request) {
+  try {
+    const file = await request.file();
+    if (!file) return null;
+    return await file.toBuffer();
+  } catch {
+    return null;
+  }
+}
+
+export async function saveProjectLogo(project, request) {
+  const data = await readUploadedFile(request);
+  if (!data) return false;
+
   const extension = imageExtension(data);
   if (!extension) return false;
 

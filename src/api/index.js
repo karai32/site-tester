@@ -1,5 +1,7 @@
+import { findProjectById } from '../db/projects.js';
 import { CHANNELS, NOTIFICATION_EVENTS } from '../logic/notifications.js';
 import { PAGE_SETS } from '../logic/page-sets.js';
+import { projectCategories } from '../logic/scenarios.js';
 import { SCHEDULE_TYPES } from '../logic/schedule.js';
 import { findApiUser } from '../logic/users.js';
 import { allCategories } from '../tests/index.js';
@@ -9,39 +11,49 @@ import reportsApi from './reports.js';
 import scenariosApi from './scenarios.js';
 import usersApi from './users.js';
 
+function catalogData(categories) {
+  const categoryList = [];
+  for (const category of categories) {
+    const tests = [];
+    for (const test of category.tests) {
+      tests.push({ id: test.id, title: test.title });
+    }
+    categoryList.push({ id: category.id, title: category.title, shortTitle: category.shortTitle, tests });
+  }
+
+  const scheduleTypes = [];
+  for (const type of SCHEDULE_TYPES) {
+    scheduleTypes.push({
+      id: type.id,
+      title: type.title,
+      hint: type.hint || null,
+      hasTime: type.hasTime,
+      number: type.number || null,
+    });
+  }
+
+  return {
+    categories: categoryList,
+    pageSets: PAGE_SETS.map((set) => ({ id: set.id, title: set.title })),
+    scheduleTypes,
+    notificationEvents: NOTIFICATION_EVENTS,
+    notificationChannels: CHANNELS,
+  };
+}
+
 async function catalogApi(app) {
   app.get('/me', async (request, reply) => {
     return sendData(reply, formatUser(request.apiUser));
   });
 
   app.get('/catalog', async (_request, reply) => {
-    const categoryList = [];
-    for (const category of allCategories()) {
-      const tests = [];
-      for (const test of category.tests) {
-        tests.push({ id: test.id, title: test.title });
-      }
-      categoryList.push({ id: category.id, title: category.title, shortTitle: category.shortTitle, tests });
-    }
+    return sendData(reply, catalogData(allCategories()));
+  });
 
-    const scheduleTypes = [];
-    for (const type of SCHEDULE_TYPES) {
-      scheduleTypes.push({
-        id: type.id,
-        title: type.title,
-        hint: type.hint || null,
-        hasTime: type.hasTime,
-        number: type.number || null,
-      });
-    }
-
-    return sendData(reply, {
-      categories: categoryList,
-      pageSets: PAGE_SETS.map((set) => ({ id: set.id, title: set.title })),
-      scheduleTypes,
-      notificationEvents: NOTIFICATION_EVENTS,
-      notificationChannels: CHANNELS,
-    });
+  app.get('/projects/:id/catalog', async (request, reply) => {
+    const project = findProjectById(request.params.id);
+    if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
+    return sendData(reply, catalogData(projectCategories(project.id)));
   });
 }
 

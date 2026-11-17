@@ -1,10 +1,88 @@
-import { APP_URL } from '../config.js';
+import nodemailer from 'nodemailer';
+import {
+  APP_URL,
+  SMTP_FROM,
+  SMTP_HOST,
+  SMTP_PASS,
+  SMTP_PORT,
+  SMTP_USER,
+  TELEGRAM_BOT_NAME,
+  TELEGRAM_BOT_TOKEN,
+} from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import { findPreviousDoneReport, findReportById, getReportResults } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
-import { percentOf } from '../helpers.js';
-import { isEmailConfigured, sendEmail } from './email.js';
-import { isTelegramConfigured, sendTelegram } from './telegram.js';
+import { percentOf } from '../logic/format.js';
+
+const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+
+function isTelegramConfigured() {
+  return Boolean(TELEGRAM_BOT_TOKEN);
+}
+
+async function sendTelegram(chatId, text) {
+  const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text, link_preview_options: { is_disabled: true } }),
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!response.ok) {
+    throw new Error(`Telegram ответил ${response.status}: ${await response.text()}`);
+  }
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function startTelegramBot(log) {
+  if (!isTelegramConfigured()) {
+    log.info('Telegram-бот не настроен: нет TELEGRAM_BOT_TOKEN');
+    return;
+  }
+  log.info(`Telegram-бот @${TELEGRAM_BOT_NAME} запущен`);
+
+  let offset = 0;
+  while (true) {
+    try {
+      const response = await fetch(`${TELEGRAM_API}/getUpdates?timeout=50&offset=${offset}`, {
+        signal: AbortSignal.timeout(60_000),
+      });
+      const data = await response.json();
+      if (!data.ok) throw new Error(data.description);
+
+      for (const update of data.result) {
+        offset = update.update_id + 1;
+        if (!update.message) continue;
+
+        const chatId = update.message.chat.id;
+        await sendTelegram(chatId, `Ваш Telegram ID: ${chatId}\n\nУкажите его в профиле 808 Checker, чтобы получать уведомления о проверках.`);
+      }
+    } catch (error) {
+      log.error(`Telegram-бот: ${error.message}`);
+      await wait(10_000);
+    }
+  }
+}
+
+let transport = null;
+
+function isEmailConfigured() {
+  return Boolean(SMTP_HOST);
+}
+
+async function sendEmail(to, subject, text) {
+  if (!transport) {
+    transport = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_PORT === 465,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+    });
+  }
+  await transport.sendMail({ from: SMTP_FROM, to, subject, text });
+}
 
 const MAX_LIST = 10;
 

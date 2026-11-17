@@ -78,7 +78,7 @@ export function percentOf(passed, total) {
   return Math.round((passed / total) * 100);
 }
 
-export function percentColor(percent) {
+function percentColor(percent) {
   if (percent === 100) return 'green';
   if (percent >= 50) return 'orange';
   return 'red';

@@ -1,3 +1,4 @@
+import { PAGE_SETS } from '../checks/page-sets.js';
 import { findProjectById } from '../db/projects.js';
 import {
   cancelDeferredCheck,
@@ -5,10 +6,21 @@ import {
   setScenarioNotifications,
   setScenarioSchedule,
 } from '../db/scenarios.js';
-import { scenarioTitle } from '../helpers.js';
-import { listUrl, paginate, SORTS, sortFromQuery, toList } from '../lists.js';
-import { defaultNotifications, notificationsFromForm, readNotificationsForm } from '../notifications/settings.js';
-import { PAGE_SETS } from '../runner/page-sets.js';
+import { scenarioTitle } from '../logic/format.js';
+import { listUrl, paginate, sortFromQuery, SORTS, toList } from '../logic/lists.js';
+import { defaultNotifications, notificationsFromForm, readNotificationsForm } from '../logic/notifications.js';
+import {
+  allTests,
+  cleanScenario,
+  listScenarios,
+  planDeferredCheck,
+  revisionName,
+  saveScenario,
+  scenarioPageSetIds,
+  scenarioSummary,
+  scenarioTestIds,
+  setActive,
+} from '../logic/scenarios.js';
 import {
   DEFAULT_TIME,
   firstRunText,
@@ -17,10 +29,7 @@ import {
   scenarioSchedule,
   scheduleFromForm,
   tomorrowDateInput,
-} from '../schedule.js';
-import { cleanScenario, planDeferredCheck, revisionName, saveScenario, setActive } from '../scenario-actions.js';
-import { allTests, scenarioPageSetIds, scenarioSummary, scenarioTestIds } from '../scenario-info.js';
-import { listScenarios } from '../scenario-list.js';
+} from '../logic/schedule.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const SCENARIOS_PER_PAGE = 10;
@@ -91,7 +100,7 @@ function loadScenario(request) {
   return { project, scenario };
 }
 
-export default async function scenarioRoutes(app) {
+export default async function scenarioPages(app) {
   app.get('/projects/:id/scenarios', async (request, reply) => {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();

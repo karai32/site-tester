@@ -1,10 +1,24 @@
-import { dashboardData } from '../dashboard.js';
 import { findProjectById, getProjects, updateProject } from '../db/projects.js';
 import { getProjectReports } from '../db/reports.js';
-import { cleanProject, createProjectWithScenario, deleteProjectWithFiles, saveProjectLogo } from '../project-actions.js';
-import { listScenarios } from '../scenario-list.js';
-import { formatProject, formatReport, formatScenarioItem, isoDate } from './format.js';
-import { hasErrors, sendData, sendError, sendValidationErrors, valueOrCurrent } from './response.js';
+import {
+  cleanProject,
+  createProjectWithScenario,
+  dashboardData,
+  deleteProjectWithFiles,
+  saveProjectLogo,
+} from '../logic/projects.js';
+import { listScenarios } from '../logic/scenarios.js';
+import {
+  formatProject,
+  formatReport,
+  formatScenarioItem,
+  hasErrors,
+  isoDate,
+  sendData,
+  sendError,
+  sendValidationErrors,
+  valueOrCurrent,
+} from './json.js';
 
 export default async function projectsApi(app) {
   app.get('/projects', async (_request, reply) => {

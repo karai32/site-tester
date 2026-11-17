@@ -1,9 +1,9 @@
 import { findProjectById } from '../db/projects.js';
 import { cancelReport, createReport } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
-import { loadReport, sendReportDownload } from '../report-data.js';
+import { loadReport, sendReportDownload } from '../logic/reports.js';
 
-export default async function reportRoutes(app) {
+export default async function reportPages(app) {
   app.post('/projects/:id/checks', async (request, reply) => {
     const project = findProjectById(request.params.id);
     const form = request.body || {};

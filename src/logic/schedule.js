@@ -1,4 +1,4 @@
-import { parseUtc, plural } from './helpers.js';
+import { parseUtc, plural } from './format.js';
 
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
@@ -17,7 +17,7 @@ export const SCHEDULE_TYPES = [
 
 export const DEFAULT_TIME = '09:00';
 
-export function findScheduleType(id) {
+function findScheduleType(id) {
   return SCHEDULE_TYPES.find((type) => type.id === id);
 }
 
@@ -113,7 +113,7 @@ export function moscowToDate(dateText, timeText) {
   return date;
 }
 
-export function moscowDateInput(date) {
+function moscowDateInput(date) {
   return new Date(date.getTime() + MOSCOW_OFFSET).toISOString().slice(0, 10);
 }
 

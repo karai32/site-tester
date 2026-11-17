@@ -1,11 +1,8 @@
+import { MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import { cancelReport, findReportWithNames } from '../db/reports.js';
-import { loadReport, sendReportDownload } from '../report-data.js';
-import { listReports } from '../report-list.js';
-import { MEDIA_DIR } from '../config.js';
-import { formatFullReport, formatReport } from './format.js';
-import { listFilters, pageOf } from './lists.js';
-import { sendData, sendError } from './response.js';
+import { listReports, loadReport, sendReportDownload } from '../logic/reports.js';
+import { formatFullReport, formatReport, listFilters, pageOf, sendData, sendError } from './json.js';
 
 export default async function reportsApi(app) {
   app.get('/projects/:id/reports', async (request, reply) => {

@@ -6,14 +6,30 @@ import {
   setScenarioNotifications,
   setScenarioSchedule,
 } from '../db/scenarios.js';
-import { cleanNotifications } from '../notifications/settings.js';
-import { cleanSchedule, firstRunText, scenarioSchedule } from '../schedule.js';
-import { cleanScenario, planDeferredCheck, revisionName, saveScenario, setActive } from '../scenario-actions.js';
-import { scenarioPageSetIds, scenarioTestIds } from '../scenario-info.js';
-import { listScenarios } from '../scenario-list.js';
-import { formatReport, formatScenario, formatScenarioItem } from './format.js';
-import { listFilters, pageOf } from './lists.js';
-import { hasErrors, sendData, sendError, sendValidationErrors, valueOrCurrent } from './response.js';
+import { cleanNotifications } from '../logic/notifications.js';
+import {
+  cleanScenario,
+  listScenarios,
+  planDeferredCheck,
+  revisionName,
+  saveScenario,
+  scenarioPageSetIds,
+  scenarioTestIds,
+  setActive,
+} from '../logic/scenarios.js';
+import { cleanSchedule, firstRunText, scenarioSchedule } from '../logic/schedule.js';
+import {
+  formatReport,
+  formatScenario,
+  formatScenarioItem,
+  hasErrors,
+  listFilters,
+  pageOf,
+  sendData,
+  sendError,
+  sendValidationErrors,
+  valueOrCurrent,
+} from './json.js';
 
 function findScenarioItem(id) {
   const scenario = findScenarioById(id);

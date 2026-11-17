@@ -1,4 +1,4 @@
-import { cleanProject, createProjectWithScenario } from '../src/project-actions.js';
+import { cleanProject, createProjectWithScenario } from '../src/logic/projects.js';
 
 const [name, url] = process.argv.slice(2);
 

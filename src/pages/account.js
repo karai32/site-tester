@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
-import { generateApiKey } from '../auth/api-keys.js';
 import { APP_URL } from '../config.js';
-import { createApiKey, deleteApiKey, getUserApiKeys } from '../db/api-keys.js';
+import { createApiKey, deleteApiKey, getUserApiKeys, updateUserContacts } from '../db/users.js';
+import { isEmail, isTelegramId } from '../logic/notifications.js';
+import { generateApiKey } from '../logic/users.js';
 
 const apiExamples = JSON.parse(readFileSync(new URL('../api/examples.json', import.meta.url), 'utf8'));
 
@@ -21,6 +22,11 @@ function examplesBySection() {
   return sections;
 }
 
+function showProfile(reply, options) {
+  if (options.errors.length > 0) reply.code(400);
+  return reply.view('profile.ejs', { title: 'Профиль', ...options }, { layout: 'layouts/app.ejs' });
+}
+
 function showSettings(reply, options) {
   if (options.error) reply.code(400);
   return reply.view('settings.ejs', {
@@ -32,7 +38,31 @@ function showSettings(reply, options) {
   }, { layout: 'layouts/app.ejs' });
 }
 
-export default async function settingsRoutes(app) {
+export default async function accountPages(app) {
+  app.get('/profile', async (request, reply) => {
+    const user = reply.locals.user;
+    const contacts = { email: user.email || '', telegramId: user.telegram_id || '' };
+    return showProfile(reply, { contacts, errors: [], saved: request.query.saved === '1' });
+  });
+
+  app.post('/profile', async (request, reply) => {
+    const body = request.body || {};
+    const contacts = {
+      email: String(body.email || '').trim(),
+      telegramId: String(body.telegram_id || '').trim(),
+    };
+
+    const errors = [];
+    if (contacts.email && !isEmail(contacts.email)) errors.push('Неверная почта');
+    if (contacts.telegramId && !isTelegramId(contacts.telegramId)) {
+      errors.push('Telegram ID должен быть числом');
+    }
+    if (errors.length > 0) return showProfile(reply, { contacts, errors, saved: false });
+
+    updateUserContacts(reply.locals.user.id, contacts);
+    return reply.redirect('/profile?saved=1');
+  });
+
   app.get('/settings', async (_request, reply) => {
     return showSettings(reply, {});
   });

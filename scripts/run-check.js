@@ -1,6 +1,6 @@
+import { runCheck } from '../src/checks/run-check.js';
 import { createReport, findReportById, getReportResults, markReportError } from '../src/db/reports.js';
 import { findScenarioById } from '../src/db/scenarios.js';
-import { runCheck } from '../src/runner/run-check.js';
 
 const scenarioId = Number(process.argv[2]);
 const scenario = findScenarioById(scenarioId);

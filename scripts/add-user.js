@@ -1,4 +1,4 @@
-import { cleanUser, createUserWithPassword } from '../src/user-actions.js';
+import { cleanUser, createUserWithPassword } from '../src/logic/users.js';
 
 const [login, name, email] = process.argv.slice(2);
 

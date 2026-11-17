@@ -8,21 +8,20 @@ import fastifyView from '@fastify/view';
 import ejs from 'ejs';
 
 import api from './api/index.js';
-import { getCurrentUser } from './auth/session.js';
+import { startTelegramBot } from './checks/notify.js';
+import { startQueue } from './checks/queue.js';
 import { HOST, MEDIA_DIR, PORT, TELEGRAM_BOT_NAME } from './config.js';
 import { getProjects } from './db/projects.js';
 import { isCheckRunning } from './db/reports.js';
-import * as helpers from './helpers.js';
-import authRoutes from './routes/auth.js';
-import projectRoutes from './routes/projects.js';
-import profileRoutes from './routes/profile.js';
-import reportRoutes from './routes/reports.js';
-import scenarioRoutes from './routes/scenarios.js';
-import settingsRoutes from './routes/settings.js';
-import { DEFAULT_TIME, SCHEDULE_TYPES, scheduleText } from './schedule.js';
-import { CHANNELS, enabledEvents, NOTIFICATION_EVENTS, notificationsText } from './notifications/settings.js';
-import { startTelegramBot } from './notifications/telegram.js';
-import { startQueue } from './runner/queue.js';
+import * as format from './logic/format.js';
+import { CHANNELS, enabledEvents, NOTIFICATION_EVENTS, notificationsText } from './logic/notifications.js';
+import { DEFAULT_TIME, SCHEDULE_TYPES, scheduleText } from './logic/schedule.js';
+import { getCurrentUser } from './logic/users.js';
+import accountPages from './pages/account.js';
+import loginPages from './pages/login.js';
+import projectPages from './pages/projects.js';
+import reportPages from './pages/reports.js';
+import scenarioPages from './pages/scenarios.js';
 
 const app = Fastify({ logger: true });
 
@@ -46,7 +45,7 @@ await app.register(fastifyView, {
   engine: { ejs },
   root: fileURLToPath(new URL('./views', import.meta.url)),
   defaultContext: {
-    ...helpers,
+    ...format,
     DEFAULT_TIME,
     SCHEDULE_TYPES,
     scheduleText,
@@ -78,12 +77,11 @@ app.addHook('preHandler', async (request, reply) => {
 });
 
 await app.register(api, { prefix: '/api' });
-await app.register(authRoutes);
-await app.register(projectRoutes);
-await app.register(scenarioRoutes);
-await app.register(reportRoutes);
-await app.register(profileRoutes);
-await app.register(settingsRoutes);
+await app.register(loginPages);
+await app.register(projectPages);
+await app.register(scenarioPages);
+await app.register(reportPages);
+await app.register(accountPages);
 
 app.get('/', async (_request, reply) => reply.redirect('/projects'));
 

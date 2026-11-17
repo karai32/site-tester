@@ -1,10 +1,9 @@
-import { dashboardData } from '../dashboard.js';
 import { findProjectById, getProjects } from '../db/projects.js';
 import { getScenarioReports } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
-import { listUrl, paginate, SORTS, sortFromQuery, toList } from '../lists.js';
-import { saveProjectLogo } from '../project-actions.js';
-import { listReports } from '../report-list.js';
+import { listUrl, paginate, sortFromQuery, SORTS, toList } from '../logic/lists.js';
+import { dashboardData, saveProjectLogo } from '../logic/projects.js';
+import { listReports } from '../logic/reports.js';
 import { categories as testCategories } from '../tests/index.js';
 
 const REPORTS_PER_PAGE = 10;
@@ -15,7 +14,7 @@ const LOGO_NOTICES = {
   error: { type: 'danger', text: 'Аватарка не загружена: нужна картинка PNG, JPEG или WebP не больше 2 МБ' },
 };
 
-export default async function projectRoutes(app) {
+export default async function projectPages(app) {
   app.get('/projects', async (_request, reply) => {
     const projects = getProjects();
     return reply.view('projects/list.ejs', { title: 'Проекты', projects }, { layout: 'layouts/app.ejs' });

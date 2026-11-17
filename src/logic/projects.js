@@ -1,9 +1,12 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { MEDIA_DIR } from './config.js';
-import { createProject, deleteProject, setProjectLogo } from './db/projects.js';
-import { getProjectReports } from './db/reports.js';
-import { createScenario } from './db/scenarios.js';
+import { MEDIA_DIR } from '../config.js';
+import { createProject, deleteProject, setProjectLogo } from '../db/projects.js';
+import { findLatestDoneReport, getProjectReports, getRecentReports, getReportResults } from '../db/reports.js';
+import { createScenario, getProjectScenarios } from '../db/scenarios.js';
+import { groupByCategory } from './reports.js';
+import { scenarioSummary } from './scenarios.js';
+import { upcomingRuns } from './schedule.js';
 
 export function cleanProject(input) {
   const project = {
@@ -48,4 +51,38 @@ export function deleteProjectWithFiles(project) {
   }
   if (project.logo) rmSync(join(MEDIA_DIR, project.logo), { force: true });
   deleteProject(project.id);
+}
+
+const UPCOMING_COUNT = 5;
+const RECENT_COUNT = 10;
+
+export function dashboardData(projectId) {
+  const allScenarios = getProjectScenarios(projectId);
+  const scenarios = [];
+  for (const scenario of allScenarios) {
+    if (scenario.is_active) scenarios.push({ ...scenario, summary: scenarioSummary(scenario) });
+  }
+
+  let upcoming = [];
+  for (const scenario of scenarios) {
+    upcoming.push(...upcomingRuns(scenario, UPCOMING_COUNT));
+  }
+  upcoming.sort((a, b) => a.runAt.localeCompare(b.runAt));
+  upcoming = upcoming.slice(0, UPCOMING_COUNT);
+
+  const lastFull = findLatestDoneReport(projectId, true);
+  const lastPartial = findLatestDoneReport(projectId, false);
+
+  let lastFullCategories = [];
+  if (lastFull) lastFullCategories = groupByCategory(getReportResults(lastFull.id));
+
+  return {
+    allScenarios,
+    scenarios,
+    upcoming,
+    lastFull,
+    lastFullCategories,
+    lastPartial,
+    recentReports: getRecentReports(projectId, RECENT_COUNT),
+  };
 }

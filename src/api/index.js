@@ -1,10 +1,49 @@
-import { findApiUser } from '../auth/api-keys.js';
-import catalogApi from './catalog.js';
+import { PAGE_SETS } from '../checks/page-sets.js';
+import { CHANNELS, NOTIFICATION_EVENTS } from '../logic/notifications.js';
+import { SCHEDULE_TYPES } from '../logic/schedule.js';
+import { findApiUser } from '../logic/users.js';
+import { categories } from '../tests/index.js';
+import { formatUser, sendData, sendError } from './json.js';
 import projectsApi from './projects.js';
 import reportsApi from './reports.js';
-import { sendError } from './response.js';
 import scenariosApi from './scenarios.js';
 import usersApi from './users.js';
+
+async function catalogApi(app) {
+  app.get('/me', async (request, reply) => {
+    return sendData(reply, formatUser(request.apiUser));
+  });
+
+  app.get('/catalog', async (_request, reply) => {
+    const categoryList = [];
+    for (const category of categories) {
+      const tests = [];
+      for (const test of category.tests) {
+        tests.push({ id: test.id, title: test.title });
+      }
+      categoryList.push({ id: category.id, title: category.title, shortTitle: category.shortTitle, tests });
+    }
+
+    const scheduleTypes = [];
+    for (const type of SCHEDULE_TYPES) {
+      scheduleTypes.push({
+        id: type.id,
+        title: type.title,
+        hint: type.hint || null,
+        hasTime: type.hasTime,
+        number: type.number || null,
+      });
+    }
+
+    return sendData(reply, {
+      categories: categoryList,
+      pageSets: PAGE_SETS.map((set) => ({ id: set.id, title: set.title })),
+      scheduleTypes,
+      notificationEvents: NOTIFICATION_EVENTS,
+      notificationChannels: CHANNELS,
+    });
+  });
+}
 
 export default async function api(app) {
   app.decorateRequest('apiUser', null);

@@ -1,13 +1,73 @@
-import { percentOf, scenarioTitle } from '../helpers.js';
-import { describeSchedule, scenarioSchedule } from '../schedule.js';
-import { allTests, scenarioCategories, scenarioPageSets } from '../scenario-info.js';
+import { percentOf, scenarioTitle } from '../logic/format.js';
+import { paginate, sortFromQuery } from '../logic/lists.js';
+import { allTests, scenarioCategories, scenarioPageSets } from '../logic/scenarios.js';
+import { describeSchedule, scenarioSchedule } from '../logic/schedule.js';
+
+export function sendData(reply, data, meta) {
+  const body = { ok: true, data };
+  if (meta) body.meta = meta;
+  return reply.send(body);
+}
+
+export function sendError(reply, statusCode, code, message, fields) {
+  const error = { code, message };
+  if (fields) error.fields = fields;
+  return reply.code(statusCode).send({ ok: false, error });
+}
+
+export function sendValidationErrors(reply, errors) {
+  const message = Object.values(errors).join('. ');
+  return sendError(reply, 400, 'validation_failed', message, errors);
+}
+
+export function hasErrors(errors) {
+  return Object.keys(errors).length > 0;
+}
+
+export function valueOrCurrent(body, field, current) {
+  if (body[field] === undefined) return current;
+  return body[field];
+}
+
+const DEFAULT_PER_PAGE = 10;
+const MAX_PER_PAGE = 100;
+
+function splitCategories(value) {
+  const ids = [];
+  for (const part of String(value || '').split(',')) {
+    const id = part.trim();
+    if (id) ids.push(id);
+  }
+  return ids;
+}
+
+export function listFilters(query) {
+  return {
+    author: String(query.author || ''),
+    categories: splitCategories(query.categories),
+    regular: String(query.regular || ''),
+    sort: sortFromQuery(query.sort),
+  };
+}
+
+export function pageOf(list, query) {
+  let perPage = Number(query.perPage) || DEFAULT_PER_PAGE;
+  if (perPage < 1) perPage = DEFAULT_PER_PAGE;
+  if (perPage > MAX_PER_PAGE) perPage = MAX_PER_PAGE;
+
+  const pagination = paginate(list, Number(query.page) || 1, perPage);
+  return {
+    items: pagination.items,
+    meta: { page: pagination.page, perPage, total: pagination.total, pagesCount: pagination.pagesCount },
+  };
+}
 
 export function isoDate(utcText) {
   if (!utcText) return null;
   return utcText.replace(' ', 'T') + 'Z';
 }
 
-export function mediaUrl(file) {
+function mediaUrl(file) {
   return `/api/media/${file}`;
 }
 

@@ -1,4 +1,4 @@
-import { defaultNotifications, parseNotifications } from '../notifications/settings.js';
+import { defaultNotifications, parseNotifications } from '../logic/notifications.js';
 import { db } from './database.js';
 
 function parseScenario(row) {

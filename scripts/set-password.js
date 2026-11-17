@@ -1,5 +1,5 @@
 import { findUserByLogin } from '../src/db/users.js';
-import { resetPassword } from '../src/user-actions.js';
+import { resetPassword } from '../src/logic/users.js';
 
 const login = process.argv[2];
 const user = login && findUserByLogin(login);

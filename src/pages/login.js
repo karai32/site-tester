@@ -1,8 +1,7 @@
-import { checkPassword } from '../auth/passwords.js';
-import { getCurrentUser, logIn, logOut } from '../auth/session.js';
 import { findUserByLogin } from '../db/users.js';
+import { checkPassword, getCurrentUser, logIn, logOut } from '../logic/users.js';
 
-export default async function authRoutes(app) {
+export default async function loginPages(app) {
   app.get('/login', async (request, reply) => {
     if (getCurrentUser(request)) return reply.redirect('/');
     return reply.view('login.ejs', { title: 'Вход', login: '', error: false }, { layout: 'layouts/auth.ejs' });

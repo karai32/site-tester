@@ -1,7 +1,6 @@
 import { deleteUser, findUserById, getUsers, updateUser } from '../db/users.js';
-import { cleanUser, createUserWithPassword, resetPassword } from '../user-actions.js';
-import { formatUser } from './format.js';
-import { hasErrors, sendData, sendError, sendValidationErrors, valueOrCurrent } from './response.js';
+import { cleanUser, createUserWithPassword, resetPassword } from '../logic/users.js';
+import { formatUser, hasErrors, sendData, sendError, sendValidationErrors, valueOrCurrent } from './json.js';
 
 export default async function usersApi(app) {
   app.get('/users', async (_request, reply) => {

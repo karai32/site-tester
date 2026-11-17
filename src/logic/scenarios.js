@@ -137,7 +137,7 @@ export function planDeferredCheck(scenario, runAt, userId) {
   return null;
 }
 
-function scenarioItems(projectId) {
+export function scenarioItems(projectId) {
   const lastReports = {};
   for (const report of getProjectReports(projectId)) {
     if (report.status === 'done' && !lastReports[report.scenario_id]) {

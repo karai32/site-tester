@@ -13,6 +13,7 @@ import {
   planDeferredCheck,
   revisionName,
   saveScenario,
+  scenarioItems,
   scenarioPageSetIds,
   scenarioTestIds,
   setActive,
@@ -34,11 +35,7 @@ import {
 function findScenarioItem(id) {
   const scenario = findScenarioById(id);
   if (!scenario) return undefined;
-
-  const noFilters = { author: '', categories: [], regular: '', sort: 'new' };
-  const active = listScenarios(scenario.project_id, { ...noFilters, inactive: false }).scenarios;
-  const inactive = listScenarios(scenario.project_id, { ...noFilters, inactive: true }).scenarios;
-  return [...active, ...inactive].find((item) => item.id === scenario.id);
+  return scenarioItems(scenario.project_id).find((item) => item.id === scenario.id);
 }
 
 function sendScenario(reply, scenarioId) {

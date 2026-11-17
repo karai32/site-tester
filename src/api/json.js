@@ -32,19 +32,10 @@ export function valueOrCurrent(body, field, current) {
 const DEFAULT_PER_PAGE = 10;
 const MAX_PER_PAGE = 100;
 
-function splitCategories(value) {
-  const ids = [];
-  for (const part of String(value || '').split(',')) {
-    const id = part.trim();
-    if (id) ids.push(id);
-  }
-  return ids;
-}
-
 export function listFilters(query) {
   return {
     author: String(query.author || ''),
-    categories: splitCategories(query.categories),
+    categories: String(query.categories || '').split(',').map((id) => id.trim()).filter(Boolean),
     regular: String(query.regular || ''),
     sort: sortFromQuery(query.sort),
   };

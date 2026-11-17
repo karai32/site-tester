@@ -1,0 +1,10 @@
+import { createArchivePagination } from '../helpers.js';
+
+export default createArchivePagination({
+  id: 'library-pagination',
+  title: 'Библиотека с пагинацией отображается и открывается корректно',
+  path: '/library/',
+  itemSelector: '.collections-item__img',
+  itemsLabel: 'материалов библиотеки',
+  opensItem: true,
+});

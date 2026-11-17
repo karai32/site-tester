@@ -10,10 +10,11 @@ import { scenarioTitle } from '../logic/format.js';
 import { listUrl, paginate, sortFromQuery, SORTS, toList } from '../logic/lists.js';
 import { defaultNotifications, notificationsFromForm, readNotificationsForm } from '../logic/notifications.js';
 import {
-  allTests,
   cleanScenario,
   listScenarios,
   planDeferredCheck,
+  projectCategories,
+  projectTests,
   revisionName,
   saveScenario,
   scenarioPageSetIds,
@@ -30,7 +31,6 @@ import {
   scheduleFromForm,
   tomorrowDateInput,
 } from '../logic/schedule.js';
-import { categories as testCategories } from '../tests/index.js';
 
 const SCENARIOS_PER_PAGE = 10;
 
@@ -41,7 +41,7 @@ const NOTICES = {
   'deferred-cancelled': 'Отложенная проверка отменена',
 };
 
-function readScenarioForm(body) {
+function readScenarioForm(body, projectId) {
   if (!body) body = {};
   const { scenario, errors } = cleanScenario({
     name: body.name,
@@ -49,7 +49,7 @@ function readScenarioForm(body) {
     pageSets: toList(body.page_sets),
     schedule: scheduleFromForm(body),
     notifications: notificationsFromForm(body),
-  });
+  }, projectId);
   return { form: scenario, errors: Object.values(errors) };
 }
 
@@ -64,7 +64,7 @@ function showForm(reply, project, form, source, errors) {
     form,
     source,
     errors,
-    categories: testCategories,
+    categories: projectCategories(project.id),
     pageSets: PAGE_SETS,
   }, { layout: 'layouts/app.ejs' });
 }
@@ -133,11 +133,11 @@ export default async function scenarioPages(app) {
       author,
       authors: result.authors,
       selectedCategories,
-      categories: testCategories,
+      categories: projectCategories(project.id),
       regular,
       sort,
       sorts: SORTS,
-      totalTests: allTests.length,
+      totalTests: projectTests(project.id).length,
       pagination: paginate(result.scenarios, Number(request.query.page) || 1, SCENARIOS_PER_PAGE),
       scenariosUrl,
     }, { layout: 'layouts/app.ejs' });
@@ -161,7 +161,7 @@ export default async function scenarioPages(app) {
     const project = findProjectById(request.params.id);
     if (!project) return reply.callNotFound();
 
-    const { form, errors } = readScenarioForm(request.body);
+    const { form, errors } = readScenarioForm(request.body, project.id);
     if (errors.length > 0) return showForm(reply, project, form, null, errors);
 
     const scenarioId = saveScenario({ projectId: project.id, authorId: reply.locals.user.id, scenario: form });
@@ -262,7 +262,7 @@ export default async function scenarioPages(app) {
     if (!data) return reply.callNotFound();
     const { project, scenario } = data;
 
-    const { form, errors } = readScenarioForm(request.body);
+    const { form, errors } = readScenarioForm(request.body, project.id);
     if (errors.length > 0) return showForm(reply, project, form, scenario, errors);
 
     const scenarioId = saveScenario({

@@ -4,19 +4,19 @@ import { MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import { findReportWithNames, getProjectReports, getReportResults } from '../db/reports.js';
 import { getProjectScenarios } from '../db/scenarios.js';
-import { categories as testCategories } from '../tests/index.js';
 import { authorName, formatDateTime } from './format.js';
 import { SORTS, uniqueSorted } from './lists.js';
-import { scenarioCategoryIds } from './scenarios.js';
+import { projectCategories, scenarioCategoryIds } from './scenarios.js';
 
-export function groupByCategory(results) {
+export function groupByCategory(results, projectId) {
+  const categories = projectCategories(projectId);
   const groups = [];
 
   for (const result of results) {
     let group = groups.find((item) => item.id === result.category_id);
 
     if (!group) {
-      const category = testCategories.find((item) => item.id === result.category_id);
+      const category = categories.find((item) => item.id === result.category_id);
       group = {
         id: result.category_id,
         title: result.category_title,
@@ -41,7 +41,7 @@ export function loadReport(reportId) {
   return {
     report,
     project: findProjectById(report.project_id),
-    categories: groupByCategory(getReportResults(report.id)),
+    categories: groupByCategory(getReportResults(report.id), report.project_id),
   };
 }
 

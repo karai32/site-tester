@@ -1,6 +1,6 @@
 import { percentOf, scenarioTitle } from '../logic/format.js';
 import { paginate, sortFromQuery } from '../logic/lists.js';
-import { allTests, scenarioCategories, scenarioPageSets } from '../logic/scenarios.js';
+import { projectTests, scenarioCategories, scenarioPageSets } from '../logic/scenarios.js';
 import { describeSchedule, scenarioSchedule } from '../logic/schedule.js';
 
 export function sendData(reply, data, meta) {
@@ -125,7 +125,7 @@ export function formatScenarioItem(item) {
     createdAt: isoDate(item.created_at),
     categoriesCount: item.categoriesCount,
     testsCount: item.testsCount,
-    testsTotal: allTests.length,
+    testsTotal: projectTests(item.project_id).length,
     pagesCount: item.pagesCount,
     sitePagesCount: item.sitePagesCount,
     schedule: formatSchedule(item),

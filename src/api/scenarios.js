@@ -80,7 +80,7 @@ export default async function scenariosApi(app) {
     const project = findProjectById(request.params.id);
     if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
 
-    const { scenario, errors } = cleanScenario(request.body || {});
+    const { scenario, errors } = cleanScenario(request.body || {}, project.id);
     if (hasErrors(errors)) return sendValidationErrors(reply, errors);
 
     const scenarioId = saveScenario({ projectId: project.id, authorId: request.apiUser.id, scenario });
@@ -99,7 +99,7 @@ export default async function scenariosApi(app) {
       pageSets: valueOrCurrent(body, 'pageSets', scenarioPageSetIds(source)),
       schedule: valueOrCurrent(body, 'schedule', scenarioSchedule(source)),
       notifications: valueOrCurrent(body, 'notifications', source.notifications),
-    });
+    }, source.project_id);
     if (hasErrors(errors)) return sendValidationErrors(reply, errors);
 
     const scenarioId = saveScenario({ projectId: source.project_id, authorId: request.apiUser.id, scenario, source });

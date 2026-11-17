@@ -2,11 +2,14 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { request } from 'playwright';
-import { errorMessage, fetchUrl } from '../tests/helpers/common.js';
 
 const BATCH_SIZE = 8;
 const TIMEOUT_MS = 15_000;
 export const MAX_PAGES = 4000;
+
+export function errorMessage(error) {
+  return (error instanceof Error ? error.message : String(error)).split('\n')[0];
+}
 
 function extractLinks(html, pageUrl, siteOrigin) {
   const links = new Set();
@@ -23,6 +26,27 @@ function extractLinks(html, pageUrl, siteOrigin) {
     }
   }
   return [...links];
+}
+
+function isHtml(status, contentType) {
+  return status >= 200 && status < 400 && contentType.includes('text/html');
+}
+
+async function fetchPage(api, url) {
+  const head = await api.head(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
+  const headStatus = head.status();
+  const headType = head.headers()['content-type'] || '';
+  await head.dispose();
+
+  const headNotSupported = headStatus === 405 || headStatus === 501;
+  if (!headNotSupported && !isHtml(headStatus, headType)) return { status: headStatus, html: null };
+
+  const response = await api.get(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
+  const status = response.status();
+  const type = response.headers()['content-type'] || '';
+  const html = isHtml(status, type) ? await response.text() : null;
+  await response.dispose();
+  return { status, html };
 }
 
 function htmlFile(htmlDir, url) {
@@ -53,7 +77,7 @@ export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
       await Promise.all(batch.map(async (pageUrl) => {
         let page;
         try {
-          page = await fetchUrl(api, pageUrl, { timeoutMs: TIMEOUT_MS, withHtml: true });
+          page = await fetchPage(api, pageUrl);
           statuses.set(pageUrl, { status: page.status, error: null });
         } catch (error) {
           statuses.set(pageUrl, { status: 0, error: errorMessage(error) });

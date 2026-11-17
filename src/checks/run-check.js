@@ -13,10 +13,8 @@ import {
   setReportPlan,
 } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
-import { scenarioPageSetIds, scenarioTestIds } from '../logic/scenarios.js';
-import { errorMessage } from '../tests/helpers/common.js';
-import { categories } from '../tests/index.js';
-import { crawlSite, MAX_PAGES, readSavedHtml } from './crawl.js';
+import { projectCategories, scenarioPageSetIds, scenarioTestIds } from '../logic/scenarios.js';
+import { crawlSite, errorMessage, MAX_PAGES, readSavedHtml } from './crawl.js';
 import { notifyCheckFinished, notifyCheckStarted } from './notify.js';
 import { collectLinks, selectPages } from './page-sets.js';
 
@@ -25,7 +23,7 @@ const TEST_TIMEOUT_MS = 10 * 60 * 1000;
 function scenarioTests(scenario) {
   const testIds = scenarioTestIds(scenario);
   const list = [];
-  for (const category of categories) {
+  for (const category of projectCategories(scenario.project_id)) {
     for (const test of category.tests) {
       if (testIds.includes(test.id)) list.push({ category, test });
     }

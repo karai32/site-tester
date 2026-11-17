@@ -74,7 +74,7 @@ export function dashboardData(projectId) {
   const lastPartial = findLatestDoneReport(projectId, false);
 
   let lastFullCategories = [];
-  if (lastFull) lastFullCategories = groupByCategory(getReportResults(lastFull.id));
+  if (lastFull) lastFullCategories = groupByCategory(getReportResults(lastFull.id), projectId);
 
   return {
     allScenarios,

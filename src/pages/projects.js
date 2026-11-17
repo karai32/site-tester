@@ -4,7 +4,7 @@ import { findScenarioById } from '../db/scenarios.js';
 import { listUrl, paginate, sortFromQuery, SORTS, toList } from '../logic/lists.js';
 import { dashboardData, saveProjectLogo } from '../logic/projects.js';
 import { listReports } from '../logic/reports.js';
-import { categories as testCategories } from '../tests/index.js';
+import { projectCategories } from '../logic/scenarios.js';
 
 const REPORTS_PER_PAGE = 10;
 const SUMMARY_BATCH = 10;
@@ -109,7 +109,7 @@ export default async function projectPages(app) {
       author,
       authors: result.authors,
       selectedCategories,
-      categories: testCategories,
+      categories: projectCategories(project.id),
       regular,
       sort,
       sorts: SORTS,

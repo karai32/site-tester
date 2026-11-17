@@ -2,7 +2,7 @@ import { PAGE_SETS } from '../checks/page-sets.js';
 import { CHANNELS, NOTIFICATION_EVENTS } from '../logic/notifications.js';
 import { SCHEDULE_TYPES } from '../logic/schedule.js';
 import { findApiUser } from '../logic/users.js';
-import { categories } from '../tests/index.js';
+import { allCategories } from '../tests/index.js';
 import { formatUser, sendData, sendError } from './json.js';
 import projectsApi from './projects.js';
 import reportsApi from './reports.js';
@@ -16,7 +16,7 @@ async function catalogApi(app) {
 
   app.get('/catalog', async (_request, reply) => {
     const categoryList = [];
-    for (const category of categories) {
+    for (const category of allCategories()) {
       const tests = [];
       for (const test of category.tests) {
         tests.push({ id: test.id, title: test.title });

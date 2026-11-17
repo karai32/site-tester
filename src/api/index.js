@@ -1,5 +1,5 @@
-import { PAGE_SETS } from '../checks/page-sets.js';
 import { CHANNELS, NOTIFICATION_EVENTS } from '../logic/notifications.js';
+import { PAGE_SETS } from '../logic/page-sets.js';
 import { SCHEDULE_TYPES } from '../logic/schedule.js';
 import { findApiUser } from '../logic/users.js';
 import { allCategories } from '../tests/index.js';

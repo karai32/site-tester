@@ -108,3 +108,24 @@ export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
   htmlPages.sort();
   return { htmlPages, linksByPage, statuses, truncated };
 }
+
+export function collectLinks(pages, linksByPage, statuses) {
+  const links = new Map();
+
+  for (const pageUrl of pages) {
+    for (const url of linksByPage.get(pageUrl) || []) {
+      if (!links.has(url)) {
+        const known = statuses.get(url);
+        links.set(url, {
+          url,
+          status: known ? known.status : null,
+          error: known ? known.error : null,
+          foundOn: [],
+        });
+      }
+      links.get(url).foundOn.push(pageUrl);
+    }
+  }
+
+  return Array.from(links.values());
+}

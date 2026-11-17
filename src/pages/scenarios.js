@@ -1,4 +1,3 @@
-import { PAGE_SETS } from '../checks/page-sets.js';
 import { findProjectById } from '../db/projects.js';
 import {
   cancelDeferredCheck,
@@ -9,6 +8,7 @@ import {
 import { scenarioTitle } from '../logic/format.js';
 import { listUrl, paginate, sortFromQuery, SORTS, toList } from '../logic/lists.js';
 import { defaultNotifications, notificationsFromForm, readNotificationsForm } from '../logic/notifications.js';
+import { PAGE_SETS } from '../logic/page-sets.js';
 import {
   cleanScenario,
   listScenarios,

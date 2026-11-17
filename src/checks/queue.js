@@ -6,6 +6,9 @@ import { cancelDeferredCheck, getDueDeferredScenarios, getDueRegularScenarios, s
 import { nextRunAt, scenarioSchedule, toUtcText } from '../logic/schedule.js';
 import { runCheck } from './run-check.js';
 
+const CHECK_EVERY_MS = 5000;
+let busy = false;
+
 function queueDueChecks(log) {
   for (const scenario of getDueDeferredScenarios()) {
     const reportId = createReport({
@@ -33,9 +36,6 @@ function queueDueChecks(log) {
     setNextRunAt(scenario.id, toUtcText(next));
   }
 }
-
-const CHECK_EVERY_MS = 5000;
-let busy = false;
 
 export function startQueue(log) {
   markInterruptedReports();

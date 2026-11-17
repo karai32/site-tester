@@ -13,10 +13,10 @@ import {
   setReportPlan,
 } from '../db/reports.js';
 import { findScenarioById } from '../db/scenarios.js';
+import { selectPages } from '../logic/page-sets.js';
 import { projectCategories, scenarioPageSetIds, scenarioTestIds } from '../logic/scenarios.js';
-import { crawlSite, errorMessage, MAX_PAGES, readSavedHtml } from './crawl.js';
+import { collectLinks, crawlSite, errorMessage, MAX_PAGES, readSavedHtml } from './crawl.js';
 import { notifyCheckFinished, notifyCheckStarted } from './notify.js';
-import { collectLinks, selectPages } from './page-sets.js';
 
 const TEST_TIMEOUT_MS = 10 * 60 * 1000;
 

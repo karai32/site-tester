@@ -1,4 +1,3 @@
-import { PAGE_SETS } from '../checks/page-sets.js';
 import { findProjectById } from '../db/projects.js';
 import { getProjectReports } from '../db/reports.js';
 import {
@@ -14,6 +13,7 @@ import { siteCategories } from '../tests/index.js';
 import { authorName } from './format.js';
 import { SORTS, toList, uniqueSorted } from './lists.js';
 import { cleanNotifications } from './notifications.js';
+import { PAGE_SETS } from './page-sets.js';
 import { cleanSchedule, firstRunText, scenarioSchedule, toUtcText } from './schedule.js';
 
 export function projectCategories(projectId) {

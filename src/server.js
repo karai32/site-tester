@@ -42,13 +42,6 @@ await app.register(fastifyStatic, {
   decorateReply: false,
 });
 
-await app.register(fastifyStatic, {
-  root: fileURLToPath(new URL('../ui-kit', import.meta.url)),
-  prefix: '/ui-kit/',
-  decorateReply: false,
-});
-app.get('/ui.html', async (_request, reply) => reply.redirect('/ui-kit/ui.html'));
-
 await app.register(fastifyView, {
   engine: { ejs },
   root: fileURLToPath(new URL('./views', import.meta.url)),

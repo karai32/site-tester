@@ -32,7 +32,7 @@ export function plural(count, [one, few, many]) {
 
 const TIME_ZONE = 'Europe/Moscow';
 
-function parseUtc(utcText) {
+export function parseUtc(utcText) {
   return new Date(utcText.replace(' ', 'T') + 'Z');
 }
 
@@ -71,19 +71,6 @@ export function formatDate(utcText) {
   if (!utcText) return '-';
   const p = dateParts(utcText);
   return `${p.day}.${p.month}.${p.year}`;
-}
-
-export function formatDuration(startUtc, endUtc) {
-  if (!startUtc || !endUtc) return '-';
-
-  const milliseconds = parseUtc(endUtc) - parseUtc(startUtc);
-  const seconds = Math.round(milliseconds / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  if (hours > 0) return `${hours} ч ${minutes % 60} мин`;
-  if (minutes > 0) return `${minutes} мин ${seconds % 60} с`;
-  return `${seconds} с`;
 }
 
 export function percentOf(passed, total) {

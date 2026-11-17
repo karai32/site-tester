@@ -7,7 +7,6 @@ RUN npm ci --omit=dev
 COPY src ./src
 COPY public ./public
 COPY scripts ./scripts
-COPY ui-kit ./ui-kit
 
 ENV HOST=0.0.0.0 PORT=3001 DATA_DIR=/app/data
 EXPOSE 3001

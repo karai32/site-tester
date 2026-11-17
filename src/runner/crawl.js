@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { request } from 'playwright';
+import { errorMessage, fetchUrl } from '../tests/helpers/common.js';
 
 const BATCH_SIZE = 8;
 const TIMEOUT_MS = 15_000;
@@ -22,24 +23,6 @@ function extractLinks(html, pageUrl, siteOrigin) {
     }
   }
   return [...links];
-}
-
-async function fetchPage(api, url) {
-  const head = await api.head(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
-  const headStatus = head.status();
-  const headType = head.headers()['content-type'] || '';
-  await head.dispose();
-
-  const headNotSupported = headStatus === 405 || headStatus === 501;
-  const looksLikeHtml = headStatus >= 200 && headStatus < 400 && headType.includes('text/html');
-  if (!looksLikeHtml && !headNotSupported) return { status: headStatus, html: null };
-
-  const response = await api.get(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
-  const status = response.status();
-  const type = response.headers()['content-type'] || '';
-  const html = status >= 200 && status < 400 && type.includes('text/html') ? await response.text() : null;
-  await response.dispose();
-  return { status, html };
 }
 
 function htmlFile(htmlDir, url) {
@@ -70,10 +53,10 @@ export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
       await Promise.all(batch.map(async (pageUrl) => {
         let page;
         try {
-          page = await fetchPage(api, pageUrl);
+          page = await fetchUrl(api, pageUrl, { timeoutMs: TIMEOUT_MS, withHtml: true });
           statuses.set(pageUrl, { status: page.status, error: null });
         } catch (error) {
-          statuses.set(pageUrl, { status: 0, error: error.message.split('\n')[0] });
+          statuses.set(pageUrl, { status: 0, error: errorMessage(error) });
           return;
         }
         if (!page.html) return;

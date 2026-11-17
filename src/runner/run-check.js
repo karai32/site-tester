@@ -15,16 +15,12 @@ import {
 import { findScenarioById } from '../db/scenarios.js';
 import { notifyCheckFinished, notifyCheckStarted } from '../notifications/notify.js';
 import { scenarioPageSetIds, scenarioTestIds } from '../scenario-info.js';
+import { errorMessage } from '../tests/helpers/common.js';
 import { categories } from '../tests/index.js';
 import { crawlSite, MAX_PAGES, readSavedHtml } from './crawl.js';
 import { collectLinks, selectPages } from './page-sets.js';
 
 const TEST_TIMEOUT_MS = 10 * 60 * 1000;
-
-function firstLine(error) {
-  const text = error instanceof Error ? error.message : String(error);
-  return text.split('\n')[0];
-}
 
 function scenarioTests(scenario) {
   const testIds = scenarioTestIds(scenario);
@@ -56,7 +52,7 @@ async function runTest(test, context) {
     running.catch(() => {});
     result = await withTimeout(running, TEST_TIMEOUT_MS);
   } catch (error) {
-    return failedResult(`Тест не выполнен: ${firstLine(error)}`);
+    return failedResult(`Тест не выполнен: ${errorMessage(error)}`);
   }
 
   if (!result || typeof result.passed !== 'boolean') {
@@ -177,8 +173,8 @@ export async function runCheck(reportId, log = console) {
     markReportDone(reportId);
     log.info(`Отчёт #${reportId}: готов`);
   } catch (error) {
-    log.error(`Отчёт #${reportId}: ошибка: ${firstLine(error)}`);
-    markReportError(reportId, firstLine(error));
+    log.error(`Отчёт #${reportId}: ошибка: ${errorMessage(error)}`);
+    markReportError(reportId, errorMessage(error));
   } finally {
     if (browser) await browser.close().catch(() => {});
     rmSync(htmlDir, { recursive: true, force: true });

@@ -9,6 +9,28 @@ export async function takeScreenshot(page, { fullPage = false } = {}) {
   return page.screenshot({ type: 'jpeg', quality: fullPage ? 45 : 60, fullPage });
 }
 
+function isHtml(status, contentType) {
+  return status >= 200 && status < 400 && contentType.includes('text/html');
+}
+
+export async function fetchUrl(api, url, { timeoutMs, withHtml = false }) {
+  const head = await api.head(url, { failOnStatusCode: false, timeout: timeoutMs });
+  const headStatus = head.status();
+  const headType = head.headers()['content-type'] || '';
+  await head.dispose();
+
+  const headNotSupported = headStatus === 405 || headStatus === 501;
+  const needsHtml = withHtml && isHtml(headStatus, headType);
+  if (!headNotSupported && !needsHtml) return { status: headStatus, html: null };
+
+  const response = await api.get(url, { failOnStatusCode: false, timeout: timeoutMs });
+  const status = response.status();
+  const type = response.headers()['content-type'] || '';
+  const html = withHtml && isHtml(status, type) ? await response.text() : null;
+  await response.dispose();
+  return { status, html };
+}
+
 export async function getStatuses(urls, { batchSize = 8, timeoutMs = 15_000 } = {}) {
   const results = new Map();
   const api = await request.newContext();
@@ -18,15 +40,7 @@ export async function getStatuses(urls, { batchSize = 8, timeoutMs = 15_000 } = 
       const batch = urls.slice(index, index + batchSize);
       await Promise.all(batch.map(async (url) => {
         try {
-          const head = await api.head(url, { failOnStatusCode: false, timeout: timeoutMs });
-          let status = head.status();
-          await head.dispose();
-
-          if (status === 405 || status === 501) {
-            const get = await api.get(url, { failOnStatusCode: false, timeout: timeoutMs });
-            status = get.status();
-            await get.dispose();
-          }
+          const { status } = await fetchUrl(api, url, { timeoutMs });
           results.set(url, { status, error: null });
         } catch (error) {
           results.set(url, { status: 0, error: errorMessage(error) });

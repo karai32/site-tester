@@ -1,4 +1,4 @@
-import { plural } from './helpers.js';
+import { parseUtc, plural } from './helpers.js';
 
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
@@ -93,7 +93,7 @@ export function upcomingRuns(scenario, count) {
   }
   if (scenario.schedule_type && scenario.next_run_at) {
     const schedule = scenarioSchedule(scenario);
-    let runAt = parseUtcText(scenario.next_run_at);
+    let runAt = parseUtc(scenario.next_run_at);
     for (let i = 0; i < count; i++) {
       runs.push({ scenario, runAt: toUtcText(runAt), isRegular: true });
       runAt = nextRunAt(schedule, runAt);
@@ -104,10 +104,6 @@ export function upcomingRuns(scenario, count) {
 
 export function toUtcText(date) {
   return date.toISOString().slice(0, 19).replace('T', ' ');
-}
-
-export function parseUtcText(text) {
-  return new Date(text.replace(' ', 'T') + 'Z');
 }
 
 export function moscowToDate(dateText, timeText) {

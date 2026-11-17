@@ -6,22 +6,18 @@ import {
   setNextRunAt,
   setScenarioActive,
 } from './db/scenarios.js';
+import { toList } from './lists.js';
 import { cleanNotifications } from './notifications/settings.js';
 import { PAGE_SETS } from './runner/page-sets.js';
 import { cleanSchedule, firstRunText, scenarioSchedule, toUtcText } from './schedule.js';
 import { allTests } from './scenario-info.js';
 
-function toArray(value) {
-  if (Array.isArray(value)) return value;
-  return [];
-}
-
 export function cleanScenario(input) {
   const scheduleResult = cleanSchedule(input.schedule);
   const notificationsResult = cleanNotifications(input.notifications);
 
-  const testIds = toArray(input.testIds).filter((id) => allTests.some((test) => test.id === id));
-  const pageSets = toArray(input.pageSets).filter((id) => PAGE_SETS.some((set) => set.id === id));
+  const testIds = toList(input.testIds).filter((id) => allTests.some((test) => test.id === id));
+  const pageSets = toList(input.pageSets).filter((id) => PAGE_SETS.some((set) => set.id === id));
 
   const scenario = {
     name: String(input.name || '').trim(),

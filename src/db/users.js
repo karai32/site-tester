@@ -26,10 +26,6 @@ export function updatePassword(userId, passwordHash) {
   })();
 }
 
-export function updateUserContacts(userId, { email, telegramId }) {
-  db.prepare('UPDATE users SET email = ?, telegram_id = ? WHERE id = ?').run(email || null, telegramId || null, userId);
-}
-
 export function updateUser(userId, { name, email, telegramId }) {
   db.prepare('UPDATE users SET name = ?, email = ?, telegram_id = ? WHERE id = ?')
     .run(name, email || null, telegramId || null, userId);

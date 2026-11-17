@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
-import { findReportWithNames, getProjectReports, getReportResults } from '../db/reports.js';
+import { findReportById, getProjectReports, getReportResults } from '../db/reports.js';
 import { getProjectScenarios } from '../db/scenarios.js';
 import { authorName, formatDateTime } from './format.js';
 import { SORTS, uniqueSorted } from './lists.js';
@@ -36,7 +36,7 @@ export function groupByCategory(results, projectId) {
 }
 
 export function loadReport(reportId) {
-  const report = findReportWithNames(reportId);
+  const report = findReportById(reportId);
   if (!report) return null;
   return {
     report,

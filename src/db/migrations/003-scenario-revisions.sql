@@ -1,3 +1,0 @@
-ALTER TABLE scenarios ADD COLUMN root_id INTEGER REFERENCES scenarios(id) ON DELETE SET NULL;
-
-ALTER TABLE reports ADD COLUMN site_pages_count INTEGER;

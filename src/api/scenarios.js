@@ -1,5 +1,5 @@
 import { findProjectById } from '../db/projects.js';
-import { createReport, findReportWithNames, getScenarioReports } from '../db/reports.js';
+import { createReport, findReportById, getScenarioReports } from '../db/reports.js';
 import {
   cancelDeferredCheck,
   findScenarioById,
@@ -172,6 +172,6 @@ export default async function scenariosApi(app) {
       startedBy: request.apiUser.id,
     });
     reply.code(201);
-    return sendData(reply, formatReport(findReportWithNames(reportId)));
+    return sendData(reply, formatReport(findReportById(reportId)));
   });
 }

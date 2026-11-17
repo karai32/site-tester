@@ -1,23 +1,19 @@
 import { db } from './database.js';
 
-export function findReportById(id) {
-  return db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
-}
-
 const reportsWithNames = `
   SELECT reports.*,
-         scenarios.name     AS scenario_name,
-         scenarios.is_full  AS scenario_is_full,
-         starters.name      AS started_by_name,
+         scenarios.name      AS scenario_name,
+         scenarios.is_full   AS scenario_is_full,
          scenarios.author_id AS scenario_author_id,
-         authors.name       AS scenario_author_name
+         authors.name        AS scenario_author_name,
+         starters.name       AS started_by_name
   FROM reports
   JOIN scenarios ON scenarios.id = reports.scenario_id
   LEFT JOIN users AS starters ON starters.id = reports.started_by
   LEFT JOIN users AS authors ON authors.id = scenarios.author_id
 `;
 
-export function findReportWithNames(id) {
+export function findReportById(id) {
   return db.prepare(`${reportsWithNames} WHERE reports.id = ?`).get(id);
 }
 

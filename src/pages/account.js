@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { APP_URL } from '../config.js';
-import { createApiKey, deleteApiKey, getUserApiKeys, updateUserContacts } from '../db/users.js';
+import { createApiKey, deleteApiKey, getUserApiKeys, updateUser } from '../db/users.js';
 import { isEmail, isTelegramId } from '../logic/notifications.js';
 import { generateApiKey } from '../logic/users.js';
 
@@ -59,7 +59,7 @@ export default async function accountPages(app) {
     }
     if (errors.length > 0) return showProfile(reply, { contacts, errors, saved: false });
 
-    updateUserContacts(reply.locals.user.id, contacts);
+    updateUser(reply.locals.user.id, { name: reply.locals.user.name, ...contacts });
     return reply.redirect('/profile?saved=1');
   });
 

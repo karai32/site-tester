@@ -113,12 +113,8 @@ export function moscowToDate(dateText, timeText) {
   return date;
 }
 
-function moscowDateInput(date) {
-  return new Date(date.getTime() + MOSCOW_OFFSET).toISOString().slice(0, 10);
-}
-
 export function tomorrowDateInput() {
-  return moscowDateInput(new Date(Date.now() + DAY));
+  return new Date(Date.now() + DAY + MOSCOW_OFFSET).toISOString().slice(0, 10);
 }
 
 function isTime(text) {

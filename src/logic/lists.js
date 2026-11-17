@@ -59,11 +59,7 @@ export function toList(value) {
 }
 
 export function uniqueSorted(values) {
-  const result = [];
-  for (const value of values) {
-    if (!result.includes(value)) result.push(value);
-  }
-  return result.sort();
+  return [...new Set(values)].sort();
 }
 
 export const SORTS = {

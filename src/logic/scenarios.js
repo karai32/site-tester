@@ -31,16 +31,6 @@ export function scenarioTestIds(scenario) {
   return scenario.test_ids;
 }
 
-export function scenarioCategoryIds(scenario) {
-  const testIds = scenarioTestIds(scenario);
-  const result = [];
-  for (const category of projectCategories(scenario.project_id)) {
-    const hasTest = category.tests.some((test) => testIds.includes(test.id));
-    if (hasTest) result.push(category.id);
-  }
-  return result;
-}
-
 export function scenarioCategories(scenario) {
   const testIds = scenarioTestIds(scenario);
   const result = [];
@@ -49,6 +39,10 @@ export function scenarioCategories(scenario) {
     if (tests.length > 0) result.push({ ...category, tests });
   }
   return result;
+}
+
+export function scenarioCategoryIds(scenario) {
+  return scenarioCategories(scenario).map((category) => category.id);
 }
 
 export function scenarioPageSetIds(scenario) {

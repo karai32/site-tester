@@ -2,6 +2,13 @@ import httpsAndSsl from './availability/https-and-ssl.js';
 import homepageHttpStatus from './availability/homepage-http-status.js';
 import custom404Page from './availability/custom-404-page.js';
 import brokenLinks from './availability/broken-links.js';
+import formsSpamProtection from './availability/forms-spam-protection.js';
+
+import menuLinks from './navigation/menu-links.js';
+import mobileMenu from './navigation/mobile-menu.js';
+import logoHome from './navigation/logo-home.js';
+import footerContent from './navigation/footer-content.js';
+import footerSocialLinks from './navigation/footer-social-links.js';
 
 import brokenImagesSitewide from './visual/broken-images-sitewide.js';
 
@@ -22,7 +29,14 @@ export default [
     icon: 'feather-shield',
     title: 'Техническая доступность и безопасность',
     shortTitle: 'Доступность',
-    tests: [httpsAndSsl, homepageHttpStatus, custom404Page, brokenLinks],
+    tests: [httpsAndSsl, homepageHttpStatus, custom404Page, brokenLinks, formsSpamProtection],
+  },
+  {
+    id: 'navigation',
+    icon: 'feather-compass',
+    title: 'Навигация, шапка и футер',
+    shortTitle: 'Навигация',
+    tests: [menuLinks, mobileMenu, logoHome, footerContent, footerSocialLinks],
   },
   {
     id: 'visual',

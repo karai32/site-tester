@@ -7,6 +7,12 @@ export function errorMessage(error) {
   return (error instanceof Error ? error.message : String(error)).split('\n')[0];
 }
 
+export async function newPageWithoutCaptcha(browser, options) {
+  const page = await browser.newPage(options);
+  await page.route('https://smartcaptcha.cloud.yandex.ru/**', (route) => route.abort());
+  return page;
+}
+
 export async function takeScreenshot(page, { fullPage = false } = {}) {
   return page.screenshot({ type: 'jpeg', quality: fullPage ? 45 : 60, fullPage });
 }

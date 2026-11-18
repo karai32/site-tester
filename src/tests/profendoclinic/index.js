@@ -10,6 +10,11 @@ import logoHome from './navigation/logo-home.js';
 import footerContent from './navigation/footer-content.js';
 import footerSocialLinks from './navigation/footer-social-links.js';
 
+import searchResults from './search-pagination/search-results.js';
+import searchNoResults from './search-pagination/search-no-results.js';
+import knowledgePagination from './search-pagination/knowledge-pagination.js';
+import reviewsPagination from './search-pagination/reviews-pagination.js';
+
 import brokenImagesSitewide from './visual/broken-images-sitewide.js';
 
 import titlePresent from './seo/title-present.js';
@@ -37,6 +42,13 @@ export default [
     title: 'Навигация, шапка и футер',
     shortTitle: 'Навигация',
     tests: [menuLinks, mobileMenu, logoHome, footerContent, footerSocialLinks],
+  },
+  {
+    id: 'search-pagination',
+    icon: 'feather-search',
+    title: 'Поиск, фильтры, пагинации и языковые сервисы',
+    shortTitle: 'Поиск и фильтры',
+    tests: [searchResults, searchNoResults, knowledgePagination, reviewsPagination],
   },
   {
     id: 'visual',

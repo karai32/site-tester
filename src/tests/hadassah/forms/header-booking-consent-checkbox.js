@@ -1,4 +1,4 @@
-import { errorMessage, getStatuses } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage, getStatuses } from '../helpers.js';
 
 function findForms(pages, getHtml) {
   const formPage = new Map();
@@ -69,7 +69,7 @@ export default {
     for (const [pageUrl, formIds] of formsByPage) {
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
       try {
-        await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+        await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
         for (const formId of formIds) {
           const where = `форма wpcf7-id=${formId} (${pageUrl})`;

@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const pricePagePath = '/price/';
 const priceBlockPaths = ['/departments/himioterapiia/', '/diseases/angina/'];
@@ -88,7 +88,7 @@ function readPriceGroups(els, sel) {
 
 async function openPage(browser, pageUrl) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
   await page.waitForTimeout(1_000);
   return page;
 }

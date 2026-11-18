@@ -1,5 +1,5 @@
 import { webkit } from 'playwright';
-import { errorMessage, takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage, takeScreenshot } from '../helpers.js';
 
 const KEY_PAGES = [
   '/',
@@ -25,7 +25,7 @@ function launchErrorText(error) {
 }
 
 async function openPage(page, url) {
-  const options = { waitUntil: 'domcontentloaded', timeout: 30_000 };
+  const options = { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS };
   try {
     return await page.goto(url, options);
   } catch {

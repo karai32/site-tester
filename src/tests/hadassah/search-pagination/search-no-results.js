@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const queries = [
   { text: '', label: 'Пустой запрос' },
@@ -18,7 +18,7 @@ export default {
     for (const query of queries) {
       const searchUrl = `${new URL('/', siteUrl).href}?s=${encodeURIComponent(query.text)}`;
       pages.push(searchUrl);
-      await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
       await page.waitForTimeout(500);
 
       const bodyText = await page.evaluate(() => document.body.innerText);

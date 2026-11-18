@@ -1,3 +1,5 @@
+import { PAGE_TIMEOUT_MS } from '../helpers.js';
+
 const selectors = {
   telegramLink: '.header__socials-item.--tg',
 };
@@ -9,7 +11,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage();
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const link = page.locator(selectors.telegramLink).first();
     if (await link.count() === 0) {

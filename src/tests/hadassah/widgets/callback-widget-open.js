@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   widgetFrame: '#CalltouchWidgetFrame',
@@ -14,7 +14,7 @@ export default {
     const widgetFrame = page.locator(selectors.widgetFrame);
 
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-      await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
       const appeared = await widgetFrame.waitFor({ state: 'attached', timeout: 20_000 }).then(() => true).catch(() => false);
       if (appeared) break;
     }

@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   section: '.h-main-licenses',
@@ -13,7 +13,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const section = page.locator(selectors.section);
     if (await section.count() === 0) {

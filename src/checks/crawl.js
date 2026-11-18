@@ -2,9 +2,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { request } from 'playwright';
+import { PARALLEL_REQUESTS, REQUEST_TIMEOUT_MS } from '../config.js';
 
-const BATCH_SIZE = 8;
-const TIMEOUT_MS = 15_000;
 export const MAX_PAGES = 4000;
 
 export function errorMessage(error) {
@@ -33,7 +32,7 @@ function isHtml(status, contentType) {
 }
 
 async function fetchPage(api, url) {
-  const head = await api.head(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
+  const head = await api.head(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
   const headStatus = head.status();
   const headType = head.headers()['content-type'] || '';
   await head.dispose();
@@ -41,7 +40,7 @@ async function fetchPage(api, url) {
   const headNotSupported = headStatus === 405 || headStatus === 501;
   if (!headNotSupported && !isHtml(headStatus, headType)) return { status: headStatus, html: null };
 
-  const response = await api.get(url, { failOnStatusCode: false, timeout: TIMEOUT_MS });
+  const response = await api.get(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
   const status = response.status();
   const type = response.headers()['content-type'] || '';
   const html = isHtml(status, type) ? await response.text() : null;
@@ -71,36 +70,44 @@ export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
   let truncated = false;
 
   const api = await request.newContext();
-  try {
-    while (queue.length > 0 && !shouldStop()) {
-      const batch = queue.splice(0, BATCH_SIZE);
-      await Promise.all(batch.map(async (pageUrl) => {
-        let page;
-        try {
-          page = await fetchPage(api, pageUrl);
-          statuses.set(pageUrl, { status: page.status, error: null });
-        } catch (error) {
-          statuses.set(pageUrl, { status: 0, error: errorMessage(error) });
-          return;
-        }
-        if (!page.html) return;
 
-        writeFileSync(htmlFile(htmlDir, pageUrl), page.html);
-        const links = extractLinks(page.html, pageUrl, start.origin);
-        htmlPages.push(pageUrl);
-        linksByPage.set(pageUrl, links);
-
-        for (const link of links) {
-          if (found.has(link)) continue;
-          if (found.size >= MAX_PAGES) {
-            truncated = true;
-            continue;
-          }
-          found.add(link);
-          queue.push(link);
-        }
-      }));
+  async function visit(pageUrl) {
+    let page;
+    try {
+      page = await fetchPage(api, pageUrl);
+      statuses.set(pageUrl, { status: page.status, error: null });
+    } catch (error) {
+      statuses.set(pageUrl, { status: 0, error: errorMessage(error) });
+      return;
     }
+    if (!page.html) return;
+
+    writeFileSync(htmlFile(htmlDir, pageUrl), page.html);
+    const links = extractLinks(page.html, pageUrl, start.origin);
+    htmlPages.push(pageUrl);
+    linksByPage.set(pageUrl, links);
+
+    for (const link of links) {
+      if (found.has(link)) continue;
+      if (found.size >= MAX_PAGES) {
+        truncated = true;
+        continue;
+      }
+      found.add(link);
+      queue.push(link);
+    }
+  }
+
+  const running = new Set();
+  try {
+    while ((queue.length > 0 || running.size > 0) && !shouldStop()) {
+      while (queue.length > 0 && running.size < PARALLEL_REQUESTS) {
+        const task = visit(queue.shift()).finally(() => running.delete(task));
+        running.add(task);
+      }
+      await Promise.race(running);
+    }
+    await Promise.all(running);
   } finally {
     await api.dispose();
   }

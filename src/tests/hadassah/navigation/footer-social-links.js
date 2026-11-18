@@ -1,4 +1,4 @@
-import { errorMessage } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage } from '../helpers.js';
 
 const selectors = {
   footer: 'footer.footer',
@@ -11,7 +11,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage();
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const footer = page.locator(selectors.footer);
     if (await footer.count() === 0) {
@@ -30,9 +30,8 @@ export default {
         continue;
       }
       try {
-        const response = await page.request.get(href, { failOnStatusCode: false, timeout: 20_000 });
+        const response = await page.goto(href, { waitUntil: 'commit', timeout: PAGE_TIMEOUT_MS });
         const status = response.status();
-        await response.dispose();
         if (status < 200 || status >= 400) problems.push(`${href}: HTTP ${status}`);
       } catch (error) {
         problems.push(`${href}: ${errorMessage(error)}`);

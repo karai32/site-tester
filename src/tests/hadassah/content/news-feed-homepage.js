@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   newsItem: '.news-item',
@@ -19,7 +19,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     if (await page.locator(selectors.newsItem).count() === 0) {
       return { passed: false, comment: 'На главной странице не найдено ни одной новости.' };
@@ -44,7 +44,7 @@ export default {
       return { passed: false, comment: 'Не удалось найти ссылку на первую новость.' };
     }
 
-    await page.goto(firstLink, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(firstLink, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     const articleTextLength = await page.evaluate(() => document.body.innerText.length);
     const media = [await takeScreenshot(page)];
     const pages = [siteUrl, firstLink];

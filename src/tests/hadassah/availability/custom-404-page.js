@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const testPath = '/qa-test-404/';
 
@@ -9,7 +9,7 @@ export default {
   async run({ siteUrl, browser }) {
     const target = new URL(testPath, siteUrl).href;
     const page = await browser.newPage();
-    const response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    const response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     const status = response.status();
     const media = [await takeScreenshot(page)];
     const pages = [target];

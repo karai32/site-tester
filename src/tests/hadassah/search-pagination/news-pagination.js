@@ -1,4 +1,4 @@
-import { errorMessage, takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   newsItem: '.news-item',
@@ -15,7 +15,7 @@ export default {
   async run({ siteUrl, browser }) {
     const newsUrl = new URL('/news/', siteUrl).href;
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(newsUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(newsUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const countBefore = await page.locator(selectors.newsItem).count();
     const hrefsBefore = new Set(await page.locator(selectors.newsLink).evaluateAll((els) => els.map((el) => el.href)));
@@ -41,7 +41,14 @@ export default {
       }, { timeout: 15_000 }).catch(() => null),
       page.evaluate((selector) => document.querySelector(selector)?.click(), selectors.showMore),
     ]);
-    await page.waitForTimeout(500);
+    if (loadMoreResponse?.ok()) {
+      await page.waitForFunction(
+        ([selector, count]) => document.querySelectorAll(selector).length > count,
+        [selectors.newsItem, countBefore],
+        { timeout: 15_000 },
+      ).catch(() => {});
+    }
+    await page.locator(selectors.newsItem).last().scrollIntoViewIfNeeded().catch(() => {});
 
     const countAfter = await page.locator(selectors.newsItem).count();
     const newHrefs = [...new Set(await page.locator(selectors.newsLink).evaluateAll((els) => els.map((el) => el.href)))]
@@ -92,7 +99,7 @@ export default {
 
     const articleUrl = newHrefs[0];
     pages.push(articleUrl);
-    const articleResponse = await page.goto(articleUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    const articleResponse = await page.goto(articleUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     const articleStatus = articleResponse?.status() ?? 0;
     if (articleStatus < 200 || articleStatus >= 400) {
       return {

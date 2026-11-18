@@ -1,4 +1,4 @@
-import { getStatuses } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, getStatuses } from '../helpers.js';
 
 const selectors = {
   menu: 'nav.nav',
@@ -11,7 +11,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const problems = [];
     if (await page.locator(selectors.menu).count() === 0) {

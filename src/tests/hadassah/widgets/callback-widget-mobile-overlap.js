@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   widget: '#CalltouchWidgetFrame',
@@ -19,7 +19,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     await page.waitForTimeout(4_000);
     await page.mouse.wheel(0, 1_500);
     await page.waitForTimeout(1_000);

@@ -1,6 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { PAGE_TIMEOUT_MS } from '../helpers.js';
 
 const selectors = {
   upButton: '.btn--up',
@@ -42,7 +43,7 @@ export default {
         recordVideo: { dir: videoDir, size: { width: 960, height: 600 } },
       });
       const page = await context.newPage();
-      await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
       const result = await checkButton(page);
 

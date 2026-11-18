@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const query = 'онколог';
 
@@ -9,7 +9,7 @@ export default {
   async run({ siteUrl, browser }) {
     const searchUrl = `${new URL('/', siteUrl).href}?s=${encodeURIComponent(query)}`;
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const bodyText = await page.evaluate(() => document.body.innerText);
     const media = [await takeScreenshot(page)];

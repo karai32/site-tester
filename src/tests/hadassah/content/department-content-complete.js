@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const departmentPath = '/departments/onkologia/';
 const selectors = {
@@ -19,7 +19,7 @@ export default {
     const target = new URL(departmentPath, siteUrl).href;
     const pages = [target];
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(target, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     await page.waitForTimeout(1_500);
 
     const serviceNames = await readTexts(page, selectors.serviceName);

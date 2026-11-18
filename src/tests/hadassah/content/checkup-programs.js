@@ -1,8 +1,9 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
-  programLink: '.checkup-item__desc',
+  programLink: 'main a[href*="/checkups/"]',
 };
+const programPathPattern = /^\/checkups\/[^/]+\/?$/;
 const programsToCheck = 3;
 const pricePattern = /\d[\d\s]*(₽|руб)/i;
 
@@ -14,9 +15,10 @@ export default {
     const checkupsUrl = new URL('/checkups/', siteUrl).href;
     const pages = [checkupsUrl];
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(checkupsUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(checkupsUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
-    const hrefs = await page.locator(selectors.programLink).evaluateAll((links) => [...new Set(links.map((link) => link.getAttribute('href')))]);
+    const linkHrefs = await page.locator(selectors.programLink).evaluateAll((links) => links.map((link) => link.href));
+    const hrefs = [...new Set(linkHrefs.filter((href) => programPathPattern.test(new URL(href).pathname)))];
     if (hrefs.length === 0) {
       return {
         passed: false,
@@ -32,7 +34,7 @@ export default {
     for (const href of sample) {
       const target = new URL(href, siteUrl).href;
       pages.push(target);
-      await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      await page.goto(target, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
       await page.waitForTimeout(500);
       const bodyText = await page.evaluate(() => document.body.innerText);
 

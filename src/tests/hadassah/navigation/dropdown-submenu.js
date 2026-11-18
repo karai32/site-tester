@@ -1,3 +1,5 @@
+import { PAGE_TIMEOUT_MS } from '../helpers.js';
+
 const selectors = {
   dropdownButtons: '.nav > .nav-item.menu-item-has-children > .nav-button',
 };
@@ -12,7 +14,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const dropdownButtons = page.locator(selectors.dropdownButtons);
     const dropdownCount = await dropdownButtons.count();

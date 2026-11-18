@@ -1,4 +1,4 @@
-import { errorMessage, takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage, takeScreenshot } from '../helpers.js';
 
 const viewports = [
   { label: 'Смартфон (320×690)', width: 320, height: 690 },
@@ -33,7 +33,7 @@ export default {
       for (const viewport of viewports) {
         const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
         try {
-          await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+          await page.goto(target, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
           await page.waitForTimeout(1_000);
 
           const { scrollWidth, clientWidth } = await page.evaluate(() => ({

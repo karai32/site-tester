@@ -1,3 +1,5 @@
+import { PAGE_TIMEOUT_MS } from '../helpers.js';
+
 const selectors = {
   trigger: 'header [data-modal="call"]',
   phone: '#call form.wpcf7-form input[name="phone"]',
@@ -22,7 +24,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     await page.locator(selectors.trigger).first().click();
     await page.waitForTimeout(600);
 

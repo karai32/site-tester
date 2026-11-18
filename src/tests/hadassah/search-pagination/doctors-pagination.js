@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   doctorCard: '.doctor-item',
@@ -41,7 +41,7 @@ export default {
     const listUrl = new URL('/doctors/', siteUrl).href;
     const pages = [listUrl];
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(listUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(listUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     let doctors = await collectDoctors(page);
     if (doctors.length === 0) {

@@ -1,4 +1,6 @@
-const captchaInitTimeoutMs = 8_000;
+import { PAGE_TIMEOUT_MS } from '../helpers.js';
+
+const captchaInitTimeoutMs = 15_000;
 
 function describeForm({ wpcf7Id, modalId, actionPath }) {
   const location = modalId ? `модалка="${modalId}"` : `action="${actionPath || '/'}"`;
@@ -11,8 +13,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage();
-    await page.goto(siteUrl, { waitUntil: 'networkidle', timeout: 30_000 });
-    await page.waitForTimeout(1_000);
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const forms = page.locator('form.wpcf7-form');
     const formCount = await forms.count();
@@ -24,7 +25,10 @@ export default {
       const firstField = document.querySelector('form.wpcf7-form input, form.wpcf7-form textarea');
       firstField?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
     });
-    await page.waitForFunction(() => window.cfycCaptchaLoaded === true, undefined, { timeout: captchaInitTimeoutMs }).catch(() => {});
+    await page.waitForFunction(() => {
+      const containers = [...document.querySelectorAll('form.wpcf7-form .cfyc-captcha-container')];
+      return containers.length > 0 && containers.every((container) => container.querySelector('iframe'));
+    }, undefined, { timeout: captchaInitTimeoutMs }).catch(() => {});
 
     const formsMeta = await forms.evaluateAll((elements) => elements.map((form) => {
       const [actionPath] = (form.getAttribute('action') || '').split('#');

@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const query = 'Аллергология';
 const selectors = {
@@ -15,7 +15,7 @@ export default {
     const priceUrl = new URL('/price/', siteUrl).href;
     const pages = [priceUrl];
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(priceUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(priceUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const searchInput = page.locator(selectors.searchInput).first();
     if (await searchInput.count() === 0) {

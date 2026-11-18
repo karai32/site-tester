@@ -1,9 +1,9 @@
-import { getStatuses, takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, getStatuses, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   card: '.doctor-item',
   photo: '.doctor-item__img',
-  about: '.doctor-item__about',
+  about: '.doctor-item__credentials',
   appointmentButton: '.doctor-item__link',
 };
 const maxCardsChecked = 8;
@@ -14,7 +14,7 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
     const cards = page.locator(selectors.card);
     const cardCount = await cards.count();
@@ -25,24 +25,31 @@ export default {
     const problems = [];
     const checkedCount = Math.min(cardCount, maxCardsChecked);
 
-    for (let index = 0; index < checkedCount; index += 1) {
-      const card = cards.nth(index);
-      const name = (await card.locator('h3').first().textContent().catch(() => '') || `№${index + 1}`).trim();
+    const cardTexts = await cards.evaluateAll((elements, sel) => elements.map((element) => ({
+      name: (element.querySelector('h3')?.textContent || '').trim(),
+      photoSrc: element.querySelector(sel.photo)?.getAttribute('src') || '',
+      about: (element.querySelector(sel.about)?.textContent || '').trim(),
+    })), selectors);
+    const checkedCards = cardTexts.slice(0, checkedCount);
 
-      const photoSrc = await card.locator(selectors.photo).first().getAttribute('src').catch(() => null);
+    const photoUrls = checkedCards.filter((card) => card.photoSrc).map((card) => new URL(card.photoSrc, siteUrl).href);
+    const photoStatuses = await getStatuses(photoUrls);
+
+    for (let index = 0; index < checkedCount; index += 1) {
+      const { photoSrc, about } = checkedCards[index];
+      const name = checkedCards[index].name || `№${index + 1}`;
+
       if (!photoSrc) {
         problems.push(`«${name}»: у фото нет src`);
       } else {
-        const photoUrl = new URL(photoSrc, siteUrl).href;
-        const { status, error } = (await getStatuses([photoUrl])).get(photoUrl);
+        const { status, error } = photoStatuses.get(new URL(photoSrc, siteUrl).href);
         if (error) problems.push(`«${name}»: фото не загрузилось (${error})`);
         else if (status < 200 || status >= 400) problems.push(`«${name}»: фото не загрузилось (HTTP ${status})`);
       }
 
-      const aboutText = (await card.locator(selectors.about).first().textContent().catch(() => '') || '').trim();
-      if (!aboutText) problems.push(`«${name}»: не указана должность/специализация`);
+      if (!about) problems.push(`«${name}»: не указана должность/специализация`);
 
-      const button = card.locator(selectors.appointmentButton).first();
+      const button = cards.nth(index).locator(selectors.appointmentButton).first();
       if (await button.count() > 0) {
         const clickable = await button.isVisible().catch(() => false) && await button.isEnabled().catch(() => false);
         if (!clickable) problems.push(`«${name}»: кнопка записи не кликабельна`);

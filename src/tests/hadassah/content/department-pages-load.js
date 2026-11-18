@@ -1,4 +1,4 @@
-import { errorMessage, takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage, takeScreenshot } from '../helpers.js';
 
 const departmentPaths = [
   '/departments/onkologia/',
@@ -22,7 +22,7 @@ export default {
     for (const target of pages) {
       let response;
       try {
-        response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+        response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
       } catch (error) {
         problems.push(`${target}: ${errorMessage(error)}`);
         continue;

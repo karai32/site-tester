@@ -1,4 +1,4 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const pagesToCheck = [
   { path: '/', label: 'главная' },
@@ -24,7 +24,7 @@ export default {
     const media = [];
 
     for (const { path, label } of pagesToCheck) {
-      await page.goto(new URL(path, siteUrl).href, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      await page.goto(new URL(path, siteUrl).href, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
       const trigger = page.locator(selectors.trigger).first();
       if (await trigger.count() === 0) {

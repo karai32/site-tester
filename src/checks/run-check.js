@@ -1,7 +1,7 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
-import { DATA_DIR, MEDIA_DIR } from '../config.js';
+import { DATA_DIR, MEDIA_DIR, TEST_TIMEOUT_MS } from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import {
   findReportById,
@@ -17,8 +17,6 @@ import { selectPages } from '../logic/page-sets.js';
 import { projectCategories, scenarioPageSetIds, scenarioTestIds } from '../logic/scenarios.js';
 import { collectLinks, crawlSite, errorMessage, MAX_PAGES, readSavedHtml } from './crawl.js';
 import { notifyCheckFinished, notifyCheckStarted } from './notify.js';
-
-const TEST_TIMEOUT_MS = 10 * 60 * 1000;
 
 function scenarioTests(scenario) {
   const testIds = scenarioTestIds(scenario);

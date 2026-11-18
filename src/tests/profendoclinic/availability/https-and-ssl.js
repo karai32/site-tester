@@ -1,4 +1,4 @@
-import { errorMessage } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, errorMessage } from '../helpers.js';
 
 export default {
   id: 'https-and-ssl',
@@ -9,7 +9,7 @@ export default {
 
     let response;
     try {
-      response = await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+      response = await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     } catch (error) {
       return { passed: false, comment: `Ошибка HTTPS/SSL: ${errorMessage(error)}` };
     }

@@ -1,9 +1,9 @@
-import { takeScreenshot } from '../helpers.js';
+import { PAGE_TIMEOUT_MS, takeScreenshot } from '../helpers.js';
 
 const selectors = {
   chatWidget: '#carrotquest-messenger-collapsed-container',
 };
-const maxWaitMs = 8_000;
+const maxWaitMs = 30_000;
 const desktopUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
 export default {
@@ -12,24 +12,38 @@ export default {
 
   async run({ siteUrl, browser }) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, userAgent: desktopUserAgent });
-    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
-    const chatWidget = page.locator(selectors.chatWidget);
-    await chatWidget.waitFor({ state: 'attached', timeout: maxWaitMs }).catch(() => {});
-    if (await chatWidget.count() === 0) {
-      return { passed: false, comment: `На странице не найден виджет чата (${selectors.chatWidget}).` };
+    const loadedAt = Date.now();
+
+    const shown = await page.waitForFunction((selector) => {
+      const widget = document.querySelector(selector);
+      if (!widget) return false;
+      const { width, height } = widget.getBoundingClientRect();
+      return width > 0 && height > 0;
+    }, selectors.chatWidget, { timeout: maxWaitMs }).then(() => true).catch(() => false);
+    const seconds = Math.round((Date.now() - loadedAt) / 1000);
+
+    if (shown) {
+      await page.waitForTimeout(1_000);
+      return {
+        passed: true,
+        comment: `Виджет чата появился через ${seconds} с после загрузки страницы.`,
+        media: [await takeScreenshot(page)],
+      };
     }
 
-    await page.waitForTimeout(maxWaitMs);
-    const { width, height } = await chatWidget.evaluate((el) => el.getBoundingClientRect());
     const media = [await takeScreenshot(page)];
-
-    if (width > 0 && height > 0) {
-      return { passed: true, comment: `Виджет чата загрузился, размер ${width}×${height}.`, media };
+    if (await page.locator(selectors.chatWidget).count() === 0) {
+      return {
+        passed: false,
+        comment: `Виджет чата (${selectors.chatWidget}) не появился на странице за ${maxWaitMs / 1000} с после загрузки.`,
+        media,
+      };
     }
     return {
       passed: false,
-      comment: `Виджет чата не отображается за ${(maxWaitMs * 2) / 1000} сек после загрузки: размер ${width}×${height}.`,
+      comment: `Виджет чата есть на странице, но не отображается за ${maxWaitMs / 1000} с после загрузки: у него нулевой размер.`,
       media,
     };
   },

@@ -18,6 +18,8 @@ import reviewsPagination from './search-pagination/reviews-pagination.js';
 import doctorsHomepageBlock from './content/doctors-homepage-block.js';
 import doctorProfileOpen from './content/doctor-profile-open.js';
 
+import mobileAdaptiveNoScroll from './visual/mobile-adaptive-no-scroll.js';
+import crossBrowser from './visual/cross-browser.js';
 import brokenImagesSitewide from './visual/broken-images-sitewide.js';
 
 import titlePresent from './seo/title-present.js';
@@ -65,7 +67,7 @@ export default [
     icon: 'feather-monitor',
     title: 'Визуал, адаптивность и кроссбраузерность',
     shortTitle: 'Визуал',
-    tests: [brokenImagesSitewide],
+    tests: [mobileAdaptiveNoScroll, crossBrowser, brokenImagesSitewide],
   },
   {
     id: 'seo',

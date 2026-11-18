@@ -22,6 +22,13 @@ import mobileAdaptiveNoScroll from './visual/mobile-adaptive-no-scroll.js';
 import crossBrowser from './visual/cross-browser.js';
 import brokenImagesSitewide from './visual/broken-images-sitewide.js';
 
+import headerBookingPhoneNormalization from './forms/header-booking-phone-normalization.js';
+import headerBookingConsentCheckbox from './forms/header-booking-consent-checkbox.js';
+
+import whatsappButtonLink from './widgets/whatsapp-button-link.js';
+import telegramButtonLink from './widgets/telegram-button-link.js';
+import headerPhoneClickableMobile from './widgets/header-phone-clickable-mobile.js';
+
 import titlePresent from './seo/title-present.js';
 import descriptionPresent from './seo/description-present.js';
 import h1Present from './seo/h1-present.js';
@@ -32,6 +39,8 @@ import openGraph from './seo-infrastructure/open-graph.js';
 import canonicalUrls from './seo-infrastructure/canonical-urls.js';
 import robotsMeta from './seo-infrastructure/robots-meta.js';
 import breadcrumbSchema from './seo-infrastructure/breadcrumb-schema.js';
+
+import yandexSmartcaptcha from './antispam/yandex-smartcaptcha.js';
 
 export default [
   {
@@ -70,6 +79,20 @@ export default [
     tests: [mobileAdaptiveNoScroll, crossBrowser, brokenImagesSitewide],
   },
   {
+    id: 'forms',
+    icon: 'feather-check-square',
+    title: 'Формы, валидации и согласия',
+    shortTitle: 'Формы',
+    tests: [headerBookingPhoneNormalization, headerBookingConsentCheckbox],
+  },
+  {
+    id: 'widgets',
+    icon: 'feather-message-circle',
+    title: 'Виджеты, связь и внешние сервисы',
+    shortTitle: 'Виджеты',
+    tests: [whatsappButtonLink, telegramButtonLink, headerPhoneClickableMobile],
+  },
+  {
     id: 'seo',
     icon: 'feather-bar-chart-2',
     title: 'SEO',
@@ -82,5 +105,12 @@ export default [
     title: 'SEO-инфраструктура',
     shortTitle: 'SEO-инфраструктура',
     tests: [xmlSitemap, openGraph, canonicalUrls, robotsMeta, breadcrumbSchema],
+  },
+  {
+    id: 'antispam',
+    icon: 'feather-lock',
+    title: 'Защита и антиспам',
+    shortTitle: 'Антиспам',
+    tests: [yandexSmartcaptcha],
   },
 ];

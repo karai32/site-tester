@@ -15,6 +15,9 @@ import searchNoResults from './search-pagination/search-no-results.js';
 import knowledgePagination from './search-pagination/knowledge-pagination.js';
 import reviewsPagination from './search-pagination/reviews-pagination.js';
 
+import doctorsHomepageBlock from './content/doctors-homepage-block.js';
+import doctorProfileOpen from './content/doctor-profile-open.js';
+
 import brokenImagesSitewide from './visual/broken-images-sitewide.js';
 
 import titlePresent from './seo/title-present.js';
@@ -49,6 +52,13 @@ export default [
     title: 'Поиск, фильтры, пагинации и языковые сервисы',
     shortTitle: 'Поиск и фильтры',
     tests: [searchResults, searchNoResults, knowledgePagination, reviewsPagination],
+  },
+  {
+    id: 'content',
+    icon: 'feather-file-text',
+    title: 'Контент и данные',
+    shortTitle: 'Контент',
+    tests: [doctorsHomepageBlock, doctorProfileOpen],
   },
   {
     id: 'visual',

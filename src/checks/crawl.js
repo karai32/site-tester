@@ -5,9 +5,22 @@ import { request } from 'playwright';
 import { PARALLEL_REQUESTS, REQUEST_TIMEOUT_MS } from '../config.js';
 
 export const MAX_PAGES = 4000;
+const MAX_SITEMAP_FILES = 50;
 
 export function errorMessage(error) {
   return (error instanceof Error ? error.message : String(error)).split('\n')[0];
+}
+
+function siteAddress(href, baseUrl, siteOrigin) {
+  try {
+    const target = new URL(href, baseUrl);
+    if (target.origin !== siteOrigin) return null;
+    target.hash = '';
+    target.search = '';
+    return target.href;
+  } catch {
+    return null;
+  }
 }
 
 function extractLinks(html, pageUrl, siteOrigin) {
@@ -15,16 +28,49 @@ function extractLinks(html, pageUrl, siteOrigin) {
   for (const match of html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>/gi)) {
     const href = match[1];
     if (href.startsWith('#') || /^(javascript|mailto|tel):/i.test(href)) continue;
-    try {
-      const target = new URL(href, pageUrl);
-      if (target.origin !== siteOrigin) continue;
-      target.hash = '';
-      target.search = '';
-      links.add(target.href);
-    } catch {
-    }
+    const address = siteAddress(href, pageUrl, siteOrigin);
+    if (address) links.add(address);
   }
   return [...links];
+}
+
+async function fetchText(api, url) {
+  try {
+    const response = await api.get(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
+    const text = response.status() === 200 ? await response.text() : '';
+    await response.dispose();
+    return text;
+  } catch {
+    return '';
+  }
+}
+
+async function readSitemap(api, siteOrigin) {
+  const robots = await fetchText(api, `${siteOrigin}/robots.txt`);
+  const listed = [...robots.matchAll(/^Sitemap:\s*(\S+)/gim)].map((match) => match[1]);
+  const files = listed.length > 0 ? listed : [`${siteOrigin}/sitemap.xml`];
+  const seen = new Set();
+  const pages = new Set();
+
+  while (files.length > 0 && seen.size < MAX_SITEMAP_FILES) {
+    const file = files.shift();
+    if (seen.has(file) || !file.startsWith(`${siteOrigin}/`)) continue;
+    seen.add(file);
+
+    const xml = await fetchText(api, file);
+    const addresses = [...xml.matchAll(/<loc>\s*(?:<!\[CDATA\[)?\s*([^<\s\]]+)/gi)]
+      .map((match) => match[1].replaceAll('&amp;', '&'));
+    if (/<sitemapindex\b/i.test(xml)) {
+      files.push(...addresses);
+      continue;
+    }
+    for (const address of addresses) {
+      const page = siteAddress(address, siteOrigin, siteOrigin);
+      if (page) pages.add(page);
+    }
+  }
+
+  return [...pages];
 }
 
 function isHtml(status, contentType) {
@@ -71,6 +117,16 @@ export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
 
   const api = await request.newContext();
 
+  function enqueue(url) {
+    if (found.has(url)) return;
+    if (found.size >= MAX_PAGES) {
+      truncated = true;
+      return;
+    }
+    found.add(url);
+    queue.push(url);
+  }
+
   async function visit(pageUrl) {
     let page;
     try {
@@ -87,19 +143,13 @@ export async function crawlSite(siteUrl, htmlDir, shouldStop = () => false) {
     htmlPages.push(pageUrl);
     linksByPage.set(pageUrl, links);
 
-    for (const link of links) {
-      if (found.has(link)) continue;
-      if (found.size >= MAX_PAGES) {
-        truncated = true;
-        continue;
-      }
-      found.add(link);
-      queue.push(link);
-    }
+    for (const link of links) enqueue(link);
   }
 
   const running = new Set();
   try {
+    for (const page of await readSitemap(api, start.origin)) enqueue(page);
+
     while ((queue.length > 0 || running.size > 0) && !shouldStop()) {
       while (queue.length > 0 && running.size < PARALLEL_REQUESTS) {
         const task = visit(queue.shift()).finally(() => running.delete(task));

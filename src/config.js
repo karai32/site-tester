@@ -12,7 +12,7 @@ export const MEDIA_DIR = join(DATA_DIR, 'media');
 export const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
 
 export const PARALLEL_REQUESTS = 8;
-export const REQUEST_TIMEOUT_MS = 15_000;
+export const REQUEST_TIMEOUT_MS = 30_000;
 export const PAGE_TIMEOUT_MS = 30_000;
 export const TEST_TIMEOUT_MS = 10 * 60 * 1000;
 

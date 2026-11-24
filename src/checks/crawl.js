@@ -77,14 +77,20 @@ function isHtml(status, contentType) {
   return status >= 200 && status < 400 && contentType.includes('text/html');
 }
 
-async function fetchPage(api, url) {
-  const head = await api.head(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
-  const headStatus = head.status();
-  const headType = head.headers()['content-type'] || '';
-  await head.dispose();
+function looksLikeFile(url) {
+  return /\.(?!html?$|php$)[a-z0-9]+$/i.test(new URL(url).pathname);
+}
 
-  const headNotSupported = headStatus === 405 || headStatus === 501;
-  if (!headNotSupported && !isHtml(headStatus, headType)) return { status: headStatus, html: null };
+async function fetchPage(api, url) {
+  if (looksLikeFile(url)) {
+    const head = await api.head(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
+    const headStatus = head.status();
+    const headType = head.headers()['content-type'] || '';
+    await head.dispose();
+
+    const headNotSupported = headStatus === 405 || headStatus === 501;
+    if (!headNotSupported && !isHtml(headStatus, headType)) return { status: headStatus, html: null };
+  }
 
   const response = await api.get(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
   const status = response.status();

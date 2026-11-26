@@ -28,6 +28,7 @@ function extractImageUrls(html, pageUrl) {
 export default {
   id: 'broken-images-sitewide',
   title: 'Отсутствие «битых» изображений по всем страницам сайта',
+  timeoutMs: 60 * 60 * 1000,
 
   async run({ pages, getHtml }) {
     const imagePages = new Map();

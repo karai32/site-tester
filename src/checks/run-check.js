@@ -46,7 +46,7 @@ async function runTest(test, context) {
   try {
     const running = test.run(context);
     running.catch(() => {});
-    result = await withTimeout(running, TEST_TIMEOUT_MS);
+    result = await withTimeout(running, test.timeoutMs || TEST_TIMEOUT_MS);
   } catch (error) {
     return failedResult(`Тест не выполнен: ${errorMessage(error)}`);
   }

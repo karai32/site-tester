@@ -2,10 +2,19 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { request } from 'playwright';
-import { PARALLEL_REQUESTS, REQUEST_TIMEOUT_MS } from '../config.js';
+import { CRAWL_REQUESTS_PER_SECOND, PARALLEL_REQUESTS, REQUEST_TIMEOUT_MS } from '../config.js';
 
 export const MAX_PAGES = 4000;
 const MAX_SITEMAP_FILES = 50;
+
+let nextRequestAt = 0;
+
+async function waitForTurn() {
+  const now = Date.now();
+  const startAt = Math.max(now, nextRequestAt);
+  nextRequestAt = startAt + 1000 / CRAWL_REQUESTS_PER_SECOND;
+  if (startAt > now) await new Promise((resolve) => setTimeout(resolve, startAt - now));
+}
 
 export function errorMessage(error) {
   return (error instanceof Error ? error.message : String(error)).split('\n')[0];
@@ -36,6 +45,7 @@ function extractLinks(html, pageUrl, siteOrigin) {
 
 async function fetchText(api, url) {
   try {
+    await waitForTurn();
     const response = await api.get(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
     const text = response.status() === 200 ? await response.text() : '';
     await response.dispose();
@@ -83,6 +93,7 @@ function looksLikeFile(url) {
 
 async function fetchPage(api, url) {
   if (looksLikeFile(url)) {
+    await waitForTurn();
     const head = await api.head(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
     const headStatus = head.status();
     const headType = head.headers()['content-type'] || '';
@@ -92,6 +103,7 @@ async function fetchPage(api, url) {
     if (!headNotSupported && !isHtml(headStatus, headType)) return { status: headStatus, html: null };
   }
 
+  await waitForTurn();
   const response = await api.get(url, { failOnStatusCode: false, timeout: REQUEST_TIMEOUT_MS });
   const status = response.status();
   const type = response.headers()['content-type'] || '';

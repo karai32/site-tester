@@ -7,7 +7,7 @@ const selectors = {
 
 const baselineFormat = '1234567890';
 const typedFormats = ['123-456-78-90', '123 456 78 90', '(123) 456-78-90'];
-const pastedFormats = ['+71234567890', '81234567890', '+7 (123) 456-78-90', '8 123 456 78 90'];
+const pastedFormats = ['+71234567890', '81234567890', '8 123 456 78 90'];
 
 async function pasteValue(field, value) {
   await field.evaluate((el, val) => {

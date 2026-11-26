@@ -1,11 +1,11 @@
-<div class="breadcrumbs"><a href="/projects">Проекты</a> / <a href="/projects/<%= project.id %>"><%= project.name %></a> / <span>Сценарии</span></div>
+<div class="breadcrumbs"><a href="/project"><%= project.name %></a> / <span>Сценарии</span></div>
 
 <div class="page-head">
 	<div>
 		<h1 class="page-title">Сценарии</h1>
 		<p class="page-subtitle"><i class="feather-link"></i><a href="<%= project.url %>" target="_blank" rel="noopener"><%= displayUrl(project.url) %></a></p>
 	</div>
-	<a href="/projects/<%= project.id %>/scenarios/new" class="btn btn-primary btn-pill"><i class="feather-plus"></i> Новый сценарий</a>
+	<a href="/scenarios/new" class="btn btn-primary btn-pill"><i class="feather-plus"></i> Новый сценарий</a>
 </div>
 
 <div class="tabs-pill">
@@ -17,22 +17,10 @@
 
 <div class="filters">
 	<div class="dropdown">
-		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-			Автор: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
-		</button>
-		<div class="dropdown-menu">
-			<a class="dropdown-item <%= author ? '' : 'active' %>" href="<%= scenariosUrl({ author: '' }) %>">Все</a>
-			<% for (const name of authors) { %>
-				<a class="dropdown-item <%= author === name ? 'active' : '' %>" href="<%= scenariosUrl({ author: name }) %>"><%= name %></a>
-			<% } %>
-		</div>
-	</div>
-
-	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 			Категории: <%= selectedCategories.length === 0 ? 'Все' : selectedCategories.length %> <i class="feather-chevron-down"></i>
 		</button>
-		<form class="dropdown-menu" method="get" action="/projects/<%= project.id %>/scenarios">
+		<form class="dropdown-menu" method="get" action="/scenarios">
 			<% for (const category of categories) { %>
 				<label class="custom_check"><%= category.title %>
 					<input type="checkbox" name="cat" value="<%= category.id %>" <%= selectedCategories.includes(category.id) ? 'checked' : '' %>>
@@ -40,7 +28,6 @@
 				</label>
 			<% } %>
 			<% if (showInactive) { %><input type="hidden" name="status" value="inactive"><% } %>
-			<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
 			<% if (regular) { %><input type="hidden" name="regular" value="<%= regular %>"><% } %>
 			<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
 			<div class="filters__apply"><button type="submit" class="btn btn-primary btn-pill btn-pill-sm w-100">Применить</button></div>
@@ -69,11 +56,10 @@
 		<div class="list-row">
 			<div class="list-row__main">
 				<h3 class="scenario-row__title">
-					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>"><%= scenario.name %></a>
+					<a href="/scenarios/<%= scenario.id %>"><%= scenario.name %></a>
 					<span class="custom-badge status-<%= scenario.is_active ? 'green' : 'grey' %>"><%= scenario.is_active ? 'Активный' : 'Неактивный' %></span>
 				</h3>
 				<div class="meta-items">
-					<span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span>Автор: <%= authorName(scenario.author_name) %></span>
 					<span>Создан: <b><%= formatDate(scenario.created_at) %></b></span>
 					<span>Категорий: <b><%= scenario.categoriesCount %></b></span>
 					<span>Тестов: <b><%= scenario.testsCount %>/<%= totalTests %></b></span>
@@ -90,7 +76,7 @@
 				<% } else { %>
 					<span class="custom-badge custom-badge-lg status-grey"><i class="feather-info"></i>Не регулярно</span>
 				<% } %>
-				<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-circle" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a>
+				<a href="/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-circle" aria-label="Открыть сценарий"><i class="feather-arrow-up-right"></i></a>
 			</div>
 		</div>
 	<% } %>

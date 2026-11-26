@@ -66,26 +66,21 @@ function fileExample(section, title, note, path, answer) {
   examples.push({ section, title, note, request: [`GET ${path}`], status: 200, response: [answer] });
 }
 
-await call('Ошибки', 'Нет ключа или ключ неверный', '', 'GET', '/api/projects', undefined, { key: 'wrong-key' });
-await call('Ошибки', 'Неверные данные', 'В fields указано, какое поле не так.', 'POST', '/api/projects', { name: '', url: 'hadassah.moscow' });
+await call('Ошибки', 'Нет ключа или ключ неверный', '', 'GET', '/api/project', undefined, { key: 'wrong-key' });
+await call('Ошибки', 'Неверные данные', 'В fields указано, какое поле не так.', 'PATCH', '/api/project', { url: 'hadassah.moscow' });
 
-await call('Справочники', 'Кто владелец ключа', '', 'GET', '/api/me');
-await call('Справочники', 'Справочники для форм', 'Категории и тесты всех сайтов сразу, выборки страниц, варианты расписания, события уведомлений. В примере списки сокращены.', 'GET', '/api/catalog');
-await call('Справочники', 'Справочники проекта', 'То же для одного проекта: только его категории и тесты. Отсюда берутся id для сценариев. В примере списки сокращены.', 'GET', '/api/projects/1/catalog');
+await call('Справочники', 'Справочники для форм', 'Категории и тесты своего проекта, выборки страниц, варианты расписания, события уведомлений. Отсюда берутся id для сценариев. В примере списки сокращены.', 'GET', '/api/catalog');
 
-await call('Проекты', 'Список проектов', '', 'GET', '/api/projects');
-await call('Проекты', 'Проект и данные дашборда', 'Активные сценарии, 5 ближайших проверок, последняя полная и частичная проверки, 10 последних отчётов. В примере списки сокращены.', 'GET', '/api/projects/1');
-const project = await call('Проекты', 'Создать проект', 'Вместе с проектом создаётся сценарий «Полная проверка».', 'POST', '/api/projects', { name: 'Тестовый сайт', url: 'https://808.ru/' });
-const projectId = project.data.id;
-await call('Проекты', 'Изменить проект', 'Можно передать только то, что меняется.', 'PATCH', `/api/projects/${projectId}`, { name: 'Сайт 808' });
+await call('Проект', 'Проект и данные дашборда', 'Проект, к которому привязан ключ. Активные сценарии, 5 ближайших проверок, последняя полная и частичная проверки, 10 последних отчётов. В примере списки сокращены.', 'GET', '/api/project');
+await call('Проект', 'Изменить проект', 'Можно передать только то, что меняется.', 'PATCH', '/api/project', { name: 'Hadassah' });
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
 const form = new FormData();
 form.append('logo', new Blob([png]), 'logo.png');
-await call('Проекты', 'Загрузить аватарку', 'PNG, JPEG или WebP до 2 МБ.', 'POST', `/api/projects/${projectId}/logo`, undefined, { form, formText: 'multipart/form-data, поле logo: файл картинки' });
+await call('Проект', 'Загрузить аватарку', 'PNG, JPEG или WebP до 2 МБ.', 'POST', '/api/project/logo', undefined, { form, formText: 'multipart/form-data, поле logo: файл картинки' });
 
-await call('Сценарии', 'Список сценариев проекта', 'Параметры: status=inactive (выключенные), author (значение из meta.authors), categories=seo,forms, regular=yes или no, sort=new, old, tests-desc, tests-asc, categories-desc, categories-asc, pages-desc, pages-asc, page, perPage.', 'GET', '/api/projects/1/scenarios?sort=old');
+await call('Сценарии', 'Список сценариев', 'Параметры: status=inactive (выключенные), categories=seo,forms, regular=yes или no, sort=new, old, tests-desc, tests-asc, categories-desc, categories-asc, pages-desc, pages-asc, page, perPage.', 'GET', '/api/scenarios?sort=old');
 await call('Сценарии', 'Сценарий целиком', 'Тесты по категориям, выборки, расписание, уведомления.', 'GET', '/api/scenarios/2');
-const scenario = await call('Сценарии', 'Создать сценарий', 'schedule и notifications можно не передавать.', 'POST', `/api/projects/${projectId}/scenarios`, {
+const scenario = await call('Сценарии', 'Создать сценарий', 'schedule и notifications можно не передавать.', 'POST', '/api/scenarios', {
   name: 'SEO главных страниц',
   testIds: ['title-present', 'h1-present'],
   pageSets: ['top'],
@@ -106,21 +101,12 @@ await call('Сценарии', 'Отменить отложенную прове
 const check = await call('Проверки и отчёты', 'Запустить проверку', 'Проверка встаёт в очередь. Дальше перезапрашивать отчёт, пока status не станет done.', 'POST', `/api/scenarios/${scenarioId}/checks`);
 await call('Проверки и отчёты', 'Отменить проверку', '', 'POST', `/api/reports/${check.data.id}/cancel`);
 await call('Проверки и отчёты', 'Отчёт', 'status: queued, running, done, error, cancelled. Прогресс: testsDone из testsTotal. В примере списки сокращены.', 'GET', '/api/reports/3', undefined, { prepare: showMediaFirst });
-await call('Проверки и отчёты', 'Архив отчётов проекта', 'Параметры как у списка сценариев, плюс q (поиск).', 'GET', '/api/projects/1/reports');
+await call('Проверки и отчёты', 'Архив отчётов', 'Параметры как у списка сценариев, плюс q (поиск).', 'GET', '/api/reports');
 await call('Проверки и отчёты', 'Отчёты сценария', 'Новые сверху.', 'GET', '/api/scenarios/2/reports');
 fileExample('Проверки и отчёты', 'Скачать отчёт', '', '/api/reports/3/download', 'HTML-файл отчёта со встроенными скриншотами (report-3.html)');
 fileExample('Проверки и отчёты', 'Скриншоты, видео, аватарки', 'Ссылки приходят в ответах (поля url, logoUrl). Запрашивать с тем же ключом.', '/api/media/reports/3/custom-404-page-1.jpg', 'Файл картинки или видео');
 
-await call('Пользователи', 'Список пользователей', '', 'GET', '/api/users');
-const user = await call('Пользователи', 'Создать пользователя', 'email и telegramId необязательные. Пароль показывается только в этом ответе.', 'POST', '/api/users', { login: 'maria', name: 'Мария Иванова', email: 'maria@808.ru' });
-const userId = user.data.user.id;
-await call('Пользователи', 'Изменить пользователя', 'Можно передать только то, что меняется. Логин не меняется.', 'PATCH', `/api/users/${userId}`, { telegramId: '123456789' });
-await call('Пользователи', 'Новый пароль', 'Пользователь выходит из сервиса во всех браузерах.', 'POST', `/api/users/${userId}/password`);
-await call('Пользователи', 'Удалить пользователя', 'Его API-ключи перестают работать.', 'DELETE', `/api/users/${userId}`);
-
-await call('Проекты', 'Удалить проект', 'Удаляет проект вместе со всеми сценариями и отчётами. Отменить нельзя.', 'DELETE', `/api/projects/${projectId}`);
-
-const SECTIONS = ['Ошибки', 'Справочники', 'Проекты', 'Сценарии', 'Проверки и отчёты', 'Пользователи'];
+const SECTIONS = ['Ошибки', 'Справочники', 'Проект', 'Сценарии', 'Проверки и отчёты'];
 examples.sort((a, b) => SECTIONS.indexOf(a.section) - SECTIONS.indexOf(b.section));
 
 writeFileSync(new URL('../src/api/examples.json', import.meta.url), JSON.stringify(examples, null, 2) + '\n');

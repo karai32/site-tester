@@ -58,10 +58,6 @@ export function toList(value) {
   return [value];
 }
 
-export function uniqueSorted(values) {
-  return [...new Set(values)].sort();
-}
-
 export const SORTS = {
   new: { title: 'По дате: сначала новые', compare: (a, b) => b.id - a.id },
   old: { title: 'По дате: сначала старые', compare: (a, b) => a.id - b.id },

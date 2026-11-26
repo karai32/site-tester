@@ -104,7 +104,7 @@ $(function () {
 			return;
 		}
 		$box.html('<p class="panel__empty">Загрузка...</p>');
-		$.get($(this).data('url'), { scenario: this.value })
+		$.get('/scenarios/' + this.value + '/summary')
 			.done(function (html) {
 				$box.html(html);
 			})

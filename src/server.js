@@ -11,15 +11,14 @@ import api from './api/index.js';
 import { startTelegramBot } from './checks/notify.js';
 import { startQueue } from './checks/queue.js';
 import { HOST, MEDIA_DIR, PORT, TELEGRAM_BOT_NAME } from './config.js';
-import { getProjects } from './db/projects.js';
 import { isCheckRunning } from './db/reports.js';
+import { isOwnRoute, sessionProject } from './logic/auth.js';
 import * as format from './logic/format.js';
 import { CHANNELS, enabledEvents, NOTIFICATION_EVENTS, notificationsText } from './logic/notifications.js';
 import { DEFAULT_TIME, SCHEDULE_TYPES, scheduleText } from './logic/schedule.js';
-import { getCurrentUser } from './logic/users.js';
 import accountPages from './pages/account.js';
 import loginPages from './pages/login.js';
-import projectPages from './pages/projects.js';
+import projectPages from './pages/project.js';
 import reportPages from './pages/reports.js';
 import scenarioPages from './pages/scenarios.js';
 
@@ -59,20 +58,22 @@ await app.register(fastifyView, {
 
 const PUBLIC_PATHS = ['/login', '/health'];
 
+app.decorateRequest('project', null);
+
 app.addHook('preHandler', async (request, reply) => {
   const path = request.url.split('?')[0];
   if (path.startsWith('/assets/') || path.startsWith('/api/')) return;
 
-  const user = getCurrentUser(request);
+  const project = sessionProject(request);
+  request.project = project;
+  reply.locals = { project, currentPath: path };
 
-  reply.locals = {
-    user,
-    currentPath: path,
-    sidebarProjects: user ? getProjects() : [],
-  };
-
-  if (!user && !PUBLIC_PATHS.includes(path)) {
+  if (!project && !PUBLIC_PATHS.includes(path)) {
     return reply.redirect('/login');
+  }
+
+  if (project && !isOwnRoute(request, project.id)) {
+    return reply.callNotFound();
   }
 });
 
@@ -83,7 +84,7 @@ await app.register(scenarioPages);
 await app.register(reportPages);
 await app.register(accountPages);
 
-app.get('/', async (_request, reply) => reply.redirect('/projects'));
+app.get('/', async (_request, reply) => reply.redirect('/project'));
 
 app.get('/health', async () => ({ status: 'ok', checkRunning: isCheckRunning() }));
 

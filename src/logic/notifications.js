@@ -15,14 +15,14 @@ export const CHANNELS = [
 
 const DEFAULT_PASS_PERCENT = 80;
 
-export function defaultNotifications(user) {
+export function defaultNotifications(project) {
   const events = {};
   for (const event of NOTIFICATION_EVENTS) events[event.id] = 'none';
 
   const emails = [];
-  if (user && user.email) emails.push(user.email);
+  if (project && project.email) emails.push(project.email);
   const telegramIds = [];
-  if (user && user.telegram_id) telegramIds.push(user.telegram_id);
+  if (project && project.telegram_id) telegramIds.push(project.telegram_id);
 
   return { events, passPercent: DEFAULT_PASS_PERCENT, emails, telegramIds };
 }

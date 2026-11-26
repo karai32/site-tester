@@ -1,11 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { APP_URL } from '../config.js';
-import { createApiKey, deleteApiKey, getUserApiKeys, updateUser } from '../db/users.js';
-import { cleanUser, generateApiKey } from '../logic/users.js';
+import { findProjectById, setProjectContacts } from '../db/projects.js';
+import { newApiKey } from '../logic/auth.js';
+import { cleanContacts } from '../logic/projects.js';
 
 const apiExamples = JSON.parse(readFileSync(new URL('../api/examples.json', import.meta.url), 'utf8'));
 
-const SECTION_ORDER = ['Сценарии', 'Проверки и отчёты', 'Проекты', 'Пользователи', 'Справочники', 'Ошибки'];
+const SECTION_ORDER = ['Сценарии', 'Проверки и отчёты', 'Проект', 'Справочники', 'Ошибки'];
 
 function examplesBySection() {
   const sections = [];
@@ -26,50 +27,31 @@ function showProfile(reply, options) {
   return reply.view('profile.ejs', { title: 'Профиль', ...options }, { layout: 'layouts/app.ejs' });
 }
 
-function showSettings(reply, options) {
-  if (options.error) reply.code(400);
-  return reply.view('settings.ejs', {
-    title: 'Настройки',
-    apiKeys: getUserApiKeys(reply.locals.user.id),
-    newKey: null,
-    error: '',
-    ...options,
-  }, { layout: 'layouts/app.ejs' });
-}
-
 export default async function accountPages(app) {
   app.get('/profile', async (request, reply) => {
-    const user = reply.locals.user;
-    const contacts = { email: user.email || '', telegramId: user.telegram_id || '' };
+    const contacts = { email: request.project.email || '', telegramId: request.project.telegram_id || '' };
     return showProfile(reply, { contacts, errors: [], saved: request.query.saved === '1' });
   });
 
   app.post('/profile', async (request, reply) => {
     const body = request.body || {};
-    const { user, errors } = cleanUser({
-      name: reply.locals.user.name,
-      email: body.email,
-      telegramId: body.telegram_id,
-    }, false);
+    const { contacts, errors } = cleanContacts({ email: body.email, telegramId: body.telegram_id });
     if (Object.keys(errors).length > 0) {
-      return showProfile(reply, { contacts: user, errors: Object.values(errors), saved: false });
+      return showProfile(reply, { contacts, errors: Object.values(errors), saved: false });
     }
 
-    updateUser(reply.locals.user.id, user);
+    setProjectContacts(request.project.id, contacts);
     return reply.redirect('/profile?saved=1');
   });
 
   app.get('/settings', async (_request, reply) => {
-    return showSettings(reply, {});
+    return reply.view('settings.ejs', { title: 'Настройки', newKey: null }, { layout: 'layouts/app.ejs' });
   });
 
-  app.post('/settings/api-keys', async (request, reply) => {
-    const name = String((request.body && request.body.name) || '').trim();
-    if (!name) return showSettings(reply, { error: 'Укажите название ключа' });
-
-    const { key, keyHash, keyStart } = generateApiKey();
-    createApiKey({ userId: reply.locals.user.id, name, keyHash, keyStart });
-    return showSettings(reply, { newKey: { name, key } });
+  app.post('/settings/api-key', async (request, reply) => {
+    const newKey = newApiKey(request.project.id);
+    reply.locals.project = findProjectById(request.project.id);
+    return reply.view('settings.ejs', { title: 'Настройки', newKey }, { layout: 'layouts/app.ejs' });
   });
 
   app.get('/settings/api', async (_request, reply) => {
@@ -78,10 +60,5 @@ export default async function accountPages(app) {
       apiUrl: `${APP_URL}/api`,
       sections: examplesBySection(),
     }, { layout: 'layouts/app.ejs' });
-  });
-
-  app.post('/settings/api-keys/:keyId/delete', async (request, reply) => {
-    deleteApiKey(Number(request.params.keyId), reply.locals.user.id);
-    return reply.redirect('/settings');
   });
 }

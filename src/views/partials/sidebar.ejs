@@ -1,6 +1,5 @@
 <%
 	const isActive = (href) => currentPath === href || currentPath.startsWith(href + '/');
-	const projectOpen = Boolean(locals.project);
 %>
 <aside class="app-sidebar">
 	<a href="/" class="app-logo"><img src="/assets/img/logo-mark-light.svg" width="35" height="35" alt=""><span>808 Checker</span></a>
@@ -8,28 +7,14 @@
 	<nav class="app-menu">
 		<ul>
 			<li><a href="/profile" class="<%= isActive('/profile') ? 'active' : '' %>"><i class="feather-user"></i><span>Профиль</span></a></li>
-			<li><a href="/projects" class="<%= currentPath === '/projects' ? 'active' : '' %>"><i class="feather-layers"></i><span>Проекты</span></a></li>
-
-			<% if (sidebarProjects.length > 0) { %>
-				<li class="app-menu__submenu">
-					<button type="button" class="<%= projectOpen ? 'open' : '' %>" data-submenu-toggle aria-expanded="<%= projectOpen %>">
-						<i class="feather-bookmark"></i><span>Выбранные проекты</span><i class="feather-chevron-down app-menu__arrow"></i>
-					</button>
-					<ul <%= projectOpen ? '' : 'hidden' %>>
-						<% for (const item of sidebarProjects) { %>
-							<li><a href="/projects/<%= item.id %>" class="<%= locals.project?.id === item.id ? 'active' : '' %>"><%= item.name %></a></li>
-						<% } %>
-					</ul>
-				</li>
-			<% } %>
-
+			<li><a href="/project" class="<%= isActive('/project') || isActive('/scenarios') || isActive('/reports') ? 'active' : '' %>"><i class="feather-layers"></i><span>Проект</span></a></li>
 			<li><a href="/settings" class="<%= isActive('/settings') ? 'active' : '' %>"><i class="feather-settings"></i><span>Настройки</span></a></li>
 		</ul>
 	</nav>
 
 	<div class="app-user dropup">
 		<button type="button" class="app-user__button" data-bs-toggle="dropdown" aria-expanded="false">
-			<span class="avatar app-user__avatar"><%= initials(user.name) %></span><span><%= shortName(user.name) %></span>
+			<span class="avatar app-user__avatar"><%= initials(project.name) %></span><span><%= project.name %></span>
 		</button>
 		<div class="dropdown-menu">
 			<a class="dropdown-item" href="/profile">Профиль</a>

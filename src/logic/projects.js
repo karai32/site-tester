@@ -1,28 +1,56 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { MEDIA_DIR } from '../config.js';
-import { createProject, deleteProject, setProjectLogo } from '../db/projects.js';
+import { createProject, deleteProject, findProjectByLogin, setProjectLogo } from '../db/projects.js';
 import { findLatestDoneReport, getProjectReports, getRecentReports, getReportResults } from '../db/reports.js';
 import { createScenario, getProjectScenarios } from '../db/scenarios.js';
+import { newPassword } from './auth.js';
+import { isEmail, isTelegramId } from './notifications.js';
 import { groupByCategory } from './reports.js';
 import { scenarioSummary } from './scenarios.js';
 import { upcomingRuns } from './schedule.js';
 
-export function cleanProject(input) {
+export function cleanProject(input, isNew) {
   const project = {
     name: String(input.name || '').trim(),
     url: String(input.url || '').trim(),
+    login: String(input.login || '').trim(),
   };
+
   const errors = {};
   if (!project.name) errors.name = 'Укажите название проекта';
   if (!/^https?:\/\/\S+$/.test(project.url)) errors.url = 'Адрес сайта должен начинаться с http:// или https://';
+  if (isNew) {
+    if (!/^[A-Za-z0-9._-]+$/.test(project.login)) errors.login = 'Логин: латинские буквы, цифры, точка, дефис и подчёркивание';
+    else if (findProjectByLogin(project.login)) errors.login = `Проект с логином «${project.login}» уже есть`;
+  }
   return { project, errors };
 }
 
-export function createProjectWithScenario({ name, url }) {
-  const projectId = createProject({ name, url });
-  createScenario({ projectId, name: 'Полная проверка', isFull: true });
-  return projectId;
+export function cleanContacts(input) {
+  const contacts = {
+    email: String(input.email || '').trim(),
+    telegramId: String(input.telegramId || '').trim(),
+  };
+
+  const errors = {};
+  if (contacts.email && !isEmail(contacts.email)) errors.email = 'Неверная почта';
+  if (contacts.telegramId && !isTelegramId(contacts.telegramId)) errors.telegramId = 'Telegram ID должен быть числом';
+  return { contacts, errors };
+}
+
+export function addProject({ name, url, login }) {
+  const id = createProject({ name, url, login, passwordHash: null });
+  createScenario({ projectId: id, name: 'Полная проверка', isFull: true });
+  return { id, password: newPassword(id) };
+}
+
+export function removeProject(project) {
+  for (const report of getProjectReports(project.id)) {
+    rmSync(join(MEDIA_DIR, 'reports', String(report.id)), { recursive: true, force: true });
+  }
+  if (project.logo) rmSync(join(MEDIA_DIR, project.logo), { force: true });
+  deleteProject(project.id);
 }
 
 function imageExtension(data) {
@@ -56,14 +84,6 @@ export async function saveProjectLogo(project, request) {
   if (project.logo) rmSync(join(MEDIA_DIR, project.logo), { force: true });
   setProjectLogo(project.id, file);
   return true;
-}
-
-export function deleteProjectWithFiles(project) {
-  for (const report of getProjectReports(project.id)) {
-    rmSync(join(MEDIA_DIR, 'reports', String(report.id)), { recursive: true, force: true });
-  }
-  if (project.logo) rmSync(join(MEDIA_DIR, project.logo), { force: true });
-  deleteProject(project.id);
 }
 
 const UPCOMING_COUNT = 5;

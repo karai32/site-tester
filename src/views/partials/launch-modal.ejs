@@ -1,7 +1,6 @@
 <div class="modal fade" id="launch-<%= scenario.id %>" tabindex="-1" aria-labelledby="launch-<%= scenario.id %>-title" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-lg">
-		<form class="modal-content launch-modal" method="post" action="/projects/<%= project.id %>/checks">
-			<input type="hidden" name="scenario_id" value="<%= scenario.id %>">
+		<form class="modal-content launch-modal" method="post" action="/scenarios/<%= scenario.id %>/checks">
 
 			<div class="modal-header">
 				<div>

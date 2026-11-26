@@ -1,4 +1,4 @@
-<div class="breadcrumbs"><a href="/projects/<%= project.id %>"><%= project.name %></a> / <span>Архив отчётов</span></div>
+<div class="breadcrumbs"><a href="/project"><%= project.name %></a> / <span>Архив отчётов</span></div>
 
 <div class="page-head">
 	<div>
@@ -7,10 +7,9 @@
 	</div>
 </div>
 
-<form class="search-pill" method="get" action="/projects/<%= project.id %>/reports">
+<form class="search-pill" method="get" action="/reports">
 	<i class="feather-search"></i>
-	<input type="search" name="q" class="form-control" placeholder="Найти отчёт: сценарий, автор или дата" value="<%= search %>">
-	<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
+	<input type="search" name="q" class="form-control" placeholder="Найти отчёт: сценарий или дата" value="<%= search %>">
 	<% for (const id of selectedCategories) { %><input type="hidden" name="cat" value="<%= id %>"><% } %>
 	<% if (regular) { %><input type="hidden" name="regular" value="<%= regular %>"><% } %>
 	<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
@@ -18,22 +17,10 @@
 
 <div class="filters">
 	<div class="dropdown">
-		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-			Автор сценария: <%= author || 'Все' %> <i class="feather-chevron-down"></i>
-		</button>
-		<div class="dropdown-menu">
-			<a class="dropdown-item <%= author ? '' : 'active' %>" href="<%= archiveUrl({ author: '' }) %>">Все</a>
-			<% for (const name of authors) { %>
-				<a class="dropdown-item <%= author === name ? 'active' : '' %>" href="<%= archiveUrl({ author: name }) %>"><%= name %></a>
-			<% } %>
-		</div>
-	</div>
-
-	<div class="dropdown">
 		<button type="button" class="filter-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 			Категории: <%= selectedCategories.length === 0 ? 'Все' : selectedCategories.length %> <i class="feather-chevron-down"></i>
 		</button>
-		<form class="dropdown-menu" method="get" action="/projects/<%= project.id %>/reports">
+		<form class="dropdown-menu" method="get" action="/reports">
 			<% for (const category of categories) { %>
 				<label class="custom_check"><%= category.title %>
 					<input type="checkbox" name="cat" value="<%= category.id %>" <%= selectedCategories.includes(category.id) ? 'checked' : '' %>>
@@ -41,7 +28,6 @@
 				</label>
 			<% } %>
 			<% if (search) { %><input type="hidden" name="q" value="<%= search %>"><% } %>
-			<% if (author) { %><input type="hidden" name="author" value="<%= author %>"><% } %>
 			<% if (regular) { %><input type="hidden" name="regular" value="<%= regular %>"><% } %>
 			<% if (sort !== 'new') { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
 			<div class="filters__apply"><button type="submit" class="btn btn-primary btn-pill btn-pill-sm w-100">Применить</button></div>
@@ -75,7 +61,7 @@
 			<% } %>
 			<div class="list-row__main">
 				<h3 class="list-row__title"><%= report.scenario_name %></h3>
-				<div class="list-row__sub">Автор сценария: <%= authorName(report.scenario_author_name) %> · отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %></div>
+				<div class="list-row__sub">Отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %></div>
 			</div>
 			<div class="list-row__aside">
 				<% if (report.status === 'done') { %>

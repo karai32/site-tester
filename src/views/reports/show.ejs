@@ -1,7 +1,7 @@
 <% const percent = percentOf(report.tests_passed, report.tests_total); %>
 <div class="breadcrumbs">
-	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
-	<a href="/projects/<%= project.id %>/reports">Архив отчётов</a> /
+	<a href="/project"><%= project.name %></a> /
+	<a href="/reports">Архив отчётов</a> /
 	<span><%= report.scenario_name %></span>
 </div>
 
@@ -10,9 +10,9 @@
 		<h1 class="page-title"><%= report.scenario_name %></h1>
 		<p class="page-subtitle">
 			<% if (report.status === 'done') { %>
-				Проверка завершена в <%= formatDateTime(report.finished_at) %> · запустил <%= authorName(report.started_by_name) %>
+				Проверка завершена в <%= formatDateTime(report.finished_at) %><%= report.is_regular ? ' · по расписанию' : '' %>
 			<% } else { %>
-				Отчёт #<%= report.id %> · запустил <%= authorName(report.started_by_name) %>
+				Отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %>
 			<% } %>
 		</p>
 	</div>

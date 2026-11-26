@@ -9,12 +9,6 @@ export function initials(name) {
   return result.toUpperCase();
 }
 
-export function shortName(name) {
-  const [first, last] = words(name);
-  if (!last) return first;
-  return `${first} ${last[0]}.`;
-}
-
 export function displayUrl(url) {
   const withoutProtocol = url.replace('https://', '').replace('http://', '');
   if (withoutProtocol.endsWith('/')) return withoutProtocol.slice(0, -1);
@@ -96,11 +90,6 @@ export function reportStatus(report) {
   if (report.status === 'cancelled') return { label: 'Отменена', color: 'grey' };
   const percent = percentOf(report.tests_passed, report.tests_total);
   return { label: `${report.tests_passed}/${report.tests_total} · ${percent}%`, color: percentColor(percent) };
-}
-
-export function authorName(name) {
-  if (!name) return '808 Checker';
-  return shortName(name);
 }
 
 export function scenarioTitle(scenario) {

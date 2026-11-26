@@ -10,8 +10,7 @@ import {
   setScenarioActive,
 } from '../db/scenarios.js';
 import { siteCategories } from '../tests/index.js';
-import { authorName } from './format.js';
-import { SORTS, toList, uniqueSorted } from './lists.js';
+import { SORTS, toList } from './lists.js';
 import { cleanNotifications } from './notifications.js';
 import { PAGE_SETS } from './page-sets.js';
 import { cleanSchedule, firstRunText, scenarioSchedule, toUtcText } from './schedule.js';
@@ -92,7 +91,7 @@ export function cleanScenario(input, projectId) {
   return { scenario, errors };
 }
 
-export function saveScenario({ projectId, authorId, scenario, source }) {
+export function saveScenario({ projectId, scenario, source }) {
   let rootId = null;
   let revision = 1;
   if (source) {
@@ -102,7 +101,6 @@ export function saveScenario({ projectId, authorId, scenario, source }) {
 
   return createScenario({
     projectId,
-    authorId,
     name: scenario.name,
     testIds: scenario.testIds,
     pageSets: scenario.pageSets,
@@ -129,11 +127,11 @@ export function setActive(scenario, isActive) {
   }
 }
 
-export function planDeferredCheck(scenario, runAt, userId) {
+export function planDeferredCheck(scenario, runAt) {
   if (!runAt) return 'Укажите дату и время проверки';
   if (runAt <= new Date()) return 'Это время уже прошло';
 
-  setDeferredCheck(scenario.id, toUtcText(runAt), userId);
+  setDeferredCheck(scenario.id, toUtcText(runAt));
   return null;
 }
 
@@ -177,14 +175,9 @@ export function listScenarios(projectId, filters) {
   const allScenarios = scenarioItems(projectId);
   const activeScenarios = allScenarios.filter((scenario) => scenario.is_active);
   const inactiveScenarios = allScenarios.filter((scenario) => !scenario.is_active);
-  const authors = uniqueSorted(allScenarios.map((scenario) => authorName(scenario.author_name)));
 
   let scenarios = activeScenarios;
   if (filters.inactive) scenarios = inactiveScenarios;
-
-  if (filters.author) {
-    scenarios = scenarios.filter((scenario) => authorName(scenario.author_name) === filters.author);
-  }
 
   if (filters.categories.length > 0) {
     scenarios = scenarios.filter((scenario) => filters.categories.every((id) => scenario.categoryIds.includes(id)));
@@ -199,6 +192,5 @@ export function listScenarios(projectId, filters) {
     scenarios,
     activeCount: activeScenarios.length,
     inactiveCount: inactiveScenarios.length,
-    authors,
   };
 }

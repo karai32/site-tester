@@ -4,8 +4,8 @@ import { MEDIA_DIR } from '../config.js';
 import { findProjectById } from '../db/projects.js';
 import { findReportById, getProjectReports, getReportResults } from '../db/reports.js';
 import { getProjectScenarios } from '../db/scenarios.js';
-import { authorName, formatDateTime } from './format.js';
-import { SORTS, uniqueSorted } from './lists.js';
+import { formatDateTime } from './format.js';
+import { SORTS } from './lists.js';
 import { projectCategories, scenarioCategoryIds } from './scenarios.js';
 
 export function groupByCategory(results, projectId) {
@@ -80,20 +80,15 @@ export function listReports(projectId, filters) {
       pagesCount: report.pages_count || 0,
     });
   }
-  const authors = uniqueSorted(allReports.map((report) => authorName(report.scenario_author_name)));
 
   let reports = allReports;
 
   if (filters.search) {
     const needle = filters.search.toLowerCase();
     reports = reports.filter((report) => {
-      const text = `#${report.id} ${report.scenario_name} ${authorName(report.scenario_author_name)} ${formatDateTime(report.finished_at)}`;
+      const text = `#${report.id} ${report.scenario_name} ${formatDateTime(report.finished_at)}`;
       return text.toLowerCase().includes(needle);
     });
-  }
-
-  if (filters.author) {
-    reports = reports.filter((report) => authorName(report.scenario_author_name) === filters.author);
   }
 
   if (filters.categories.length > 0) {
@@ -105,5 +100,5 @@ export function listReports(projectId, filters) {
 
   reports.sort(SORTS[filters.sort].compare);
 
-  return { reports, authors, total: allReports.length };
+  return { reports, total: allReports.length };
 }

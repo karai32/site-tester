@@ -1,36 +1,49 @@
-import { findProjectById } from '../db/projects.js';
-import { cancelReport, createReport } from '../db/reports.js';
-import { findScenarioById } from '../db/scenarios.js';
-import { loadReport, sendReportDownload } from '../logic/reports.js';
+import { cancelReport } from '../db/reports.js';
+import { listUrl, paginate, sortFromQuery, SORTS, toList } from '../logic/lists.js';
+import { listReports, loadReport, sendReportDownload } from '../logic/reports.js';
+import { projectCategories } from '../logic/scenarios.js';
+
+const REPORTS_PER_PAGE = 10;
 
 export default async function reportPages(app) {
-  app.post('/projects/:id/checks', async (request, reply) => {
-    const project = findProjectById(request.params.id);
-    const form = request.body || {};
-    const scenario = findScenarioById(form.scenario_id);
-    if (!project || !scenario || scenario.project_id !== project.id) return reply.callNotFound();
-    if (!scenario.is_active) return reply.redirect(`/projects/${project.id}/scenarios/${scenario.id}`);
+  app.get('/reports', async (request, reply) => {
+    const project = request.project;
+    const search = String(request.query.q || '').trim();
+    const regular = String(request.query.regular || '');
+    const selectedCategories = toList(request.query.cat);
+    const sort = sortFromQuery(request.query.sort);
 
-    const reportId = createReport({ projectId: project.id, scenarioId: scenario.id, startedBy: reply.locals.user.id });
-    return reply.redirect(`/reports/${reportId}`);
-  });
+    const result = listReports(project.id, { search, categories: selectedCategories, regular, sort });
 
-  app.post('/reports/:id/cancel', async (request, reply) => {
-    const data = loadReport(request.params.id);
-    if (!data) return reply.callNotFound();
-    cancelReport(data.report.id);
-    return reply.redirect(`/reports/${data.report.id}`);
+    const currentFilters = { q: search, cat: selectedCategories, regular };
+    if (sort !== 'new') currentFilters.sort = sort;
+    const archiveUrl = (changes) => listUrl('/reports', { ...currentFilters, ...changes });
+
+    return reply.view('reports/list.ejs', {
+      title: `Архив отчётов - ${project.name}`,
+      search,
+      selectedCategories,
+      categories: projectCategories(project.id),
+      regular,
+      sort,
+      sorts: SORTS,
+      totalReports: result.total,
+      pagination: paginate(result.reports, Number(request.query.page) || 1, REPORTS_PER_PAGE),
+      archiveUrl,
+    }, { layout: 'layouts/app.ejs' });
   });
 
   app.get('/reports/:id', async (request, reply) => {
     const data = loadReport(request.params.id);
-    if (!data) return reply.callNotFound();
     return reply.view('reports/show.ejs', { title: `Отчёт #${data.report.id}`, ...data }, { layout: 'layouts/app.ejs' });
   });
 
+  app.post('/reports/:id/cancel', async (request, reply) => {
+    cancelReport(request.params.id);
+    return reply.redirect(`/reports/${request.params.id}`);
+  });
+
   app.get('/reports/:id/download', async (request, reply) => {
-    const data = loadReport(request.params.id);
-    if (!data) return reply.callNotFound();
-    return sendReportDownload(reply, data);
+    return sendReportDownload(reply, loadReport(request.params.id));
   });
 }

@@ -1,10 +1,10 @@
-<div class="breadcrumbs"><a href="/projects">Проекты</a> / <span><%= project.name %></span></div>
+<div class="breadcrumbs"><span><%= project.name %></span></div>
 
 <div class="page-head">
 	<div class="project-head">
-		<form method="post" action="/projects/<%= project.id %>/logo" enctype="multipart/form-data">
+		<form method="post" action="/project/logo" enctype="multipart/form-data">
 			<label class="project-logo-change" title="Сменить аватарку">
-				<%- include('../partials/project-logo', { project }) %>
+				<%- include('partials/project-logo', { project }) %>
 				<span class="project-logo-change__icon"><i class="feather-camera"></i></span>
 				<input type="file" name="logo" accept="image/png,image/jpeg,image/webp" class="visually-hidden" data-auto-submit>
 			</label>
@@ -35,19 +35,18 @@
 				<div class="list-row">
 					<div class="list-row__main">
 						<h3 class="scenario-row__title"><%= scenario.name %></h3>
-						<span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span>
-						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="scenario-row__link">Страница сценария</a>
+						<a href="/scenarios/<%= scenario.id %>" class="scenario-row__link">Страница сценария</a>
 					</div>
 					<button type="button" class="btn btn-primary btn-pill" data-bs-toggle="modal" data-bs-target="#launch-<%= scenario.id %>">Запустить</button>
 				</div>
 			<% } %>
 
-			<a href="/projects/<%= project.id %>/scenarios" class="btn btn-outline-primary btn-pill w-100 panel__footer">Смотреть все сценарии</a>
+			<a href="/scenarios" class="btn btn-outline-primary btn-pill w-100 panel__footer">Смотреть все сценарии</a>
 
 		</section>
 
 		<% for (const scenario of scenarios) { %>
-			<%- include('../partials/launch-modal', { scenario, summary: scenario.summary }) %>
+			<%- include('partials/launch-modal', { scenario, summary: scenario.summary }) %>
 		<% } %>
 
 		<section class="panel">
@@ -99,7 +98,7 @@
 			<% for (const run of upcoming) { %>
 				<div class="info-row">
 					<span class="info-row__label">
-						<a href="/projects/<%= project.id %>/scenarios/<%= run.scenario.id %>"><%= run.scenario.name %></a>
+						<a href="/scenarios/<%= run.scenario.id %>"><%= run.scenario.name %></a>
 						<span class="info-row__note"><%= run.isRegular ? 'По расписанию' : 'Отложенная' %></span>
 					</span>
 					<span class="info-row__value"><%= formatDateShort(run.runAt) %></span>
@@ -112,7 +111,7 @@
 <section class="panel">
 	<div class="panel__head">
 		<h2 class="panel__title">Последние отчёты</h2>
-		<span class="panel__meta"><a href="/projects/<%= project.id %>/reports">Архив отчётов</a></span>
+		<span class="panel__meta"><a href="/reports">Архив отчётов</a></span>
 	</div>
 	<% if (recentReports.length === 0) { %>
 		<p class="panel__empty">Проверок ещё не было</p>
@@ -134,10 +133,10 @@
 		<h2 class="panel__title">Сводка по сценарию</h2>
 	</div>
 	<select class="form-select summary-select" aria-label="Сценарий для сводки"
-		data-scenario-summary-select data-url="/projects/<%= project.id %>/scenario-summary">
+		data-scenario-summary-select>
 		<option value="">Выберите сценарий</option>
 		<% for (const scenario of summaryScenarios) { %>
-			<option value="<%= scenario.id %>"><%= scenario.name %> - <%= authorName(scenario.author_name) %></option>
+			<option value="<%= scenario.id %>"><%= scenario.name %></option>
 		<% } %>
 	</select>
 	<div data-scenario-summary></div>

@@ -1,4 +1,4 @@
-import { findProjectById } from '../db/projects.js';
+import { createReport, getScenarioReports } from '../db/reports.js';
 import {
   cancelDeferredCheck,
   findScenarioById,
@@ -33,6 +33,7 @@ import {
 } from '../logic/schedule.js';
 
 const SCENARIOS_PER_PAGE = 10;
+const SUMMARY_BATCH = 10;
 
 const NOTICES = {
   schedule: 'Регулярность сохранена',
@@ -41,8 +42,8 @@ const NOTICES = {
   'deferred-cancelled': 'Отложенная проверка отменена',
 };
 
-function scenarioUrl(projectId, scenarioId, saved) {
-  const url = `/projects/${projectId}/scenarios/${scenarioId}`;
+function scenarioUrl(scenarioId, saved) {
+  const url = `/scenarios/${scenarioId}`;
   if (saved) return `${url}?saved=${saved}`;
   return url;
 }
@@ -59,14 +60,14 @@ function readScenarioForm(body, projectId) {
   return { form: scenario, errors: Object.values(errors) };
 }
 
-function showForm(reply, project, form, source, errors) {
+function showForm(request, reply, form, source, errors) {
+  const project = request.project;
   let title = `Создание сценария - ${project.name}`;
   if (source) title = `Обновление сценария - ${project.name}`;
 
   if (errors.length > 0) reply.code(400);
   return reply.view('scenarios/form.ejs', {
     title,
-    project,
     form,
     source,
     errors,
@@ -75,12 +76,11 @@ function showForm(reply, project, form, source, errors) {
   }, { layout: 'layouts/app.ejs' });
 }
 
-function showScenarioPage(reply, project, scenario, options) {
+function showScenarioPage(request, reply, scenario, options) {
   if (options.scheduleErrors || options.deferredErrors || options.notificationErrors) reply.code(400);
 
   return reply.view('scenarios/show.ejs', {
-    title: `${scenarioTitle(scenario)} - ${project.name}`,
-    project,
+    title: `${scenarioTitle(scenario)} - ${request.project.name}`,
     scenario,
     summary: scenarioSummary(scenario),
     notice: '',
@@ -96,48 +96,26 @@ function showScenarioPage(reply, project, scenario, options) {
   }, { layout: 'layouts/app.ejs' });
 }
 
-function loadScenario(request) {
-  const project = findProjectById(request.params.id);
-  if (!project) return null;
-
-  const scenario = findScenarioById(request.params.sid);
-  if (!scenario || scenario.project_id !== project.id) return null;
-
-  return { project, scenario };
-}
-
 export default async function scenarioPages(app) {
-  app.get('/projects/:id/scenarios', async (request, reply) => {
-    const project = findProjectById(request.params.id);
-    if (!project) return reply.callNotFound();
-
+  app.get('/scenarios', async (request, reply) => {
+    const project = request.project;
     const showInactive = request.query.status === 'inactive';
-    const author = String(request.query.author || '');
     const regular = String(request.query.regular || '');
     const selectedCategories = toList(request.query.cat);
     const sort = sortFromQuery(request.query.sort);
 
-    const result = listScenarios(project.id, {
-      inactive: showInactive,
-      author,
-      categories: selectedCategories,
-      regular,
-      sort,
-    });
+    const result = listScenarios(project.id, { inactive: showInactive, categories: selectedCategories, regular, sort });
 
-    const currentFilters = { author, cat: selectedCategories, regular };
+    const currentFilters = { cat: selectedCategories, regular };
     if (showInactive) currentFilters.status = 'inactive';
     if (sort !== 'new') currentFilters.sort = sort;
-    const scenariosUrl = (changes) => listUrl(`/projects/${project.id}/scenarios`, { ...currentFilters, ...changes });
+    const scenariosUrl = (changes) => listUrl('/scenarios', { ...currentFilters, ...changes });
 
     return reply.view('scenarios/list.ejs', {
       title: `Сценарии - ${project.name}`,
-      project,
       showInactive,
       activeCount: result.activeCount,
       inactiveCount: result.inactiveCount,
-      author,
-      authors: result.authors,
       selectedCategories,
       categories: projectCategories(project.id),
       regular,
@@ -149,110 +127,104 @@ export default async function scenarioPages(app) {
     }, { layout: 'layouts/app.ejs' });
   });
 
-  app.get('/projects/:id/scenarios/new', async (request, reply) => {
-    const project = findProjectById(request.params.id);
-    if (!project) return reply.callNotFound();
-
+  app.get('/scenarios/new', async (request, reply) => {
     const emptyForm = {
       name: '',
       testIds: [],
       pageSets: [],
       schedule: { type: null, time: null, number: null },
-      notifications: defaultNotifications(reply.locals.user),
+      notifications: defaultNotifications(request.project),
     };
-    return showForm(reply, project, emptyForm, null, []);
+    return showForm(request, reply, emptyForm, null, []);
   });
 
-  app.post('/projects/:id/scenarios', async (request, reply) => {
-    const project = findProjectById(request.params.id);
-    if (!project) return reply.callNotFound();
+  app.post('/scenarios', async (request, reply) => {
+    const projectId = request.project.id;
+    const { form, errors } = readScenarioForm(request.body, projectId);
+    if (errors.length > 0) return showForm(request, reply, form, null, errors);
 
-    const { form, errors } = readScenarioForm(request.body, project.id);
-    if (errors.length > 0) return showForm(reply, project, form, null, errors);
-
-    const scenarioId = saveScenario({ projectId: project.id, authorId: reply.locals.user.id, scenario: form });
-    return reply.redirect(scenarioUrl(project.id, scenarioId));
+    return reply.redirect(scenarioUrl(saveScenario({ projectId, scenario: form })));
   });
 
-  app.get('/projects/:id/scenarios/:sid', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-
-    return showScenarioPage(reply, data.project, data.scenario, {
+  app.get('/scenarios/:id', async (request, reply) => {
+    return showScenarioPage(request, reply, findScenarioById(request.params.id), {
       editSchedule: request.query.edit === 'schedule',
       editNotifications: request.query.edit === 'notifications',
       notice: NOTICES[request.query.saved] || '',
     });
   });
 
-  app.post('/projects/:id/scenarios/:sid/active', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-    const { project, scenario } = data;
+  app.get('/scenarios/:id/summary', async (request, reply) => {
+    const scenarioId = Number(request.params.id);
+    const reports = getScenarioReports(scenarioId);
+    const offset = Number(request.query.offset) || 0;
+    const batch = reports.slice(offset, offset + SUMMARY_BATCH);
+    const remaining = reports.length - offset - batch.length;
 
-    const makeActive = request.body && request.body.active === '1';
-    setActive(scenario, makeActive);
-    return reply.redirect(scenarioUrl(project.id, scenario.id));
+    let nextUrl = null;
+    if (remaining > 0) nextUrl = `/scenarios/${scenarioId}/summary?offset=${offset + SUMMARY_BATCH}`;
+
+    const view = offset > 0 ? 'partials/scenario-summary-rows.ejs' : 'partials/scenario-summary.ejs';
+    return reply.view(view, { reports: batch, remaining, nextUrl });
   });
 
-  app.post('/projects/:id/scenarios/:sid/schedule', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-    const { project, scenario } = data;
+  app.post('/scenarios/:id/checks', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
+    if (!scenario.is_active) return reply.redirect(scenarioUrl(scenario.id));
+
+    const reportId = createReport({ projectId: scenario.project_id, scenarioId: scenario.id });
+    return reply.redirect(`/reports/${reportId}`);
+  });
+
+  app.post('/scenarios/:id/active', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
+    setActive(scenario, Boolean(request.body) && request.body.active === '1');
+    return reply.redirect(scenarioUrl(scenario.id));
+  });
+
+  app.post('/scenarios/:id/schedule', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
 
     const { schedule, errors } = readScheduleForm(request.body || {});
     if (errors.length > 0) {
-      return showScenarioPage(reply, project, scenario, { editSchedule: true, schedule, scheduleErrors: errors });
+      return showScenarioPage(request, reply, scenario, { editSchedule: true, schedule, scheduleErrors: errors });
     }
 
     setScenarioSchedule(scenario.id, schedule, firstRunText(schedule));
-    return reply.redirect(scenarioUrl(project.id, scenario.id, 'schedule'));
+    return reply.redirect(scenarioUrl(scenario.id, 'schedule'));
   });
 
-  app.post('/projects/:id/scenarios/:sid/notifications', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-    const { project, scenario } = data;
+  app.post('/scenarios/:id/notifications', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
 
     const { notifications, errors } = readNotificationsForm(request.body || {});
     if (errors.length > 0) {
-      return showScenarioPage(reply, project, scenario, { editNotifications: true, notifications, notificationErrors: errors });
+      return showScenarioPage(request, reply, scenario, { editNotifications: true, notifications, notificationErrors: errors });
     }
 
     setScenarioNotifications(scenario.id, notifications);
-    return reply.redirect(scenarioUrl(project.id, scenario.id, 'notifications'));
+    return reply.redirect(scenarioUrl(scenario.id, 'notifications'));
   });
 
-  app.post('/projects/:id/scenarios/:sid/deferred', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-    const { project, scenario } = data;
-    if (!scenario.is_active) return reply.redirect(scenarioUrl(project.id, scenario.id));
+  app.post('/scenarios/:id/deferred', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
+    if (!scenario.is_active) return reply.redirect(scenarioUrl(scenario.id));
 
     const body = request.body || {};
     const deferredForm = { date: String(body.date || ''), time: String(body.time || '') };
-    const runAt = moscowToDate(deferredForm.date, deferredForm.time);
 
-    const error = planDeferredCheck(scenario, runAt, reply.locals.user.id);
-    if (error) {
-      return showScenarioPage(reply, project, scenario, { deferredForm, deferredErrors: [error] });
-    }
-    return reply.redirect(scenarioUrl(project.id, scenario.id, 'deferred'));
+    const error = planDeferredCheck(scenario, moscowToDate(deferredForm.date, deferredForm.time));
+    if (error) return showScenarioPage(request, reply, scenario, { deferredForm, deferredErrors: [error] });
+    return reply.redirect(scenarioUrl(scenario.id, 'deferred'));
   });
 
-  app.post('/projects/:id/scenarios/:sid/deferred/cancel', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-
-    cancelDeferredCheck(data.scenario.id);
-    return reply.redirect(scenarioUrl(data.project.id, data.scenario.id, 'deferred-cancelled'));
+  app.post('/scenarios/:id/deferred/cancel', async (request, reply) => {
+    cancelDeferredCheck(request.params.id);
+    return reply.redirect(scenarioUrl(request.params.id, 'deferred-cancelled'));
   });
 
-  app.get('/projects/:id/scenarios/:sid/copy', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-    const { project, scenario } = data;
-
+  app.get('/scenarios/:id/copy', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
     const form = {
       name: revisionName(scenario),
       testIds: scenarioTestIds(scenario),
@@ -260,23 +232,16 @@ export default async function scenarioPages(app) {
       schedule: scenarioSchedule(scenario),
       notifications: scenario.notifications,
     };
-    return showForm(reply, project, form, scenario, []);
+    return showForm(request, reply, form, scenario, []);
   });
 
-  app.post('/projects/:id/scenarios/:sid/copy', async (request, reply) => {
-    const data = loadScenario(request);
-    if (!data) return reply.callNotFound();
-    const { project, scenario } = data;
+  app.post('/scenarios/:id/copy', async (request, reply) => {
+    const scenario = findScenarioById(request.params.id);
 
-    const { form, errors } = readScenarioForm(request.body, project.id);
-    if (errors.length > 0) return showForm(reply, project, form, scenario, errors);
+    const { form, errors } = readScenarioForm(request.body, scenario.project_id);
+    if (errors.length > 0) return showForm(request, reply, form, scenario, errors);
 
-    const scenarioId = saveScenario({
-      projectId: project.id,
-      authorId: reply.locals.user.id,
-      scenario: form,
-      source: scenario,
-    });
-    return reply.redirect(scenarioUrl(project.id, scenarioId));
+    const scenarioId = saveScenario({ projectId: scenario.project_id, scenario: form, source: scenario });
+    return reply.redirect(scenarioUrl(scenarioId));
   });
 }

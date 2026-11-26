@@ -2,15 +2,10 @@ import { db } from './database.js';
 
 const reportsWithNames = `
   SELECT reports.*,
-         scenarios.name      AS scenario_name,
-         scenarios.is_full   AS scenario_is_full,
-         scenarios.author_id AS scenario_author_id,
-         authors.name        AS scenario_author_name,
-         starters.name       AS started_by_name
+         scenarios.name    AS scenario_name,
+         scenarios.is_full AS scenario_is_full
   FROM reports
   JOIN scenarios ON scenarios.id = reports.scenario_id
-  LEFT JOIN users AS starters ON starters.id = reports.started_by
-  LEFT JOIN users AS authors ON authors.id = scenarios.author_id
 `;
 
 export function findReportById(id) {
@@ -45,9 +40,9 @@ export function findPreviousDoneReport(scenarioId, reportId) {
   `).get(scenarioId, reportId);
 }
 
-export function createReport({ projectId, scenarioId, startedBy, isRegular = false }) {
-  const result = db.prepare('INSERT INTO reports (project_id, scenario_id, started_by, is_regular) VALUES (?, ?, ?, ?)')
-    .run(projectId, scenarioId, startedBy ?? null, isRegular ? 1 : 0);
+export function createReport({ projectId, scenarioId, isRegular = false }) {
+  const result = db.prepare('INSERT INTO reports (project_id, scenario_id, is_regular) VALUES (?, ?, ?)')
+    .run(projectId, scenarioId, isRegular ? 1 : 0);
   return result.lastInsertRowid;
 }
 

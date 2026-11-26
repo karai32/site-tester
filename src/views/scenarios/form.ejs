@@ -1,9 +1,9 @@
-<% const action = source ? `/projects/${project.id}/scenarios/${source.id}/copy` : `/projects/${project.id}/scenarios`; %>
+<% const action = source ? `/scenarios/${source.id}/copy` : '/scenarios'; %>
 <div class="breadcrumbs">
-	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
-	<a href="/projects/<%= project.id %>/scenarios">Сценарии</a> /
+	<a href="/project"><%= project.name %></a> /
+	<a href="/scenarios">Сценарии</a> /
 	<% if (source) { %>
-		<a href="/projects/<%= project.id %>/scenarios/<%= source.id %>"><%= source.name %></a> / <span>Обновление</span>
+		<a href="/scenarios/<%= source.id %>"><%= source.name %></a> / <span>Обновление</span>
 	<% } else { %>
 		<span>Новый сценарий</span>
 	<% } %>
@@ -117,7 +117,7 @@
 	<div class="actions-bar">
 		<button type="submit" class="btn btn-primary btn-pill"><%= source ? 'Сохранить' : 'Создать сценарий' %></button>
 		<% if (source) { %>
-			<a href="/projects/<%= project.id %>/scenarios/<%= source.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
+			<a href="/scenarios/<%= source.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
 		<% } %>
 	</div>
 </form>

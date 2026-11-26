@@ -9,24 +9,16 @@ function parseScenario(row) {
   return row;
 }
 
-const scenariosWithAuthor = `
-  SELECT scenarios.*, users.name AS author_name
-  FROM scenarios
-  LEFT JOIN users ON users.id = scenarios.author_id
-`;
-
 export function findScenarioById(id) {
-  return parseScenario(db.prepare(`${scenariosWithAuthor} WHERE scenarios.id = ?`).get(id));
+  return parseScenario(db.prepare('SELECT * FROM scenarios WHERE id = ?').get(id));
 }
 
 export function getProjectScenarios(projectId) {
-  return db.prepare(`${scenariosWithAuthor} WHERE scenarios.project_id = ? ORDER BY scenarios.id`)
-    .all(projectId).map(parseScenario);
+  return db.prepare('SELECT * FROM scenarios WHERE project_id = ? ORDER BY id').all(projectId).map(parseScenario);
 }
 
 export function createScenario({
   projectId,
-  authorId,
   name,
   isFull = false,
   testIds = [],
@@ -38,12 +30,11 @@ export function createScenario({
   notifications = defaultNotifications(null),
 }) {
   const result = db.prepare(`
-    INSERT INTO scenarios (project_id, author_id, name, is_full, test_ids, page_sets, root_id, revision,
+    INSERT INTO scenarios (project_id, name, is_full, test_ids, page_sets, root_id, revision,
                            schedule_type, schedule_time, schedule_number, next_run_at, notifications)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     projectId,
-    authorId ?? null,
     name,
     isFull ? 1 : 0,
     JSON.stringify(testIds),
@@ -81,12 +72,12 @@ export function setScenarioNotifications(id, notifications) {
   db.prepare('UPDATE scenarios SET notifications = ? WHERE id = ?').run(JSON.stringify(notifications), id);
 }
 
-export function setDeferredCheck(id, runAt, userId) {
-  db.prepare('UPDATE scenarios SET deferred_at = ?, deferred_by = ? WHERE id = ?').run(runAt, userId, id);
+export function setDeferredCheck(id, runAt) {
+  db.prepare('UPDATE scenarios SET deferred_at = ? WHERE id = ?').run(runAt, id);
 }
 
 export function cancelDeferredCheck(id) {
-  db.prepare('UPDATE scenarios SET deferred_at = NULL, deferred_by = NULL WHERE id = ?').run(id);
+  db.prepare('UPDATE scenarios SET deferred_at = NULL WHERE id = ?').run(id);
 }
 
 export function getDueDeferredScenarios() {

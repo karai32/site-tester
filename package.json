@@ -10,9 +10,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "add-user": "node scripts/add-user.js",
-    "set-password": "node scripts/set-password.js",
-    "add-project": "node scripts/add-project.js",
+    "project": "node scripts/project.js",
     "check": "node scripts/run-check.js"
   },
   "dependencies": {

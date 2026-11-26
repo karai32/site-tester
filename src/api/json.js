@@ -34,7 +34,6 @@ const MAX_PER_PAGE = 100;
 
 export function listFilters(query) {
   return {
-    author: String(query.author || ''),
     categories: String(query.categories || '').split(',').map((id) => id.trim()).filter(Boolean),
     regular: String(query.regular || ''),
     sort: sortFromQuery(query.sort),
@@ -60,22 +59,6 @@ export function isoDate(utcText) {
 
 function mediaUrl(file) {
   return `/api/media/${file}`;
-}
-
-export function formatUser(user) {
-  return {
-    id: user.id,
-    login: user.login,
-    name: user.name,
-    email: user.email,
-    telegramId: user.telegram_id,
-    createdAt: isoDate(user.created_at),
-  };
-}
-
-function formatPerson(id, name) {
-  if (!id) return null;
-  return { id, name };
 }
 
 export function formatProject(project) {
@@ -105,14 +88,12 @@ function formatSchedule(scenario) {
 export function formatScenarioItem(item) {
   return {
     id: item.id,
-    projectId: item.project_id,
     name: item.name,
     title: scenarioTitle(item),
     revision: item.revision,
     rootId: item.root_id,
     isFull: Boolean(item.is_full),
     isActive: Boolean(item.is_active),
-    author: formatPerson(item.author_id, item.author_name),
     createdAt: isoDate(item.created_at),
     categoriesCount: item.categoriesCount,
     testsCount: item.testsCount,
@@ -145,14 +126,11 @@ export function formatReport(report) {
 
   return {
     id: report.id,
-    projectId: report.project_id,
     scenario: {
       id: report.scenario_id,
       name: report.scenario_name,
       isFull: Boolean(report.scenario_is_full),
-      author: formatPerson(report.scenario_author_id, report.scenario_author_name),
     },
-    startedBy: formatPerson(report.started_by, report.started_by_name),
     isRegular: Boolean(report.is_regular),
     status: report.status,
     error: report.error,

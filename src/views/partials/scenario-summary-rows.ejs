@@ -1,7 +1,7 @@
 <% for (const report of reports) { %>
 	<% const status = reportStatus(report); %>
 	<a class="report-link-row" href="/reports/<%= report.id %>">
-		<span>Отчёт #<%= report.id %> · <%= authorName(report.started_by_name) %><%= report.is_regular ? ' · по расписанию' : '' %></span>
+		<span>Отчёт #<%= report.id %><%= report.is_regular ? ' · по расписанию' : '' %></span>
 		<span class="custom-badge status-<%= status.color %>"><%= status.label %></span>
 		<span class="report-link-row__date"><%= formatDateTime(report.finished_at || report.created_at) %></span>
 	</a>

@@ -1,9 +1,9 @@
-import { findUserByLogin } from '../db/users.js';
-import { checkPassword, getCurrentUser, logIn, logOut } from '../logic/users.js';
+import { findProjectByLogin } from '../db/projects.js';
+import { checkPassword, logIn, logOut } from '../logic/auth.js';
 
 export default async function loginPages(app) {
   app.get('/login', async (request, reply) => {
-    if (getCurrentUser(request)) return reply.redirect('/');
+    if (request.project) return reply.redirect('/');
     return reply.view('login.ejs', { title: 'Вход', login: '', error: false }, { layout: 'layouts/auth.ejs' });
   });
 
@@ -12,12 +12,12 @@ export default async function loginPages(app) {
     const login = String(form.login || '').trim();
     const password = String(form.password || '');
 
-    const user = findUserByLogin(login);
-    if (!user || !checkPassword(password, user.password_hash)) {
+    const project = findProjectByLogin(login);
+    if (!project || !checkPassword(password, project.password_hash)) {
       return reply.code(401).view('login.ejs', { title: 'Вход', login, error: true }, { layout: 'layouts/auth.ejs' });
     }
 
-    logIn(reply, user.id);
+    logIn(reply, project.id);
     return reply.redirect('/');
   });
 

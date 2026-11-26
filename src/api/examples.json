@@ -4,7 +4,7 @@
     "title": "Нет ключа или ключ неверный",
     "note": "",
     "request": [
-      "GET /api/projects"
+      "GET /api/project"
     ],
     "status": 401,
     "response": [
@@ -22,9 +22,8 @@
     "title": "Неверные данные",
     "note": "В fields указано, какое поле не так.",
     "request": [
-      "POST /api/projects",
+      "PATCH /api/project",
       "{",
-      "  \"name\": \"\",",
       "  \"url\": \"hadassah.moscow\"",
       "}"
     ],
@@ -34,9 +33,8 @@
       "  \"ok\": false,",
       "  \"error\": {",
       "    \"code\": \"validation_failed\",",
-      "    \"message\": \"Укажите название проекта. Адрес сайта должен начинаться с http:// или https://\",",
+      "    \"message\": \"Адрес сайта должен начинаться с http:// или https://\",",
       "    \"fields\": {",
-      "      \"name\": \"Укажите название проекта\",",
       "      \"url\": \"Адрес сайта должен начинаться с http:// или https://\"",
       "    }",
       "  }",
@@ -45,30 +43,8 @@
   },
   {
     "section": "Справочники",
-    "title": "Кто владелец ключа",
-    "note": "",
-    "request": [
-      "GET /api/me"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"id\": 1,",
-      "    \"login\": \"artem\",",
-      "    \"name\": \"Артем Тепляков\",",
-      "    \"email\": \"artem@808.ru\",",
-      "    \"telegramId\": null,",
-      "    \"createdAt\": \"2026-10-20T17:30:37Z\"",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Справочники",
     "title": "Справочники для форм",
-    "note": "Категории и тесты всех сайтов сразу, выборки страниц, варианты расписания, события уведомлений. В примере списки сокращены.",
+    "note": "Категории и тесты своего проекта, выборки страниц, варианты расписания, события уведомлений. Отсюда берутся id для сценариев. В примере списки сокращены.",
     "request": [
       "GET /api/catalog"
     ],
@@ -123,91 +99,11 @@
     ]
   },
   {
-    "section": "Справочники",
-    "title": "Справочники проекта",
-    "note": "То же для одного проекта: только его категории и тесты. Отсюда берутся id для сценариев. В примере списки сокращены.",
-    "request": [
-      "GET /api/projects/1/catalog"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"categories\": [",
-      "      {",
-      "        \"id\": \"availability\",",
-      "        \"title\": \"Техническая доступность и безопасность\",",
-      "        \"shortTitle\": \"Доступность\",",
-      "        \"tests\": [",
-      "          {",
-      "            \"id\": \"https-and-ssl\",",
-      "            \"title\": \"Сайт открывается по https, есть корректный SSL-сертификат, нет предупреждений браузера\"",
-      "          }",
-      "        ]",
-      "      }",
-      "    ],",
-      "    \"pageSets\": [",
-      "      {",
-      "        \"id\": \"top\",",
-      "        \"title\": \"Верхнеуровневые страницы\"",
-      "      }",
-      "    ],",
-      "    \"scheduleTypes\": [",
-      "      {",
-      "        \"id\": \"daily\",",
-      "        \"title\": \"Каждый день в\",",
-      "        \"hint\": null,",
-      "        \"hasTime\": true,",
-      "        \"number\": null",
-      "      }",
-      "    ],",
-      "    \"notificationEvents\": [",
-      "      {",
-      "        \"id\": \"started\",",
-      "        \"question\": \"Получать уведомления о проверках?\",",
-      "        \"title\": \"Запуск проверки\"",
-      "      }",
-      "    ],",
-      "    \"notificationChannels\": [",
-      "      {",
-      "        \"id\": \"telegram\",",
-      "        \"title\": \"Тг\"",
-      "      }",
-      "    ]",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Проекты",
-    "title": "Список проектов",
-    "note": "",
-    "request": [
-      "GET /api/projects"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": [",
-      "    {",
-      "      \"id\": 1,",
-      "      \"name\": \"Hadassah\",",
-      "      \"url\": \"https://hadassah.moscow/\",",
-      "      \"logoUrl\": null,",
-      "      \"createdAt\": \"2026-10-20T17:30:37Z\"",
-      "    }",
-      "  ]",
-      "}"
-    ]
-  },
-  {
-    "section": "Проекты",
+    "section": "Проект",
     "title": "Проект и данные дашборда",
-    "note": "Активные сценарии, 5 ближайших проверок, последняя полная и частичная проверки, 10 последних отчётов. В примере списки сокращены.",
+    "note": "Проект, к которому привязан ключ. Активные сценарии, 5 ближайших проверок, последняя полная и частичная проверки, 10 последних отчётов. В примере списки сокращены.",
     "request": [
-      "GET /api/projects/1"
+      "GET /api/project"
     ],
     "status": 200,
     "response": [
@@ -224,14 +120,12 @@
       "    \"scenarios\": [",
       "      {",
       "        \"id\": 1,",
-      "        \"projectId\": 1,",
       "        \"name\": \"Полная проверка\",",
       "        \"title\": \"Полная проверка #1\",",
       "        \"revision\": 1,",
       "        \"rootId\": null,",
       "        \"isFull\": true,",
       "        \"isActive\": true,",
-      "        \"author\": null,",
       "        \"createdAt\": \"2026-10-20T17:30:37Z\",",
       "        \"categoriesCount\": 10,",
       "        \"testsCount\": 53,",
@@ -258,14 +152,11 @@
       "    ],",
       "    \"lastFullReport\": {",
       "      \"id\": 3,",
-      "      \"projectId\": 1,",
       "      \"scenario\": {",
       "        \"id\": 1,",
       "        \"name\": \"Полная проверка\",",
-      "        \"isFull\": true,",
-      "        \"author\": null",
+      "        \"isFull\": true",
       "      },",
-      "      \"startedBy\": null,",
       "      \"isRegular\": false,",
       "      \"status\": \"done\",",
       "      \"error\": null,",
@@ -291,17 +182,11 @@
       "    },",
       "    \"lastPartialReport\": {",
       "      \"id\": 2,",
-      "      \"projectId\": 1,",
       "      \"scenario\": {",
       "        \"id\": 2,",
       "        \"name\": \"SEO главных страниц\",",
-      "        \"isFull\": false,",
-      "        \"author\": {",
-      "          \"id\": 1,",
-      "          \"name\": \"Артем Тепляков\"",
-      "        }",
+      "        \"isFull\": false",
       "      },",
-      "      \"startedBy\": null,",
       "      \"isRegular\": false,",
       "      \"status\": \"done\",",
       "      \"error\": null,",
@@ -319,14 +204,11 @@
       "    \"recentReports\": [",
       "      {",
       "        \"id\": 3,",
-      "        \"projectId\": 1,",
       "        \"scenario\": {",
       "          \"id\": 1,",
       "          \"name\": \"Полная проверка\",",
-      "          \"isFull\": true,",
-      "          \"author\": null",
+      "          \"isFull\": true",
       "        },",
-      "        \"startedBy\": null,",
       "        \"isRegular\": false,",
       "        \"status\": \"done\",",
       "        \"error\": null,",
@@ -347,38 +229,13 @@
     ]
   },
   {
-    "section": "Проекты",
-    "title": "Создать проект",
-    "note": "Вместе с проектом создаётся сценарий «Полная проверка».",
-    "request": [
-      "POST /api/projects",
-      "{",
-      "  \"name\": \"Тестовый сайт\",",
-      "  \"url\": \"https://808.ru/\"",
-      "}"
-    ],
-    "status": 201,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"id\": 2,",
-      "    \"name\": \"Тестовый сайт\",",
-      "    \"url\": \"https://808.ru/\",",
-      "    \"logoUrl\": null,",
-      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Проекты",
+    "section": "Проект",
     "title": "Изменить проект",
     "note": "Можно передать только то, что меняется.",
     "request": [
-      "PATCH /api/projects/2",
+      "PATCH /api/project",
       "{",
-      "  \"name\": \"Сайт 808\"",
+      "  \"name\": \"Hadassah\"",
       "}"
     ],
     "status": 200,
@@ -386,21 +243,21 @@
       "{",
       "  \"ok\": true,",
       "  \"data\": {",
-      "    \"id\": 2,",
-      "    \"name\": \"Сайт 808\",",
-      "    \"url\": \"https://808.ru/\",",
+      "    \"id\": 1,",
+      "    \"name\": \"Hadassah\",",
+      "    \"url\": \"https://hadassah.moscow/\",",
       "    \"logoUrl\": null,",
-      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
+      "    \"createdAt\": \"2026-10-20T17:30:37Z\"",
       "  }",
       "}"
     ]
   },
   {
-    "section": "Проекты",
+    "section": "Проект",
     "title": "Загрузить аватарку",
     "note": "PNG, JPEG или WebP до 2 МБ.",
     "request": [
-      "POST /api/projects/2/logo",
+      "POST /api/project/logo",
       "multipart/form-data, поле logo: файл картинки"
     ],
     "status": 200,
@@ -408,38 +265,21 @@
       "{",
       "  \"ok\": true,",
       "  \"data\": {",
-      "    \"id\": 2,",
-      "    \"name\": \"Сайт 808\",",
-      "    \"url\": \"https://808.ru/\",",
-      "    \"logoUrl\": \"/api/media/projects/2-1792520374766.png\",",
-      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Проекты",
-    "title": "Удалить проект",
-    "note": "Удаляет проект вместе со всеми сценариями и отчётами. Отменить нельзя.",
-    "request": [
-      "DELETE /api/projects/2"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"deleted\": true",
+      "    \"id\": 1,",
+      "    \"name\": \"Hadassah\",",
+      "    \"url\": \"https://hadassah.moscow/\",",
+      "    \"logoUrl\": \"/api/media/projects/1-1792520374766.png\",",
+      "    \"createdAt\": \"2026-10-20T17:30:37Z\"",
       "  }",
       "}"
     ]
   },
   {
     "section": "Сценарии",
-    "title": "Список сценариев проекта",
-    "note": "Параметры: status=inactive (выключенные), author (значение из meta.authors), categories=seo,forms, regular=yes или no, sort=new, old, tests-desc, tests-asc, categories-desc, categories-asc, pages-desc, pages-asc, page, perPage.",
+    "title": "Список сценариев",
+    "note": "Параметры: status=inactive (выключенные), categories=seo,forms, regular=yes или no, sort=new, old, tests-desc, tests-asc, categories-desc, categories-asc, pages-desc, pages-asc, page, perPage.",
     "request": [
-      "GET /api/projects/1/scenarios?sort=old"
+      "GET /api/scenarios?sort=old"
     ],
     "status": 200,
     "response": [
@@ -448,14 +288,12 @@
       "  \"data\": [",
       "    {",
       "      \"id\": 1,",
-      "      \"projectId\": 1,",
       "      \"name\": \"Полная проверка\",",
       "      \"title\": \"Полная проверка #1\",",
       "      \"revision\": 1,",
       "      \"rootId\": null,",
       "      \"isFull\": true,",
       "      \"isActive\": true,",
-      "      \"author\": null,",
       "      \"createdAt\": \"2026-10-20T17:30:37Z\",",
       "      \"categoriesCount\": 10,",
       "      \"testsCount\": 53,",
@@ -478,10 +316,7 @@
       "    \"total\": 2,",
       "    \"pagesCount\": 1,",
       "    \"activeCount\": 2,",
-      "    \"inactiveCount\": 0,",
-      "    \"authors\": [",
-      "      \"808 Checker\"",
-      "    ]",
+      "    \"inactiveCount\": 0",
       "  }",
       "}"
     ]
@@ -499,17 +334,12 @@
       "  \"ok\": true,",
       "  \"data\": {",
       "    \"id\": 2,",
-      "    \"projectId\": 1,",
       "    \"name\": \"SEO главных страниц\",",
       "    \"title\": \"SEO главных страниц #1\",",
       "    \"revision\": 1,",
       "    \"rootId\": null,",
       "    \"isFull\": false,",
       "    \"isActive\": true,",
-      "    \"author\": {",
-      "      \"id\": 1,",
-      "      \"name\": \"Артем Тепляков\"",
-      "    },",
       "    \"createdAt\": \"2026-10-20T17:30:38Z\",",
       "    \"categoriesCount\": 2,",
       "    \"testsCount\": 3,",
@@ -564,7 +394,7 @@
     "title": "Создать сценарий",
     "note": "schedule и notifications можно не передавать.",
     "request": [
-      "POST /api/projects/2/scenarios",
+      "POST /api/scenarios",
       "{",
       "  \"name\": \"SEO главных страниц\",",
       "  \"testIds\": [",
@@ -596,17 +426,12 @@
       "  \"ok\": true,",
       "  \"data\": {",
       "    \"id\": 4,",
-      "    \"projectId\": 2,",
       "    \"name\": \"SEO главных страниц\",",
       "    \"title\": \"SEO главных страниц #1\",",
       "    \"revision\": 1,",
       "    \"rootId\": null,",
       "    \"isFull\": false,",
       "    \"isActive\": true,",
-      "    \"author\": {",
-      "      \"id\": 1,",
-      "      \"name\": \"Артем Тепляков\"",
-      "    },",
       "    \"createdAt\": \"2026-10-20T18:19:34Z\",",
       "    \"categoriesCount\": 1,",
       "    \"testsCount\": 2,",
@@ -844,19 +669,10 @@
       "  \"ok\": true,",
       "  \"data\": {",
       "    \"id\": 4,",
-      "    \"projectId\": 2,",
       "    \"scenario\": {",
       "      \"id\": 4,",
       "      \"name\": \"SEO главных страниц\",",
-      "      \"isFull\": false,",
-      "      \"author\": {",
-      "        \"id\": 1,",
-      "        \"name\": \"Артем Тепляков\"",
-      "      }",
-      "    },",
-      "    \"startedBy\": {",
-      "      \"id\": 1,",
-      "      \"name\": \"Артем Тепляков\"",
+      "      \"isFull\": false",
       "    },",
       "    \"isRegular\": false,",
       "    \"status\": \"queued\",",
@@ -888,19 +704,10 @@
       "  \"ok\": true,",
       "  \"data\": {",
       "    \"id\": 4,",
-      "    \"projectId\": 2,",
       "    \"scenario\": {",
       "      \"id\": 4,",
       "      \"name\": \"SEO главных страниц\",",
-      "      \"isFull\": false,",
-      "      \"author\": {",
-      "        \"id\": 1,",
-      "        \"name\": \"Артем Тепляков\"",
-      "      }",
-      "    },",
-      "    \"startedBy\": {",
-      "      \"id\": 1,",
-      "      \"name\": \"Артем Тепляков\"",
+      "      \"isFull\": false",
       "    },",
       "    \"isRegular\": false,",
       "    \"status\": \"cancelled\",",
@@ -932,14 +739,11 @@
       "  \"ok\": true,",
       "  \"data\": {",
       "    \"id\": 3,",
-      "    \"projectId\": 1,",
       "    \"scenario\": {",
       "      \"id\": 1,",
       "      \"name\": \"Полная проверка\",",
-      "      \"isFull\": true,",
-      "      \"author\": null",
+      "      \"isFull\": true",
       "    },",
-      "    \"startedBy\": null,",
       "    \"isRegular\": false,",
       "    \"status\": \"done\",",
       "    \"error\": null,",
@@ -987,10 +791,10 @@
   },
   {
     "section": "Проверки и отчёты",
-    "title": "Архив отчётов проекта",
+    "title": "Архив отчётов",
     "note": "Параметры как у списка сценариев, плюс q (поиск).",
     "request": [
-      "GET /api/projects/1/reports"
+      "GET /api/reports"
     ],
     "status": 200,
     "response": [
@@ -999,14 +803,11 @@
       "  \"data\": [",
       "    {",
       "      \"id\": 3,",
-      "      \"projectId\": 1,",
       "      \"scenario\": {",
       "        \"id\": 1,",
       "        \"name\": \"Полная проверка\",",
-      "        \"isFull\": true,",
-      "        \"author\": null",
+      "        \"isFull\": true",
       "      },",
-      "      \"startedBy\": null,",
       "      \"isRegular\": false,",
       "      \"status\": \"done\",",
       "      \"error\": null,",
@@ -1026,10 +827,7 @@
       "    \"page\": 1,",
       "    \"perPage\": 10,",
       "    \"total\": 3,",
-      "    \"pagesCount\": 1,",
-      "    \"authors\": [",
-      "      \"808 Checker\"",
-      "    ]",
+      "    \"pagesCount\": 1",
       "  }",
       "}"
     ]
@@ -1048,17 +846,11 @@
       "  \"data\": [",
       "    {",
       "      \"id\": 2,",
-      "      \"projectId\": 1,",
       "      \"scenario\": {",
       "        \"id\": 2,",
       "        \"name\": \"SEO главных страниц\",",
-      "        \"isFull\": false,",
-      "        \"author\": {",
-      "          \"id\": 1,",
-      "          \"name\": \"Артем Тепляков\"",
-      "        }",
+      "        \"isFull\": false",
       "      },",
-      "      \"startedBy\": null,",
       "      \"isRegular\": false,",
       "      \"status\": \"done\",",
       "      \"error\": null,",
@@ -1105,119 +897,6 @@
     "status": 200,
     "response": [
       "Файл картинки или видео"
-    ]
-  },
-  {
-    "section": "Пользователи",
-    "title": "Список пользователей",
-    "note": "",
-    "request": [
-      "GET /api/users"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": [",
-      "    {",
-      "      \"id\": 1,",
-      "      \"login\": \"artem\",",
-      "      \"name\": \"Артем Тепляков\",",
-      "      \"email\": \"artem@808.ru\",",
-      "      \"telegramId\": null,",
-      "      \"createdAt\": \"2026-10-20T17:30:37Z\"",
-      "    }",
-      "  ]",
-      "}"
-    ]
-  },
-  {
-    "section": "Пользователи",
-    "title": "Создать пользователя",
-    "note": "email и telegramId необязательные. Пароль показывается только в этом ответе.",
-    "request": [
-      "POST /api/users",
-      "{",
-      "  \"login\": \"maria\",",
-      "  \"name\": \"Мария Иванова\",",
-      "  \"email\": \"maria@808.ru\"",
-      "}"
-    ],
-    "status": 201,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"user\": {",
-      "      \"id\": 2,",
-      "      \"login\": \"maria\",",
-      "      \"name\": \"Мария Иванова\",",
-      "      \"email\": \"maria@808.ru\",",
-      "      \"telegramId\": null,",
-      "      \"createdAt\": \"2026-10-20T18:19:34Z\"",
-      "    },",
-      "    \"password\": \"06jnkX_AJJBM\"",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Пользователи",
-    "title": "Изменить пользователя",
-    "note": "Можно передать только то, что меняется. Логин не меняется.",
-    "request": [
-      "PATCH /api/users/2",
-      "{",
-      "  \"telegramId\": \"123456789\"",
-      "}"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"id\": 2,",
-      "    \"login\": \"maria\",",
-      "    \"name\": \"Мария Иванова\",",
-      "    \"email\": \"maria@808.ru\",",
-      "    \"telegramId\": \"123456789\",",
-      "    \"createdAt\": \"2026-10-20T18:19:34Z\"",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Пользователи",
-    "title": "Новый пароль",
-    "note": "Пользователь выходит из сервиса во всех браузерах.",
-    "request": [
-      "POST /api/users/2/password"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"password\": \"n12ye-m9cZZC\"",
-      "  }",
-      "}"
-    ]
-  },
-  {
-    "section": "Пользователи",
-    "title": "Удалить пользователя",
-    "note": "Его API-ключи перестают работать.",
-    "request": [
-      "DELETE /api/users/2"
-    ],
-    "status": 200,
-    "response": [
-      "{",
-      "  \"ok\": true,",
-      "  \"data\": {",
-      "    \"deleted\": true",
-      "  }",
-      "}"
     ]
   }
 ]

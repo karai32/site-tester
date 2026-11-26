@@ -1,15 +1,12 @@
-import { findProjectById } from '../db/projects.js';
+import { isOwnRoute, keyProject } from '../logic/auth.js';
 import { CHANNELS, NOTIFICATION_EVENTS } from '../logic/notifications.js';
 import { PAGE_SETS } from '../logic/page-sets.js';
 import { projectCategories } from '../logic/scenarios.js';
 import { SCHEDULE_TYPES } from '../logic/schedule.js';
-import { findApiUser } from '../logic/users.js';
-import { allCategories } from '../tests/index.js';
-import { formatUser, sendData, sendError } from './json.js';
-import projectsApi from './projects.js';
+import { sendData, sendError } from './json.js';
+import projectApi from './project.js';
 import reportsApi from './reports.js';
 import scenariosApi from './scenarios.js';
-import usersApi from './users.js';
 
 function catalogData(categories) {
   const categoryList = [];
@@ -42,29 +39,21 @@ function catalogData(categories) {
 }
 
 async function catalogApi(app) {
-  app.get('/me', async (request, reply) => {
-    return sendData(reply, formatUser(request.apiUser));
-  });
-
-  app.get('/catalog', async (_request, reply) => {
-    return sendData(reply, catalogData(allCategories()));
-  });
-
-  app.get('/projects/:id/catalog', async (request, reply) => {
-    const project = findProjectById(request.params.id);
-    if (!project) return sendError(reply, 404, 'not_found', 'Проект не найден');
-    return sendData(reply, catalogData(projectCategories(project.id)));
+  app.get('/catalog', async (request, reply) => {
+    return sendData(reply, catalogData(projectCategories(request.project.id)));
   });
 }
 
 export default async function api(app) {
-  app.decorateRequest('apiUser', null);
   app.addHook('onRequest', async (request, reply) => {
-    const user = findApiUser(request);
-    if (!user) {
+    const project = keyProject(request);
+    if (!project) {
       return sendError(reply, 401, 'unauthorized', 'Нужен действующий API-ключ: заголовок Authorization: Bearer <ключ>');
     }
-    request.apiUser = user;
+    if (!isOwnRoute(request, project.id)) {
+      return sendError(reply, 404, 'not_found', 'Не найдено');
+    }
+    request.project = project;
   });
 
   app.setErrorHandler((error, request, reply) => {
@@ -80,8 +69,7 @@ export default async function api(app) {
   });
 
   await app.register(catalogApi);
-  await app.register(projectsApi);
+  await app.register(projectApi);
   await app.register(scenariosApi);
   await app.register(reportsApi);
-  await app.register(usersApi);
 }

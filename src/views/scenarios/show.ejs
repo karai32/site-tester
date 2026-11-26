@@ -1,6 +1,6 @@
 <div class="breadcrumbs">
-	<a href="/projects/<%= project.id %>"><%= project.name %></a> /
-	<a href="/projects/<%= project.id %>/scenarios">Сценарии</a> /
+	<a href="/project"><%= project.name %></a> /
+	<a href="/scenarios">Сценарии</a> /
 	<span><%= scenarioTitle(scenario) %></span>
 </div>
 
@@ -12,7 +12,6 @@
 		</h1>
 		<p class="page-subtitle">Создан: <%= formatDate(scenario.created_at) %></p>
 	</div>
-	<div class="page-subtitle mt-0">Автор сценария: <span class="author-chip"><span class="avatar"><%= initials(authorName(scenario.author_name)) %></span><%= authorName(scenario.author_name) %></span></div>
 </div>
 
 <% if (notice) { %>
@@ -65,14 +64,14 @@
 					<button type="button" class="btn btn-outline-primary btn-pill btn-pill-sm" data-bs-toggle="modal" data-bs-target="#launch-<%= scenario.id %>">Запустить сейчас</button>
 					<button type="button" class="btn btn-pill btn-pill-sm btn-soft-warning" data-bs-toggle="collapse" data-bs-target="#deferred-form" aria-expanded="<%= deferredErrors.length > 0 %>">Отложенная проверка</button>
 					<% if (scenario.deferred_at) { %>
-						<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/deferred/cancel">
+						<form method="post" action="/scenarios/<%= scenario.id %>/deferred/cancel">
 							<button type="submit" class="btn btn-pill btn-pill-sm btn-soft-danger">Отменить отложенную проверку</button>
 						</form>
 					<% } %>
 				</div>
 
 				<div class="collapse <%= deferredErrors.length > 0 ? 'show' : '' %>" id="deferred-form">
-					<form class="soft-box deferred-form" method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/deferred">
+					<form class="soft-box deferred-form" method="post" action="/scenarios/<%= scenario.id %>/deferred">
 						<% if (deferredErrors.length > 0) { %>
 							<div class="alert alert-danger w-100" role="alert">
 								<% for (const error of deferredErrors) { %><div><%= error %></div><% } %>
@@ -116,7 +115,7 @@
 			</div>
 
 			<% if (editSchedule) { %>
-				<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/schedule">
+				<form method="post" action="/scenarios/<%= scenario.id %>/schedule">
 					<% if (scheduleErrors.length > 0) { %>
 						<div class="alert alert-danger" role="alert">
 							<% for (const error of scheduleErrors) { %><div><%= error %></div><% } %>
@@ -125,7 +124,7 @@
 					<%- include('../partials/schedule-form', { schedule }) %>
 					<div class="panel__actions">
 						<button type="submit" class="btn btn-primary btn-pill">Сохранить</button>
-						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
+						<a href="/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
 					</div>
 				</form>
 			<% } else { %>
@@ -137,7 +136,7 @@
 							<span class="schedule-box__next">Следующий запуск: <%= formatDateShort(scenario.next_run_at) %></span>
 						<% } %>
 					</div>
-					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>?edit=schedule#schedule" class="btn btn-primary btn-pill">Изменить</a>
+					<a href="/scenarios/<%= scenario.id %>?edit=schedule#schedule" class="btn btn-primary btn-pill">Изменить</a>
 				</div>
 			<% } %>
 		</section>
@@ -148,7 +147,7 @@
 			</div>
 
 			<% if (editNotifications) { %>
-				<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/notifications">
+				<form method="post" action="/scenarios/<%= scenario.id %>/notifications">
 					<% if (notificationErrors.length > 0) { %>
 						<div class="alert alert-danger" role="alert">
 							<% for (const error of notificationErrors) { %><div><%= error %></div><% } %>
@@ -157,7 +156,7 @@
 					<%- include('../partials/notifications-form', { notifications }) %>
 					<div class="panel__actions">
 						<button type="submit" class="btn btn-primary btn-pill">Сохранить</button>
-						<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
+						<a href="/scenarios/<%= scenario.id %>" class="btn btn-outline-primary btn-pill">Отменить</a>
 					</div>
 				</form>
 			<% } else { %>
@@ -186,7 +185,7 @@
 					</div>
 				<% } %>
 				<div class="panel__actions">
-					<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>?edit=notifications#notifications" class="btn btn-primary btn-pill">Изменить</a>
+					<a href="/scenarios/<%= scenario.id %>?edit=notifications#notifications" class="btn btn-primary btn-pill">Изменить</a>
 				</div>
 			<% } %>
 		</section>
@@ -194,7 +193,7 @@
 </div>
 
 <div class="actions-bar">
-	<form method="post" action="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/active">
+	<form method="post" action="/scenarios/<%= scenario.id %>/active">
 		<% if (scenario.is_active) { %>
 			<input type="hidden" name="active" value="0">
 			<button type="submit" class="btn btn-pill btn-soft-danger">Деактивировать сценарий</button>
@@ -203,5 +202,5 @@
 			<button type="submit" class="btn btn-dark btn-pill">Активировать сценарий</button>
 		<% } %>
 	</form>
-	<a href="/projects/<%= project.id %>/scenarios/<%= scenario.id %>/copy" target="_blank" class="btn btn-outline-primary btn-pill">Скопировать и изменить сценарий</a>
+	<a href="/scenarios/<%= scenario.id %>/copy" target="_blank" class="btn btn-outline-primary btn-pill">Скопировать и изменить сценарий</a>
 </div>

@@ -11,11 +11,7 @@ let busy = false;
 
 function queueDueChecks(log) {
   for (const scenario of getDueDeferredScenarios()) {
-    const reportId = createReport({
-      projectId: scenario.project_id,
-      scenarioId: scenario.id,
-      startedBy: scenario.deferred_by,
-    });
+    const reportId = createReport({ projectId: scenario.project_id, scenarioId: scenario.id });
     cancelDeferredCheck(scenario.id);
     log.info(`Отложенная проверка «${scenario.name}» поставлена в очередь, отчёт #${reportId}`);
   }

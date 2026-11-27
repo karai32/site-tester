@@ -14,7 +14,7 @@
 
 	<div class="app-user dropup">
 		<button type="button" class="app-user__button" data-bs-toggle="dropdown" aria-expanded="false">
-			<span class="avatar app-user__avatar"><%= initials(project.name) %></span><span><%= project.name %></span>
+			<%- include('project-logo', { project, className: 'avatar app-user__avatar' }) %><span><%= project.name %></span>
 		</button>
 		<div class="dropdown-menu">
 			<a class="dropdown-item" href="/profile">Профиль</a>

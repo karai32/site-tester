@@ -1,5 +1,3 @@
-<% if (project.logo) { %>
-	<span class="project-logo project-logo-image"><img src="/media/<%= project.logo %>" alt=""></span>
-<% } else { %>
-	<span class="project-logo"><%= initials(project.name) %></span>
-<% } %>
+<span class="<%= locals.className || 'project-logo' %><%= project.logo ? ' project-logo-image' : '' %>">
+	<% if (project.logo) { %><img src="/media/<%= project.logo %>" alt=""><% } else { %><%= initials(project.name) %><% } %>
+</span>
